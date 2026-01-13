@@ -542,4 +542,9 @@ public class Game
         protag.protagSteps(command);
     }
 
+    public static void main(String[] args) {
+    Game game = new Game();
+    game.play();
+}
+
 }
