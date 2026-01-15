@@ -109,7 +109,7 @@ public class Game
     }
 
     /**
-     *  Main play routine.  Loops until end of play.
+     *  Main play routine.  Loops until end of play.bu
      */
     public void play() 
     {            
@@ -192,6 +192,9 @@ public class Game
                 break;
         }
         //initiates the protagonist's move routine after every command
+// BUG 1: The protagonist moves even when the player types an invalid command.
+// Example: typing "asdf" prints "I don't know what you mean..." but protagMove()
+// still runs and the protagonist changes rooms anyway
         protagMove();
         return wantToQuit;
     }
@@ -259,6 +262,7 @@ public class Game
                 player.addItem(tempItem);
                 player.getCurrentRoom().removeItemByName(itemName);
                 System.out.println("Picked up the " + tempItem.getName() + "!");
+                // BUG 2: This compares strings using == instead of .equals().
                 if (tempItem.getName() == "hammer" && player.getCurrentRoom().getID() == 4)
                 {
                     Room.setClearCon(1, false);
@@ -435,6 +439,10 @@ public class Game
         switch (player.getCurrentRoom().getID())
         {
             case 3:
+                // BUG 3: Using the hammer in the quarry can be done over and over.
+                // Each use adds the same ore item again, so the game keeps spawning ore.
+                // It looks like only one ore exists because they all reference the same item,
+                // but the room state is still being duplicated.
                 player.getCurrentRoom().addItem(givenItems.get(0));
                 System.out.println("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
                 break;
@@ -538,6 +546,7 @@ public class Game
      */
     private void protagMove()
     {
+        //Bug 4 GetRandomExit may return null if the room has no exits. 
         Command command = new Command(CommandWord.GO, protag.getCurrentRoom().getRandomExit());
         protag.protagSteps(command);
     }

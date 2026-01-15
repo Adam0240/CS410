@@ -228,6 +228,11 @@ public class Room
     public String getRandomExit()
     {
         ArrayList<String> tempExits = new ArrayList<String>(exits.keySet());
+
+    // BUG: This assumes the room always has at least one exit.
+    // If exits is empty, tempExits.size() will be 0 and
+    // Game.random.nextInt(0) will crash the game.
+
         //god this sucks so bad
         //if there's a better way to do this let me know
         return tempExits.get(Game.random.nextInt(tempExits.size()));
