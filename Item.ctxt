@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.target=Item
+comment0.text=\n\ This\ class\ is\ part\ of\ the\ "FUGwACL\ Adventure"\ application.\ \n\ "FUGwACL\ Adventure"\ is\ a\ slightly\ less\ simple,\ text\ based\ adventure\ game.\n\ \n\ Holds\ information\ about\ Items.\ Does\ nothing\ on\ its\ own.\n\n\ @author\ \ Michael\ K\u00F6lling,\ David\ J.\ Barnes,\ and\ Christian\ Byrne\n\ @version\ 2023-12-03\n
+comment1.params=itemName\ itemDesc\ itemWeight\ itemID
+comment1.target=Item(java.lang.String,\ java.lang.String,\ int,\ int)
+comment2.params=
+comment2.target=java.lang.String\ getName()
+comment3.params=
+comment3.target=java.lang.String\ getDesc()
+comment4.params=
+comment4.target=int\ getWeight()
+comment5.params=
+comment5.target=int\ getID()
+numComments=6
