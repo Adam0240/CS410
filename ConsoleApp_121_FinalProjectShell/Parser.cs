@@ -1,31 +1,26 @@
-﻿namespace ConsoleApp_121_FinalProjectShell;
+﻿//Transcribed Parser.java file - Adam Abbadusky
 
-/**
- * This class is part of the "World of Zuul" application.
- * "World of Zuul" is a very simple, text based adventure game.
- *
- * This parser reads user input and tries to interpret it as an "Adventure"
- * command. Every time it is called it reads a line from the terminal and
- * tries to interpret the line as a two-word command. It returns the command
- * as an object of class Command.
- *
- * The parser has a set of known command words. It checks user input against
- * the known commands, and if the input is not one of the known commands, it
- * returns a command object that is marked as an unknown command.
- *
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
- */
+/// <summary>
+/// The parser has a set of known command words. It checks user input against
+/// the known commands, and if the input is not one of the known commands, it
+/// returns a command object that is marked as an unknown command.
+/// </summary>
+
+namespace ConsoleApp_121_FinalProjectShell;
+
 public class Parser 
 {
-    private CmdWords commands;  // holds all valid command words
+    private CommandWords commands;  // holds all valid command words
+    //private Scanner reader;       //not needed in c#
 
     /**
      * Create a parser to read from the terminal window.
      */
     public Parser() 
     {
-        commands = new CmdWords();
+        commands = new CommandWords();
+        //scanner not needed in c#
+        //private Scanner reader;
     }
 
     /**
@@ -51,7 +46,8 @@ public class Parser
             }
         }
 
-        return new Command(commands.getCommandWord(word1), word2);
+        //bug: may cause error if word1 is null
+        return new Command(commands.GetCommandWord(word1), word2);
     }
 
     /**
@@ -59,6 +55,6 @@ public class Parser
      */
     public void showCommands()
     {
-        commands.showAll();
+        commands.ShowAll();
     }
 }
