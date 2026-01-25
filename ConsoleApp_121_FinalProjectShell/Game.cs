@@ -109,8 +109,8 @@ public class Game
         altarGrove.addItem(hilt);
 
         //initialize items to be given when conditions are met
-        givenItems.add(0, ore);
-        givenItems.add(1, sword);
+        givenItems[0] = ore;
+        givenItems-[1] = sword;
 
         player.setCurrentRoom(hub);
         // start game in the game hub
@@ -159,45 +159,45 @@ public class Game
     {
         bool wantToQuit = false;
 
-        CommandWord commandWord = command.getCommandWord();
+        CommandWord commandWord = command.GetCommandWord();
         switch(commandWord)
         {
-            case HELP:
+            case CommandWord.HELP:
                 printHelp();
                 break;
-            case GO:
+            case CommandWord.GO:
                 goTo(command);
                 printLocationInfo(player.getCurrentRoom());
                 break;
-            case QUIT:
+            case CommandWord.QUIT:
                 wantToQuit = quit(command);
                 break;
-            case BACK:
+            case CommandWord.BACK:
                 backTo();
                 printLocationInfo(player.getCurrentRoom());
                 break;
-            case LOOK:
+            case CommandWord.LOOK:
                 printLocationInfo(player.getCurrentRoom());
                 break;
-            case TAKE:
+            case CommandWord.TAKE:
                 take(command);
                 break;
-            case DROP:
+            case CommandWord.DROP:
                 drop(command);
                 break;
-            case ITEMS:
+            case CommandWord.ITEMS:
                 itemsPrint();
                 break;
-            case USE:
+            case CommandWord.USE:
                 wantToQuit = use(command);
                 break;
-            case TALK:
+            case CommandWord.TALK:
                 talk();
                 break;
-            case SLEEP:
+            case CommandWord.SLEEP:
                 wantToQuit = sleep();
                 break;
-            case UNKNOWN:
+            case CommandWord.UNKNOWN:
                 Console.WriteLine("I don't know what you mean...");
                 break;
         }
@@ -241,7 +241,7 @@ public class Game
      */
     private bool quit(Command command) 
     {
-        if(command.hasSecondWord()) {
+        if(command.HasSecondWord()) {
             Console.WriteLine("Quit what?");
             return false;
         }
@@ -257,13 +257,13 @@ public class Game
      */
     private void take(Command command)
     {
-        if(!command.hasSecondWord()) {
+        if(!command.HasSecondWord()) {
             // if there is no second word, we don't know what to take...
             Console.WriteLine("Take what?");
             return;
         }
 
-        String itemName = command.getSecondWord();
+        String itemName = command.GetSecondWord();
         Item tempItem = player.getCurrentRoom().getItemByName(itemName);
         if (tempItem != null)
         {
@@ -294,13 +294,13 @@ public class Game
      */
     private void drop(Command command)
     {
-        if(!command.hasSecondWord()) {
+        if(!command.HasSecondWord()) {
             // if there is no second word, we don't know what to take...
             Console.WriteLine("Drop what?");
             return;
         }
 
-        String itemName = command.getSecondWord();
+        String itemName = command.GetSecondWord();
         Item tempItem = player.getItemByName(itemName);
         if (tempItem != null)
         {
@@ -359,12 +359,12 @@ public class Game
      */
     private bool use(Command command)
     {
-        if(!command.hasSecondWord()) {
+        if(!command.HasSecondWord()) {
             Console.WriteLine("Use what?");
             return false;
         }
 
-        String item = command.getSecondWord();
+        String item = command.GetSecondWord();
 
         if (player.hasItemByName(item))
         {
@@ -452,7 +452,7 @@ public class Game
                 // Each use adds the same ore item again, so the game keeps spawning ore.
                 // It looks like only one ore exists because they all reference the same item,
                 // but the room state is still being duplicated.
-                player.getCurrentRoom().addItem(givenItems.get(0));
+                player.getCurrentRoom().addItem(givenItems[0]);
                 Console.WriteLine("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
                 break;
             case 4:
@@ -473,7 +473,7 @@ public class Game
         {
             player.removeItemByName("ore");
             player.removeItemByName("hilt");
-            player.getCurrentRoom().addItem(givenItems.get(1));
+            player.getCurrentRoom().addItem(givenItems[1]);
             Console.WriteLine("Forged the hilt into a new sword!");
         } else 
         {

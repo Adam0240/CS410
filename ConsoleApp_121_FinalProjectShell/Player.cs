@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ConsoleApp_121_FinalProjectShell;
 
 /**
  * This class is part of the "FUGwACL Adventure" application. 
@@ -184,12 +185,12 @@ public class Player
 
     public int goRoom(Command command) 
     {
-        if(!command.hasSecondWord()) {
+        if(!command.HasSecondWord()) {
             //return zero for no second word
             return 0;
         }
 
-        string direction = command.getSecondWord();
+        string direction = command.GetSecondWord();
         // Try to leave current room.
         Room nextRoom = null;
         if (currentRoom.getExits().ContainsKey(direction))
