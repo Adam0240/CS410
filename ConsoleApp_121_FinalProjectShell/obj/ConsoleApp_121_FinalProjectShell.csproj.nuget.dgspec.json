@@ -1,28 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/Users/parzival/Documents/School Docs/CS 410/project main/CS410/ConsoleApp_121_FinalProjectShell/ConsoleApp_121_FinalProjectShell.csproj": {}
+    "D:\\CS410_TextAdventure\\CS410\\ConsoleApp_121_FinalProjectShell\\ConsoleApp_121_FinalProjectShell.csproj": {}
   },
   "projects": {
-    "/Users/parzival/Documents/School Docs/CS 410/project main/CS410/ConsoleApp_121_FinalProjectShell/ConsoleApp_121_FinalProjectShell.csproj": {
+    "D:\\CS410_TextAdventure\\CS410\\ConsoleApp_121_FinalProjectShell\\ConsoleApp_121_FinalProjectShell.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/parzival/Documents/School Docs/CS 410/project main/CS410/ConsoleApp_121_FinalProjectShell/ConsoleApp_121_FinalProjectShell.csproj",
+        "projectUniqueName": "D:\\CS410_TextAdventure\\CS410\\ConsoleApp_121_FinalProjectShell\\ConsoleApp_121_FinalProjectShell.csproj",
         "projectName": "ConsoleApp_121_FinalProjectShell",
-        "projectPath": "/Users/parzival/Documents/School Docs/CS 410/project main/CS410/ConsoleApp_121_FinalProjectShell/ConsoleApp_121_FinalProjectShell.csproj",
-        "packagesPath": "/Users/parzival/.nuget/packages/",
-        "outputPath": "/Users/parzival/Documents/School Docs/CS 410/project main/CS410/ConsoleApp_121_FinalProjectShell/obj/",
+        "projectPath": "D:\\CS410_TextAdventure\\CS410\\ConsoleApp_121_FinalProjectShell\\ConsoleApp_121_FinalProjectShell.csproj",
+        "packagesPath": "C:\\Users\\STEAM Room\\.nuget\\packages\\",
+        "outputPath": "D:\\CS410_TextAdventure\\CS410\\ConsoleApp_121_FinalProjectShell\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "/Users/parzival/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\STEAM Room\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -61,7 +64,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.401/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.414/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

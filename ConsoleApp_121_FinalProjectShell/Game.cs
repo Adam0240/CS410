@@ -19,14 +19,18 @@ namespace ConsoleApp_121_FinalProjectShell;
  * @version 2016.02.29
  */
 
-public class Game 
+public class Game
 {
     private Parser parser;
     private Player player;
     private Player protag;
     public static Random random;
+
+    // CHANGED: ArrayList is non-generic and indexing requires items to exist.
+    // We keep ArrayList (to avoid refactoring logic), but we will populate it with Add()
+    // instead of invalid index assignment.
     private ArrayList givenItems;
-    
+
     /**
     * Create the game and initialise its internal map.
     * Also initialises givenItems (used to hold items given by puzzles),
@@ -94,7 +98,7 @@ public class Game
         rocky.setExit("south", lava);
 
         lava.setExit("north", rocky);
-        lava .setExit("slideward", graves);
+        lava.setExit("slideward", graves);
 
         graves.setExit("exit", hub);
 
@@ -108,9 +112,13 @@ public class Game
         graves.addItem(hammer);
         altarGrove.addItem(hilt);
 
-        //initialize items to be given when conditions are met
-        givenItems[0] = ore;
-        givenItems-[1] = sword;
+        // CHANGED: ArrayList does not support assigning to [0] / [1] unless elements exist.
+        // The original code attempted:
+        //   givenItems[0] = ore;
+        //   givenItems-[1] = sword;   (also had a syntax error)
+        // We populate in order with Add() so givenItems[0] and givenItems[1] still work later.
+        givenItems.Add(ore);
+        givenItems.Add(sword);
 
         player.setCurrentRoom(hub);
         // start game in the game hub
@@ -118,18 +126,19 @@ public class Game
         //protagonist starts in the obligatory area
     }
 
-     /**
-     *  Main play routine.  Loops until end of play.bu
-     */
-    public void play() 
-    {            
+    /**
+    *  Main play routine.  Loops until end of play.bu
+    */
+    public void play()
+    {
         printWelcome();
 
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
 
         bool finished = false;
-        while (! finished) {
+        while (!finished)
+        {
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
@@ -155,12 +164,12 @@ public class Game
      * @param command The command to be processed.
      * @return true If the command ends the game, false otherwise.
      */
-    private bool processCommand(Command command) 
+    private bool processCommand(Command command)
     {
         bool wantToQuit = false;
 
         CommandWord commandWord = command.GetCommandWord();
-        switch(commandWord)
+        switch (commandWord)
         {
             case CommandWord.HELP:
                 printHelp();
@@ -202,9 +211,9 @@ public class Game
                 break;
         }
         //initiates the protagonist's move routine after every command
-// BUG 1: The protagonist moves even when the player types an invalid command.
-// Example: typing "asdf" prints "I don't know what you mean..." but protagMove()
-// still runs and the protagonist changes rooms anyway
+        // BUG 1: The protagonist moves even when the player types an invalid command.
+        // Example: typing "asdf" prints "I don't know what you mean..." but protagMove()
+        // still runs and the protagonist changes rooms anyway
         protagMove();
         return wantToQuit;
     }
@@ -214,12 +223,12 @@ public class Game
      * Print out some help information.
      * Informs the player their goals and lists the available commands.
      */
-    private void printHelp() 
+    private void printHelp()
     {
         Console.WriteLine("Assist the protagonist in progressing through the beginning areas. \nThey will need to be able to obtain a weapon and have a way into the castle.");
         Console.WriteLine();
         Console.WriteLine("Your command words are:");
-        parser.showCommands();   
+        parser.showCommands();
     }
 
     /**
@@ -231,7 +240,8 @@ public class Game
         if (protag.getCurrentRoom() == currentRoom)
         {
             Console.WriteLine(currentRoom.getLongDesc() + "\nThe protagonist is here, bumbling about the area.");
-        } else { Console.WriteLine(currentRoom.getLongDesc()); }
+        }
+        else { Console.WriteLine(currentRoom.getLongDesc()); }
     }
 
     /** 
@@ -239,17 +249,19 @@ public class Game
      * whether we really quit the game.
      * @return true, if this command quits the game, false otherwise.
      */
-    private bool quit(Command command) 
+    private bool quit(Command command)
     {
-        if(command.HasSecondWord()) {
+        if (command.HasSecondWord())
+        {
             Console.WriteLine("Quit what?");
             return false;
         }
-        else {
+        else
+        {
             return true;  // signal that we want to quit
         }
     }
-    
+
     //inventory methods
     /**
      * Tries to move a given item from the current room into the player's inventory
@@ -257,7 +269,8 @@ public class Game
      */
     private void take(Command command)
     {
-        if(!command.HasSecondWord()) {
+        if (!command.HasSecondWord())
+        {
             // if there is no second word, we don't know what to take...
             Console.WriteLine("Take what?");
             return;
@@ -278,7 +291,8 @@ public class Game
                     Room.setClearCon(1, false);
                     Console.WriteLine("The forge's tool set is once again incomplete.");
                 }
-            } else
+            }
+            else
             {
                 Console.WriteLine("That's too heavy to carry right now.");
             }
@@ -294,7 +308,8 @@ public class Game
      */
     private void drop(Command command)
     {
-        if(!command.HasSecondWord()) {
+        if (!command.HasSecondWord())
+        {
             // if there is no second word, we don't know what to take...
             Console.WriteLine("Drop what?");
             return;
@@ -307,14 +322,15 @@ public class Game
             player.getCurrentRoom().addItem(tempItem);
             player.removeItemByName(itemName);
             Console.WriteLine("Dropped the " + tempItem.getName() + "!");
-        } else {Console.WriteLine("You don't have anything like that.");}
+        }
+        else { Console.WriteLine("You don't have anything like that."); }
     }
-    
+
     private void itemsPrint()
     {
         Console.WriteLine(player.itemsText());
     }
-    
+
     //methods for moving the player
     /**
      * Calls player's goRoom() method to determine what should be printed
@@ -350,7 +366,7 @@ public class Game
             Console.WriteLine("You haven't gone anywhere!");
         }
     }
-    
+
     /**
      * Methods for item functionality
      *
@@ -359,7 +375,8 @@ public class Game
      */
     private bool use(Command command)
     {
-        if(!command.HasSecondWord()) {
+        if (!command.HasSecondWord())
+        {
             Console.WriteLine("Use what?");
             return false;
         }
@@ -370,13 +387,13 @@ public class Game
         {
             return itemSwitch(player.getItemByName(item).getID());
         }
-        else 
+        else
         {
             Console.WriteLine("You don't have an item like that.");
             return false;
         }
     }
-    
+
     /**
      * Switch statement that determines what methods to run based on the ID of the item stated
      * The default case should never be triggered unless you add a new item and don't add a case for it
@@ -412,7 +429,7 @@ public class Game
         }
         return quitBool;
     }
-    
+
     //methods that determine what happens when a particular item is used
     private bool axeUse()
     {
@@ -422,17 +439,20 @@ public class Game
             Room.setClearCon(0, true);
             Console.WriteLine("You chop the large log into several more easily navigable pieces.");
             Console.WriteLine("Beyond where it stood is revealed the entrance to a hidden grove.");
-        } else if(player.getCurrentRoom().getID() == 6 && !Room.getClearCons()[3])
+        }
+        else if (player.getCurrentRoom().getID() == 6 && !Room.getClearCons()[3])
         {
             Room.setClearCon(3, true);
             Console.WriteLine("Utilizing the hefty weight of the axe, you smash a hole through the wooden gate.");
-        } else if (player.getCurrentRoom() == protag.getCurrentRoom())
+        }
+        else if (player.getCurrentRoom() == protag.getCurrentRoom())
         {
             quitAxe = protagKill();
-        } else
+        }
+        else
         {
             Console.WriteLine("Nothing to do with that here.");
-        }  
+        }
         return quitAxe;
     }
 
@@ -452,7 +472,11 @@ public class Game
                 // Each use adds the same ore item again, so the game keeps spawning ore.
                 // It looks like only one ore exists because they all reference the same item,
                 // but the room state is still being duplicated.
-                player.getCurrentRoom().addItem(givenItems[0]);
+
+                // CHANGED: givenItems is an ArrayList, so index access returns object.
+                // Cast to Item so addItem receives the correct type.
+                player.getCurrentRoom().addItem((Item)givenItems[0]);
+
                 Console.WriteLine("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
                 break;
             case 4:
@@ -473,9 +497,14 @@ public class Game
         {
             player.removeItemByName("ore");
             player.removeItemByName("hilt");
-            player.getCurrentRoom().addItem(givenItems[1]);
+
+            // CHANGED: givenItems is an ArrayList, so index access returns object.
+            // Cast to Item so addItem receives the correct type.
+            player.getCurrentRoom().addItem((Item)givenItems[1]);
+
             Console.WriteLine("Forged the hilt into a new sword!");
-        } else 
+        }
+        else
         {
             Console.WriteLine("Can't do anything with that right now.");
         }
@@ -492,7 +521,8 @@ public class Game
         else if (player.getCurrentRoom() == protag.getCurrentRoom())
         {
             return protagKill();
-        } else 
+        }
+        else
         {
             Console.WriteLine("Nothing to do with that here.");
         }
@@ -512,15 +542,18 @@ public class Game
             {
                 Room.setClearCon(5, true);
                 Console.WriteLine("You inform the protagonist of the location of a weapon.");
-            } else if(Room.getClearCons()[3] && !Room.getClearCons()[4])
+            }
+            else if (Room.getClearCons()[3] && !Room.getClearCons()[4])
             {
                 Room.setClearCon(4, true);
                 Console.WriteLine("You inform the protagonist of a way forward.");
-            } else
+            }
+            else
             {
                 Console.WriteLine("Nothing to say to the protagonist right now.");
             }
-        } else {Console.WriteLine("There's no-one to talk to!");}
+        }
+        else { Console.WriteLine("There's no-one to talk to!"); }
     }
 
     private bool sleep()
@@ -532,8 +565,10 @@ public class Game
             {
                 Console.WriteLine("You lay your head down to sleep, your (likely fruitless) endeavors complete.");
                 quitSleep = true;
-            } else {Console.WriteLine("You've not finished all that you need to!");}
-        } else {Console.WriteLine("This is a terrible place to sleep.");}
+            }
+            else { Console.WriteLine("You've not finished all that you need to!"); }
+        }
+        else { Console.WriteLine("This is a terrible place to sleep."); }
         return quitSleep;
     }
 
@@ -547,7 +582,7 @@ public class Game
     private bool protagKill()
     {
         Console.WriteLine("In a single mighty blow, you strike down the oblivious protagonist.");
-        Console.WriteLine("With this character's death the thread of prophecy... et cetera."); 
+        Console.WriteLine("With this character's death the thread of prophecy... et cetera.");
         return true;
     }
 
@@ -561,7 +596,4 @@ public class Game
         Command command = new Command(CommandWord.GO, protag.getCurrentRoom().getRandomExit());
         protag.protagSteps(command);
     }
-
-
-    
 }

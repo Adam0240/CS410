@@ -23,7 +23,9 @@ public class Player
     private ArrayList inventory;
     private int carryWeight;
     private int currentWeight;
-    private int protagSteps;
+
+    //bug: had to change the field name - adam
+    private int protagStepsCount;
 
     //determines if the created player is the "Protagonist", used for some checks
     //was going to be referenced more, but I didn't have time to implement more
@@ -42,7 +44,7 @@ public class Player
         currentWeight = 0;
         if (isProtag)
         {
-            protagSteps = Game.random.Next(6);
+            protagStepsCount = Game.random.Next(6);
         }
     }
 
@@ -220,12 +222,12 @@ public class Player
     //moves the protagonist. called after every command.
     public bool protagSteps(Command command)
     {
-        if (protagSteps >= 8)
+        if (protagStepsCount >= 8)
         {
-            protagSteps -= 8;
+            protagStepsCount -= 8;
             goRoom(command);
             return true;
-        } else {protagSteps += Game.random.Next(4);}
+        } else { protagStepsCount += Game.random.Next(4);}
 
         return false;
     }
