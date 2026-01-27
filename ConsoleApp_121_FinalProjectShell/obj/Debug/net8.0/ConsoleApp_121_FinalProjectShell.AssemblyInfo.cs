@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ConsoleApp_121_FinalProjectShell")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8dab03b6571331479a05253c399a2fcd26ce3a5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e866c5c85cf5996b45c5d867568174cfaffae6b5")]
 [assembly: System.Reflection.AssemblyProductAttribute("ConsoleApp_121_FinalProjectShell")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ConsoleApp_121_FinalProjectShell")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
