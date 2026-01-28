@@ -3,11 +3,11 @@ using Xunit;
 
 namespace ConsoleApp_121_FinalProjectShell.Tests
 {
-    public class ItemTests
+    public class ItemTest
     {
-        private Item _testItem;
+        private readonly Item _testItem;
 
-        public ItemTests()
+        public ItemTest()
         {
             // This runs before each test
             _testItem = new Item("Sword", "A sharp blade", 10, 1);
