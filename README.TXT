@@ -24,6 +24,35 @@ be used as a basis for extending the project without fixing these design
 problems. It serves as an example to discuss good and bad design (chapter 8
 of the book).
 
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'GIT_BRANCH', defaultValue: 'main', description: 'Branch to build')
+        string(name: 'GIT_REPO', defaultValue: 'git@github.com:WVUP/MobileAPI.git', description: 'Git repo SSH URL')
+        string(name: 'CREDENTIALS', defaultValue: 'ssh_key', description: 'Jenkins Credentials ID')
+    }
+
+    stages {
+        stage('Checkout Source') {
+            steps {
+                git branch: "${params.GIT_BRANCH}",
+                    url: "${params.GIT_REPO}",
+                    credentialsId: "${params.CREDENTIALS}"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Checkout successful."
+        }
+        failure {
+            echo "❌ Checkout failed."
+        }
+    }
+}
+
 Chapter 8 of the book contains a detailed description of the problems in this
 project, and how to fix them.
 
