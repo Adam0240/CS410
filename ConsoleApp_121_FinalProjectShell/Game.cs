@@ -24,7 +24,7 @@ public class Game
     private Parser parser;
     private Player player;
     private Player protag;
-    public static Random random;
+    public static Random random = new Random();
 
     // CHANGED: ArrayList is non-generic and indexing requires items to exist.
     // We keep ArrayList (to avoid refactoring logic), but we will populate it with Add()
