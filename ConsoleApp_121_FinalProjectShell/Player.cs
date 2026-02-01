@@ -231,4 +231,10 @@ public class Player
 
         return false;
     }
+    
+    //Method added for testing
+    public int getProtagStepsCount()
+    {
+        return protagStepsCount;
+    }
 }

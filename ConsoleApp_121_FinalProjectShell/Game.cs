@@ -1,4 +1,9 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
+
+//ADDED FOR TESTING:
+//methods and properties need to be exposed to the testing project to enable unit testing on them
+[assembly:InternalsVisibleTo("UnitTesting")]
 
 namespace ConsoleApp_121_FinalProjectShell;
 
@@ -25,35 +30,58 @@ public class Game
     private Player player;
     private Player protag;
     public static Random random = new Random();
-
+    
     // CHANGED: ArrayList is non-generic and indexing requires items to exist.
     // We keep ArrayList (to avoid refactoring logic), but we will populate it with Add()
     // instead of invalid index assignment.
     private ArrayList givenItems;
-
-    /**
-    * Create the game and initialise its internal map.
-    * Also initialises givenItems (used to hold items given by puzzles),
-    * and random (a public instance of Random to be used by any object)
-    */
-    public Game()
+    
+    //ADDED FOR TESTING:
+    //enables testing of certain things
+    private bool isTestInstance;
+    //holds all the rooms created in the constructor for easier testing
+    internal List<Room> allRooms;
+    //hold all the items created in the constructor for easier testing
+    internal List<Item> allItems;
+    
+    /*
+     * Create the game and initialise its internal map.
+     * Also initialises givenItems (used to hold items given by puzzles),
+     * and random (a public instance of Random to be used by any object)
+     *
+     * ADDITION:
+     * Now takes a boolean determining whether to perform extra functions
+     * to enable easier testing
+     * 
+     */
+    public Game(bool isTestInstance)
     {
         givenItems = new ArrayList();
         random = new Random();
         parser = new Parser();
         player = new Player(false);
         protag = new Player(true);
+        
+        this.isTestInstance = isTestInstance;
+        
+        if (isTestInstance)
+        {
+            allRooms = new List<Room>();
+            allItems = new List<Item>();
+        }
+        
         createRooms();
-    }
 
-    /**
-     * Create all the rooms and link their exits together.
-     */
+        
+    }
+    
+    
+    
     /**
      * Create all the rooms and link their exits together.
      * In addition, creates and places all items in their respective places.
      */
-    private void createRooms()
+    internal void createRooms()
     {
         Room hub, swamp, battleGr, rocky, lava, graves, castleGate, castleTown, altarGrove;
         Item axe, ring, hammer, ore, hilt, sword;
@@ -68,7 +96,8 @@ public class Game
         castleGate = new Room("The wooden castle gate stands tall, imposing, and completely shut.", 6);
         castleTown = new Room("Standing in the deserted square of the castle's town, \nyou think at one point it must have been bustling with activity.", 7);
         altarGrove = new Room("Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center.", 8);
-
+        
+        
         //create the items
         axe = new Item("axe", "a battered war AXE", 55, 0);
         ring = new Item("ring", "a shining RING with a knight's insignia", 2, 1);
@@ -77,6 +106,28 @@ public class Game
         hilt = new Item("hilt", "a HILT of an old sword", 17, 4);
         sword = new Item("sword", "a sharp SWORD with a regal gleam", 22, 5);
 
+        //TESTING ONLY
+        //add the rooms and items to their respective testing lists if this is a testing instance
+        if (isTestInstance)
+        {
+            allRooms.Add(hub);
+            allRooms.Add(swamp);
+            allRooms.Add(battleGr);
+            allRooms.Add(rocky);
+            allRooms.Add(lava);
+            allRooms.Add(graves);
+            allRooms.Add(castleGate);
+            allRooms.Add(castleTown);
+            allRooms.Add(altarGrove);
+
+            allItems.Add(axe);
+            allItems.Add(ring);
+            allItems.Add(hammer);
+            allItems.Add(ore);
+            allItems.Add(hilt);
+            allItems.Add(sword);
+        }
+        
         // initialise room exits
         hub.setExit("north", castleTown);
         hub.setExit("cave", graves);
@@ -127,7 +178,7 @@ public class Game
     }
 
     /**
-    *  Main play routine.  Loops until end of play.bu
+    *  Main play routine.  Loops until end of play.
     */
     public void play()
     {
@@ -145,6 +196,7 @@ public class Game
 
         Console.WriteLine("Play again, if you'd like.");
     }
+    //no need to test, very simple
 
     /**
      * Print out the opening message for the player.
@@ -158,13 +210,14 @@ public class Game
         Console.WriteLine();
         printLocationInfo(player.getCurrentRoom());
     }
+    //no need to test, just prints
 
     /**
      * Given a command, process (that is: execute) the command.
      * @param command The command to be processed.
      * @return true If the command ends the game, false otherwise.
      */
-    private bool processCommand(Command command)
+    internal bool processCommand(Command command)
     {
         bool wantToQuit = false;
 
@@ -217,6 +270,7 @@ public class Game
         protagMove();
         return wantToQuit;
     }
+    //no logic to test, only bug that needs fixing exists already
 
     //basic functionality methods
     /**
@@ -230,12 +284,14 @@ public class Game
         Console.WriteLine("Your command words are:");
         parser.showCommands();
     }
+    //no need to test, just prints and parser command is tested on its own
 
+    
     /**
     * Prints the information of a location. Uses the longDesc from Room,
     * and accounts for the presence of the protagonist
     */
-    private void printLocationInfo(Room currentRoom)
+    internal void printLocationInfo(Room currentRoom)
     {
         if (protag.getCurrentRoom() == currentRoom)
         {
@@ -243,13 +299,14 @@ public class Game
         }
         else { Console.WriteLine(currentRoom.getLongDesc()); }
     }
+    
 
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
      * @return true, if this command quits the game, false otherwise.
      */
-    private bool quit(Command command)
+    internal bool quit(Command command)
     {
         if (command.HasSecondWord())
         {
@@ -261,13 +318,13 @@ public class Game
             return true;  // signal that we want to quit
         }
     }
-
+    
     //inventory methods
     /**
      * Tries to move a given item from the current room into the player's inventory
      * Calls weightCheck to make sure the player has the allowance to do so
      */
-    private void take(Command command)
+    internal void take(Command command)
     {
         if (!command.HasSecondWord())
         {
@@ -306,7 +363,7 @@ public class Game
     /**
      * Similar to take(), but lacks a weight check
      */
-    private void drop(Command command)
+    internal void drop(Command command)
     {
         if (!command.HasSecondWord())
         {
@@ -330,7 +387,9 @@ public class Game
     {
         Console.WriteLine(player.itemsText());
     }
-
+    //Just calls a Player method, testing should be done over there
+    
+    
     //methods for moving the player
     /**
      * Calls player's goRoom() method to determine what should be printed
@@ -366,6 +425,10 @@ public class Game
             Console.WriteLine("You haven't gone anywhere!");
         }
     }
+    //the movement logic for the game is all handled by the Player class, these methods just
+    //call it when needed, and write the corresponding lines
+    //could theoretically bundle the messages into the Player class as the return type,
+    //and remove these methods all-together
 
     /**
      * Methods for item functionality
@@ -373,7 +436,7 @@ public class Game
      * I copied much of the code for use(), take(), and drop() from Player's goRoom()
      * as they have similar requirements in terms of what format command they parse
      */
-    private bool use(Command command)
+    internal bool use(Command command)
     {
         if (!command.HasSecondWord())
         {
@@ -393,12 +456,13 @@ public class Game
             return false;
         }
     }
+    
 
     /**
      * Switch statement that determines what methods to run based on the ID of the item stated
      * The default case should never be triggered unless you add a new item and don't add a case for it
      */
-    private bool itemSwitch(int ID)
+    internal bool itemSwitch(int ID)
     {
         bool quitBool = false;
 
@@ -463,7 +527,7 @@ public class Game
         Console.WriteLine("By equipping the ring, your maximum carryable weight has increased.");
     }
 
-    private void hammerUse()
+    internal void hammerUse()
     {
         switch (player.getCurrentRoom().getID())
         {
@@ -491,7 +555,7 @@ public class Game
         }
     }
 
-    private void hiltUse()
+    internal void hiltUse()
     {
         if (player.hasItemByName("ore") && player.getCurrentRoom().getID() == 4 && Room.getClearCons()[1])
         {
@@ -510,7 +574,7 @@ public class Game
         }
     }
 
-    private bool swordUse()
+    internal bool swordUse()
     {
         if (player.getCurrentRoom().getID() == 8)
         {
@@ -596,4 +660,12 @@ public class Game
         Command command = new Command(CommandWord.GO, protag.getCurrentRoom().getRandomExit());
         protag.protagSteps(command);
     }
+    
+    
+    /*
+     * The following are a set of internal accessor methods used for testing various parts of this class.
+     * Do not modify.
+     */
+    internal Player getPlayer() { return player; }
+    internal Player getProtag() { return protag; }
 }

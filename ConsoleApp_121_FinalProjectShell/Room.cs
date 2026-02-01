@@ -238,5 +238,11 @@ public class Room
         //if there's a better way to do this let me know
         return tempExits[Game.random.Next(tempExits.Count)];
     }
+    
+    //For testing, returns the number of items in roomItems
+    public int getItemsCount()
+    {
+        return roomItems.Count;
+    }
 
 }

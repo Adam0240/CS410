@@ -2,5 +2,5 @@
 
 using ConsoleApp_121_FinalProjectShell;
 
-Game game = new Game();
+Game game = new Game(false);
 game.play();
