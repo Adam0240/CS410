@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace ConsoleApp_121_FinalProjectShell.Tests;
 
 public class GameTest
@@ -102,36 +104,61 @@ public class GameTest
 
     // NOTE: This test currently reveals a bug or design mismatch in processCommand/protagonist step updates.
     // It is being tracked to be fixed in Sprint 4.
-    // [Fact]
-    //     public void protagMoveTest()
-    //     {
-    //         //ARRANGE
-    //         StringWriter stringWriter = new StringWriter();
-    //         Console.SetOut(stringWriter);
-    //         Player protag = _testGame.getProtag();
-    //         int initialSteps;
-    //         int afterSteps;
-    //         bool statementresult;
-    //         
-    //         foreach (CommandWord commandWord in (CommandWord[])Enum.GetValues(typeof(CommandWord)))
-    //         { 
-    //             //ACT
-    //             initialSteps = protag.getProtagStepsCount();
-    //             _testGame.processCommand(new Command(commandWord, "foobar"));
-    //             afterSteps = protag.getProtagStepsCount();
-    //             if (commandWord == CommandWord.UNKNOWN)
-    //             {
-    //                 statementresult = (afterSteps == initialSteps);
-    //             }
-    //             else
-    //             {
-    //                 statementresult = (afterSteps != initialSteps);
-    //             }
-    //             
-    //             //ASSERT 
-    //             Assert.True(statementresult);
-    //         }
-    //     }
+    [Fact]
+    public void protagMoveTest()
+    {
+        // ARRANGE
+        StringWriter stringWriter = new StringWriter();
+        Console.SetOut(stringWriter);
+
+        Player protag = _testGame.getProtag();
+
+        // Grab known rooms from the test instance (IDs from Game.createRooms)
+        Room hub = _testGame.allRooms.Single(r => r.getID() == 0);
+        Room graves = _testGame.allRooms.Single(r => r.getID() == 5);
+
+        // Reflection helper to set protagStepsCount deterministically
+        FieldInfo? stepsField = typeof(Player).GetField(
+            "protagStepsCount",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+
+        Assert.NotNull(stepsField);
+
+        foreach (CommandWord commandWord in (CommandWord[])Enum.GetValues(typeof(CommandWord)))
+        {
+            // Reset protag to a room with exactly one exit so movement is deterministic (graves -> hub)
+            protag.setCurrentRoom(graves);
+
+            // Force protag to move on the next protagSteps() call (>= 8 triggers a move)
+            stepsField!.SetValue(protag, 8);
+
+            int initialSteps = protag.getProtagStepsCount();
+            Room initialRoom = protag.getCurrentRoom();
+
+            // ACT
+            string? secondWord = (commandWord == CommandWord.QUIT) ? null : "foobar";
+            _testGame.processCommand(new Command(commandWord, secondWord));
+
+            int afterSteps = protag.getProtagStepsCount();
+            Room afterRoom = protag.getCurrentRoom();
+
+            // ASSERT
+            if (commandWord == CommandWord.UNKNOWN)
+            {
+                // After your fix, UNKNOWN should NOT trigger protagMove()
+                Assert.Equal(initialSteps, afterSteps);
+                Assert.Same(initialRoom, afterRoom);
+            }
+            else
+            {
+                // Recognized commands should trigger protagMove()
+                // With steps forced to 8, protagSteps() must subtract 8 and move graves -> hub
+                Assert.Equal(initialSteps - 8, afterSteps);
+                Assert.Same(hub, afterRoom);
+            }
+        }
+    }
+
 
 
     //INVENTORY

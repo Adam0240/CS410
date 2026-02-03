@@ -267,7 +267,11 @@ public class Game
         // BUG 1: The protagonist moves even when the player types an invalid command.
         // Example: typing "asdf" prints "I don't know what you mean..." but protagMove()
         // still runs and the protagonist changes rooms anyway
-        protagMove();
+
+        if (commandWord != CommandWord.UNKNOWN)
+        {
+            protagMove();
+        }
         return wantToQuit;
     }
     //no logic to test, only bug that needs fixing exists already
@@ -656,12 +660,26 @@ public class Game
      */
     private void protagMove()
     {
-        //Bug 4 GetRandomExit may return null if the room has no exits. 
-        Command command = new Command(CommandWord.GO, protag.getCurrentRoom().getRandomExit());
+        Room current = protag.getCurrentRoom();
+        if (current == null)
+            return;
+
+        // If there are no exits, don't try to move (prevents crash)
+        var exits = current.getExits();
+        if (exits == null || exits.Count == 0)
+            return;
+
+        string direction = current.getRandomExit();
+        if (string.IsNullOrWhiteSpace(direction))
+            return;
+
+        // Construct a normal GO command for the protag
+        Command command = new Command(CommandWord.GO, direction);
         protag.protagSteps(command);
     }
-    
-    
+
+
+
     /*
      * The following are a set of internal accessor methods used for testing various parts of this class.
      * Do not modify.
