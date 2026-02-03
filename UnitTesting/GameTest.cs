@@ -299,45 +299,45 @@ public class GameTest
     }
 
     //Bug identified to be fixed in sprint 4
-    //[Fact]
-    //private void hammerUseTest()
-    //{
-    //    //ARRANGE
-    //    Player player = _testGame.getPlayer();
-    //    List<Room> rooms = _testGame.allRooms;
-    //    StringWriter stringWriter = new StringWriter();
-    //    int roomItems1;
-    //    int roomItems2;
-    //    player.setCurrentRoom(rooms[3]);
+    [Fact]
+    private void hammerUseTest()
+    {
+        //ARRANGE
+        Player player = _testGame.getPlayer();
+        List<Room> rooms = _testGame.allRooms;
+        StringWriter stringWriter = new StringWriter();
+        int roomItems1;
+        int roomItems2;
+        player.setCurrentRoom(rooms[3]);
 
-    //    //ACT
-    //    _testGame.hammerUse();
-    //    roomItems1 = player.getCurrentRoom().getItemsCount();
-    //    _testGame.take(new Command(CommandWord.TAKE, "ore"));
-    //    _testGame.hammerUse();
-    //    roomItems2 = player.getCurrentRoom().getItemsCount();
+        //ACT
+        _testGame.hammerUse();
+        roomItems1 = player.getCurrentRoom().getItemsCount();
+        _testGame.take(new Command(CommandWord.TAKE, "ore"));
+        _testGame.hammerUse();
+        roomItems2 = player.getCurrentRoom().getItemsCount();
 
-    //    player.setCurrentRoom(rooms[4]);
-    //    _testGame.hammerUse();
+        player.setCurrentRoom(rooms[4]);
+        _testGame.hammerUse();
 
-    //    player.setCurrentRoom(rooms[0]);
-    //    Console.SetOut(stringWriter);
-    //    _testGame.hammerUse();
+        player.setCurrentRoom(rooms[0]);
+        Console.SetOut(stringWriter);
+        _testGame.hammerUse();
 
-    //    //ASSERT
-    //    //make sure error dialogue is displayed when there's nothing to do
-    //    var output = stringWriter.ToString().Replace("\r\n", "\n");
-    //    Assert.Equal("Nothing to do with that here.\n", output);
+        //ASSERT
+        //make sure error dialogue is displayed when there's nothing to do
+        var output = stringWriter.ToString().Replace("\r\n", "\n");
+        Assert.Equal("Nothing to do with that here.\n", output);
 
-    //    //ensure the forge is prepared when the hammer is used in the room
-    //    Assert.True(rooms[4].getItemsCount() == 1 && !player.hasItemByName("hammer") && Room.getClearCons()[1]);
+        //ensure the forge is prepared when the hammer is used in the room
+        Assert.True(rooms[4].getItemsCount() == 1 && !player.hasItemByName("hammer") && Room.getClearCons()[1]);
 
-    //    //ensure that the ore can be obtained AND that it won't be re-placed on use again
-    //    //(currently fails, change this comment once that bug is fixed)
-    //    Assert.True(player.hasItemByName("ore") && rooms[3].getItemsCount() == 0);
+        //ensure that the ore can be obtained AND that it won't be re-placed on use again
+        //(currently fails, change this comment once that bug is fixed)
+        Assert.True(player.hasItemByName("ore") && rooms[3].getItemsCount() == 0);
 
 
-    //}
+    }
 
     [Fact]
     private void hiltUseTest()

@@ -536,17 +536,20 @@ public class Game
         switch (player.getCurrentRoom().getID())
         {
             case 3:
-                // BUG 3: Using the hammer in the quarry can be done over and over.
-                // Each use adds the same ore item again, so the game keeps spawning ore.
-                // It looks like only one ore exists because they all reference the same item,
-                // but the room state is still being duplicated.
+                // BUG 3: prevent spawning ore repeatedly in the quarry.
+                if (player.hasItemByName("ore") || player.getCurrentRoom().hasItemByName("ore"))
+                {
+                    Console.WriteLine("Nothing to do with that here.");
+                    break;
+                }
 
-                // CHANGED: givenItems is an ArrayList, so index access returns object.
+                // givenItems is an ArrayList, so index access returns object.
                 // Cast to Item so addItem receives the correct type.
                 player.getCurrentRoom().addItem((Item)givenItems[0]);
 
                 Console.WriteLine("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
                 break;
+
             case 4:
                 player.getCurrentRoom().addItem(player.getItemByName("hammer"));
                 player.removeItemByName("hammer");
