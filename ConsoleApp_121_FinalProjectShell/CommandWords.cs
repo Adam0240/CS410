@@ -49,10 +49,9 @@ public class CommandWords
         {
             return validCommands[commandWord];
         }
-        else
-        {
-            return CommandWord.UNKNOWN;
-        }
+        
+        return CommandWord.UNKNOWN;
+        
     }
 
     /// <summary>

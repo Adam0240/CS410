@@ -95,9 +95,6 @@ public class Room
             case 5:
                 toldProtagSword = state;
                 break;
-            default:
-                //something has gone terribly wrong
-                break;
         }
     }
 
@@ -159,7 +156,6 @@ public class Room
                 return;
             }
         }
-        return;
     }
 
     public bool hasItemByName(string name)
@@ -194,13 +190,10 @@ public class Room
         string returnString = "Exits:";
         var keys = exits.Keys;
         foreach(string exit in keys) {
-            if (exit == "grove" && swampCleared == false)
-            {
-                continue;
-            } else
+            if (exit != "grove" || swampCleared)
             {
                 returnString += " " + exit;
-            }
+            } 
         }
         return returnString;
 
@@ -226,8 +219,8 @@ public class Room
         if (roomItems.Count == 0)
         {
             return getDescription() + "\n" + getExitString();    
-        } else 
-        { return getDescription() + "\n" + getItemsText() + ". \n" + getExitString();}
+        }
+        return getDescription() + "\n" + getItemsText() + ". \n" + getExitString();
     }
 
     //@returns the String from the key to a randomly chosen exit

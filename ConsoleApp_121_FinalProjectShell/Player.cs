@@ -102,19 +102,24 @@ public class Player
     {
         string returnString = "";
         returnString += "You are holding";
-        if (inventory.Count == 0)
-        {
-            returnString += " nothing. \n";
-        }
-        else
+        
+        if (inventory.Count > 0)
         {
             returnString += ":";
             foreach (Item item in inventory)
             {
-                returnString +=  "  " + item.getName();
+                returnString += "  " + item.getName();
             }
+
             returnString += "\n";
+
         }
+        else
+        {
+            returnString += " nothing. \n";
+        }
+        
+        
         returnString += "Current weight: " + getCurrentWeight();
 
         return returnString;
@@ -157,7 +162,6 @@ public class Player
                 return;
             }
         }
-        return;
     }
 
     public void addItem(Item item)
@@ -168,7 +172,7 @@ public class Player
     //returns true if something with a weight of itemWeight can be added to inventory
     public bool weightCheck(int itemWeight)
     {
-        return (getCarryWeight() >= (getCurrentWeight() + itemWeight));
+        return getCarryWeight() >= getCurrentWeight() + itemWeight;
     }
 
     /**
@@ -187,16 +191,18 @@ public class Player
 
     public int goRoom(Command command) 
     {
+        //have to check this first
         if(!command.HasSecondWord()) {
             //return zero for no second word
             return 0;
         }
-
+        
         string direction = command.GetSecondWord();
         // Try to leave current room.
         Room nextRoom = null;
         if (currentRoom.getExits().ContainsKey(direction))
         {
+            //will be set to null if there's no matching exit
             nextRoom = currentRoom.getExits()[direction];
         }
 
@@ -204,19 +210,19 @@ public class Player
             //return -1 if there isn't an exit
             return -1;
         }
-        else {
-            if (direction.Equals("slide", StringComparison.OrdinalIgnoreCase))
-            {
-                lastRooms.Push(currentRoom);
-                currentRoom = nextRoom;
-                //return 2 if we slidin
-                return 2;
-            }
+        
+        if (direction.Equals("slide", StringComparison.OrdinalIgnoreCase))
+        {
             lastRooms.Push(currentRoom);
             currentRoom = nextRoom;
-            //return 1 if successful
-            return 1;
+            //return 2 if we slidin
+            return 2;
         }
+        
+        lastRooms.Push(currentRoom);
+        currentRoom = nextRoom;
+        //return 1 if successful
+        return 1;
     }
 
     //moves the protagonist. called after every command.
@@ -227,8 +233,9 @@ public class Player
             protagStepsCount -= 8;
             goRoom(command);
             return true;
-        } else { protagStepsCount += Game.random.Next(4);}
-
+        }
+        
+        protagStepsCount += Game.random.Next(4);
         return false;
     }
     

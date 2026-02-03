@@ -8,8 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="238f02c3-c02e-46fa-9d12-9c8efe80e1f5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/CmdWords.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/CommandWords.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/CommandWords.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Player.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Room.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Room.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +59,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected=".NET Project.ConsoleApp_121_FinalProjectShell">
     <configuration name="ConsoleApp_121_FinalProjectShell" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -92,6 +94,7 @@
       <workItem from="1769802154838" duration="40389000" />
       <workItem from="1769989610610" duration="756000" />
       <workItem from="1770045493602" duration="64000" />
+      <workItem from="1770127728447" duration="6996000" />
     </task>
     <servers />
   </component>
