@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 //ADDED FOR TESTING:
 //methods and properties need to be exposed to the testing project to enable unit testing on them
+//Delete this comment in Sprint 5, demonstrates pull requst process
 [assembly: InternalsVisibleTo("UnitTesting")]
 
 namespace ConsoleApp_121_FinalProjectShell;
