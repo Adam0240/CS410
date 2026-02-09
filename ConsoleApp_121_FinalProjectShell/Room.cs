@@ -170,17 +170,40 @@ public class Room
         return false;
     }
 
+    //technical debt:
+    //unique room descriptions for rooms with alternate descriptions are all stored here
+    //rooms are dependent on an instance in a class, and adding more rooms with clear conditions
+    //requires modifying this method
+    //potential solution: refactor Room to allow rooms to store their own Clear Condition flag or
+    //alternative description. Factory pattern could also be implemented to add each room with a clear condition
+    //to a static list in Room to allow for easier checking of all clearcons. 
     /**
      * @return The description of the room.
      * returns unique descriptions depending on the room and what flags are true
      */
     public string getDescription()
     {
-        if (roomID == 4 && forgePrepared) {return "Lava flows through the channels dug into the rock around a vacant smith's shop. \nThe forge and its tools stand complete.";}
-        else if (roomID == 6 && gateOpen) {return "The castle gate stands tall and imposing as before. Now however, \na large hole has been hacked through to the other side.";}
-        else if (roomID == 1 && swampCleared) {return "Your boots catch in the stiff and stinking muck of the swamp. \nThe large log lies in pieces now, revealing a hidden path.";}
-        else if (roomID == 8 && swordPlaced) {return "Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center, now bearing a shining sword.";}
-        else {return description;}
+        if (roomID == 4 && forgePrepared)
+        {
+            return "Lava flows through the channels dug into the rock around a vacant smith's shop. \nThe forge and its tools stand complete.";
+        }
+
+        if (roomID == 6 && gateOpen)
+        {
+            return "The castle gate stands tall and imposing as before. Now however, \na large hole has been hacked through to the other side.";
+        }
+
+        if (roomID == 1 && swampCleared)
+        {
+            return "Your boots catch in the stiff and stinking muck of the swamp. \nThe large log lies in pieces now, revealing a hidden path.";
+        }
+
+        if (roomID == 8 && swordPlaced)
+        {
+            return "Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center, now bearing a shining sword.";
+        }
+        
+        return description;
     }
 
     //@returns the list of exits
