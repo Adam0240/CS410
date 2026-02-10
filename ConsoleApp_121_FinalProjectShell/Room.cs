@@ -18,11 +18,10 @@ using System.Linq;
  */
 public class Room 
 {
-    private string description;
-    private Dictionary<string, Room> exits;
-    private List<Item> roomItems;
+    private string description = string.Empty;
+    private Dictionary<string, Room> exits = new();
+    private List<Item> roomItems = new();
     private int roomID;
-    private static List<Item> givenItems;
 
     //fields used to track game progress
     private static bool swampCleared;
@@ -32,23 +31,10 @@ public class Room
     private static bool toldProtagGate;
     private static bool toldProtagSword;
 
-    //every flag begins as false
-    static Room()
-    {
-        swampCleared = false;
-        forgePrepared = false;
-        swordPlaced = false;
-        gateOpen = false;
-        toldProtagGate = false;
-        toldProtagSword = false;
-    }
-
     //object constructor
     public Room(string description, int roomID) 
     {
         this.description = description;
-        exits = new Dictionary<string, Room>();
-        roomItems = new List<Item>();
         this.roomID = roomID;
     }
 
@@ -98,19 +84,15 @@ public class Room
         }
     }
 
-    public static bool[] getClearCons()
-    {
-        bool[] tempArray = new bool[6];
-
-        tempArray[0] = swampCleared;
-        tempArray[1] = forgePrepared;
-        tempArray[2] = swordPlaced;
-        tempArray[3] = gateOpen;
-        tempArray[4] = toldProtagGate;
-        tempArray[5] = toldProtagSword;
-
-        return tempArray;
-    }
+    public static bool[] getClearCons() => new bool[]
+        {
+        swampCleared,
+        forgePrepared,
+        swordPlaced,
+        gateOpen,
+        toldProtagGate,
+        toldProtagSword
+        };
 
     //returns ID, used for several checks in Game
     public int getID()
@@ -124,51 +106,28 @@ public class Room
         roomItems.Add(item);
     }
 
-    public bool hasItem(Item item)
-    {
+    public bool hasItem(Item item) => roomItems.Contains(item);
 
-        if (roomItems.Contains(item))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public Item getItemByName(string name) 
+    public Item? getItemByName(string name)
     {
-        foreach (Item item in roomItems)
-        {
-            if (item.getName().Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                return item;
-            }
-        }
-        return null;
+        return roomItems.FirstOrDefault(item =>
+            item.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
     public void removeItemByName(string name)
     {
-        foreach (Item item in roomItems)
+        Item? itemToRemove = getItemByName(name);
+        if (itemToRemove != null)
         {
-            if (item.getName().Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                roomItems.Remove(item);
-                return;
-            }
+            roomItems.Remove(itemToRemove);
         }
     }
 
     public bool hasItemByName(string name)
     {
-        foreach (Item item in roomItems)
-        {
-            if (item.getName().Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-        }
-        return false;
+        return roomItems.Any(item => item.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
+
 
     //technical debt:
     //unique room descriptions for rooms with alternate descriptions are all stored here
@@ -210,51 +169,59 @@ public class Room
     //skips the grove if the path has not been cleared
     public string getExitString()
     {
-        string returnString = "Exits:";
-        var keys = exits.Keys;
-        foreach(string exit in keys) {
+        var exitString = new System.Text.StringBuilder("Exits:");
+        foreach (string exit in exits.Keys)
+        {
             if (exit != "grove" || swampCleared)
             {
-                returnString += " " + exit;
-            } 
+                exitString.Append(" ").Append(exit);
+            }
         }
-        return returnString;
-
+        return exitString.ToString();
     }
 
     //@returns a string containing the decription of every item in roomItems
     private string getItemsText()
     {
-        string tempText = "";
-        tempText +=  "There is ";
+        var itemText = new System.Text.StringBuilder("There is ");
+
         for (int i = 0; i < roomItems.Count; i++)
         {
-            if (i > 0) {tempText += ", \n";}
-            if (i > 0 && i == (roomItems.Count - 1)){ tempText += "and ";}
-            tempText += roomItems[i].getDesc();
+            if (i > 0)
+            {
+                itemText.Append(", \n");
+                if (i == roomItems.Count - 1)
+                {
+                    itemText.Append("and ");
+                }
+            }
+            itemText.Append(roomItems[i].getDesc());
         }
-        return tempText;
+        return itemText.ToString();
     }
 
     //@returns a string compiled from several others
     public string getLongDesc()
     {
-        if (roomItems.Count == 0)
+        var description = new System.Text.StringBuilder(getDescription());
+        description.Append("\n");
+
+        if (roomItems.Count > 0)
         {
-            return getDescription() + "\n" + getExitString();    
+            description.Append(getItemsText()).Append(". \n");
         }
-        return getDescription() + "\n" + getItemsText() + ". \n" + getExitString();
+
+        description.Append(getExitString());
+        return description.ToString();
     }
 
     //@returns the String from the key to a randomly chosen exit
     public string getRandomExit()
     {
-        List<string> tempExits = new List<string>(exits.Keys);
-        //god this sucks so bad
-        //if there's a better way to do this let me know
-        return tempExits[Game.random.Next(tempExits.Count)];
+        var exitsArray = exits.Keys.ToArray();
+        return exitsArray[Game.random.Next(exitsArray.Length)];
     }
-    
+
     //For testing, returns the number of items in roomItems
     public int getItemsCount()
     {
