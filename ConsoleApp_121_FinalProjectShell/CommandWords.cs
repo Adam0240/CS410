@@ -1,30 +1,30 @@
 //Transcribed CommandWords.java file - Adam Abbadusky
+namespace ConsoleApp_121_FinalProjectShell;
 
-using System.Collections.Generic;       //changed from import java.util.HashMap
-
-public class CommandWords
+public class CommandWords 
 {
     // a Dictionary that holds strings of the command words
-    private Dictionary<string, CommandWord> validCommands;
+    private readonly Dictionary<string, CommandWord> _validCommands;
 
     /// <summary>
     /// Constructor - initialise the command words.
     /// </summary>
     public CommandWords()
     {
-        validCommands = new Dictionary<string, CommandWord>();      //changed from private HashMap<String, CommandWord> validCommands;
-
-        validCommands.Add("walk", CommandWord.GO);          //adds to dictionary with 'add' instead of 'put'
-        validCommands.Add("help", CommandWord.HELP);
-        validCommands.Add("EndGame", CommandWord.QUIT);     //possible bug doesn't match "quit"
-        validCommands.Add("back", CommandWord.BACK);
-        validCommands.Add("look", CommandWord.LOOK);
-        validCommands.Add("take", CommandWord.TAKE);
-        validCommands.Add("drop", CommandWord.DROP);
-        validCommands.Add("items", CommandWord.ITEMS);
-        validCommands.Add("use", CommandWord.USE);
-        validCommands.Add("talk", CommandWord.TALK);
-        validCommands.Add("sleep", CommandWord.SLEEP);
+        _validCommands = new Dictionary<string, CommandWord>
+        {
+            { "walk", CommandWord.GO }, //adds to dictionary with 'add' instead of 'put' - fixed, now uses collection initializer
+            { "help", CommandWord.HELP },
+            { "EndGame", CommandWord.QUIT }, //possible bug doesn't match "quit"
+            { "back", CommandWord.BACK },
+            { "look", CommandWord.LOOK },
+            { "take", CommandWord.TAKE },
+            { "drop", CommandWord.DROP },
+            { "items", CommandWord.ITEMS },
+            { "use", CommandWord.USE },
+            { "talk", CommandWord.TALK },
+            { "sleep", CommandWord.SLEEP }
+        };
     }
 
     /// <summary>
@@ -33,9 +33,9 @@ public class CommandWords
     /// <returns>
     /// True if a given string is a valid command, false if it isn't.
     /// </returns>
-    public bool IsCommand(string aString)           //bug will throw an exception if aString is null, difference with Java hashmaps vs c# dictionary
+    public bool IsCommand(string aString) //bug will throw an exception if aString is null, difference with Java hashmaps vs c# dictionary
     {
-        return validCommands.ContainsKey(aString);
+        return _validCommands.ContainsKey(aString);
     }
 
 
@@ -45,13 +45,7 @@ public class CommandWords
     public CommandWord GetCommandWord(string commandWord)
     {
         // Bug:  Dictionary does not allow null keys and this will throw an exception if commandWord is null. 
-        if (validCommands.ContainsKey(commandWord))
-        {
-            return validCommands[commandWord];
-        }
-        
-        return CommandWord.UNKNOWN;
-        
+        return _validCommands.ContainsKey(commandWord) ? _validCommands[commandWord] : CommandWord.UNKNOWN;
     }
 
     /// <summary>
@@ -59,7 +53,7 @@ public class CommandWords
     /// </summary>
     public void ShowAll()
     {
-        foreach (string command in validCommands.Keys)
+        foreach (string command in _validCommands.Keys)
         {
             Console.Write(command + "  ");
         }

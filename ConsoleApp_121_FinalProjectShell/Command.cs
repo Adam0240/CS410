@@ -4,21 +4,21 @@ namespace ConsoleApp_121_FinalProjectShell;
 
 public class Command
 {
-    private CommandWord commandWord;
-    private string secondWord;
+    private CommandWord _commandWord;
+    private string _argument;
 
     /// <summary>
     /// Create a command object. First and second word must be supplied, but
     /// either one (or both) can be null.
     /// </summary>
-    /// <param name="firstWord">
+    /// <param name="commandWord">
     /// The first word of the command. Null if the command was not recognised.
     /// </param>
-    /// <param name="secondWord">The second word of the command.</param>
-    public Command(CommandWord firstWord, string secondWord)
+    /// <param name="argument">The second word of the command.</param>
+    public Command(CommandWord commandWord, string argument)
     {
-        this.commandWord = firstWord;
-        this.secondWord = secondWord;
+        this._commandWord = commandWord;
+        this._argument = argument;
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public class Command
     /// <returns>The command word.</returns>
     public CommandWord GetCommandWord()
     {
-        return commandWord;
+        return _commandWord;
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class Command
     /// <returns>The second word.</returns>
     public string GetSecondWord()
     {
-        return secondWord;
+        return _argument;
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class Command
     /// </summary>
     public bool IsUnknown()
     {
-        return (commandWord == CommandWord.UNKNOWN);
+        return (_commandWord == CommandWord.UNKNOWN);
     }
 
     /// <summary>
@@ -54,6 +54,6 @@ public class Command
     /// </summary>
     public bool HasSecondWord()
     {
-        return (secondWord != null);
+        return _argument != null;
     }
 }

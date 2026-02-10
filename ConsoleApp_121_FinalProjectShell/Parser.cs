@@ -1,26 +1,21 @@
 ﻿//Transcribed Parser.java file - Adam Abbadusky
 
-/// <summary>
-/// The parser has a set of known command words. It checks user input against
-/// the known commands, and if the input is not one of the known commands, it
-/// returns a command object that is marked as an unknown command.
-/// </summary>
+// The parser has a set of known command words. It checks user input against
+// the known commands, and if the input is not one of the known commands, it
+// returns a command object that is marked as an unknown command.
 
 namespace ConsoleApp_121_FinalProjectShell;
 
 public class Parser 
 {
-    private CommandWords commands;  // holds all valid command words
-    //private Scanner reader;       //not needed in c#
+    private CommandWords _commands;  // holds all valid command words
 
     /**
      * Create a parser to read from the terminal window.
      */
     public Parser() 
     {
-        commands = new CommandWords();
-        //scanner not needed in c#
-        //private Scanner reader;
+        _commands = new CommandWords();
     }
 
     /**
@@ -28,13 +23,12 @@ public class Parser
      */
     public Command getCommand() 
     {
-        String inputLine;   // will hold the full input line
         String word1 = null;
         String word2 = null;
 
         Console.Write("> ");     // print prompt
 
-        inputLine = Console.ReadLine();
+        var inputLine = Console.ReadLine(); // will hold the full input line
 
         // Find up to two words on the line.
         string[] tokenizer = inputLine.Split(' ');
@@ -47,7 +41,7 @@ public class Parser
         }
 
         //bug: may cause error if word1 is null
-        return new Command(commands.GetCommandWord(word1), word2);
+        return new Command(_commands.GetCommandWord(word1), word2);
     }
 
     /**
@@ -55,6 +49,6 @@ public class Parser
      */
     public void showCommands()
     {
-        commands.ShowAll();
+        _commands.ShowAll();
     }
 }
