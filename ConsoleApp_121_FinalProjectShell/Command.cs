@@ -17,8 +17,8 @@ public class Command
     /// <param name="argument">The second word of the command.</param>
     public Command(CommandWord commandWord, string argument)
     {
-        this._commandWord = commandWord;
-        this._argument = argument;
+        _commandWord = commandWord;
+        _argument = argument;
     }
 
     /// <summary>
