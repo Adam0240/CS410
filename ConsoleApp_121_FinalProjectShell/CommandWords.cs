@@ -1,4 +1,8 @@
 //Transcribed CommandWords.java file - Adam Abbadusky
+
+using System;
+using System.Collections.Generic;
+
 namespace ConsoleApp_121_FinalProjectShell;
 
 public class CommandWords 
@@ -45,7 +49,7 @@ public class CommandWords
     public CommandWord GetCommandWord(string commandWord)
     {
         // Bug:  Dictionary does not allow null keys and this will throw an exception if commandWord is null. 
-        return _validCommands.ContainsKey(commandWord) ? _validCommands[commandWord] : CommandWord.UNKNOWN;
+        return _validCommands.GetValueOrDefault(commandWord, CommandWord.UNKNOWN);
     }
 
     /// <summary>

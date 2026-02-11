@@ -4,6 +4,8 @@
 // the known commands, and if the input is not one of the known commands, it
 // returns a command object that is marked as an unknown command.
 
+using System;
+
 namespace ConsoleApp_121_FinalProjectShell;
 
 public class Parser 
