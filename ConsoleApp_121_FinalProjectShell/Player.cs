@@ -80,87 +80,70 @@ public class Player
         carryWeight = number;
     }
 
-    public void setCurrentWeight(int number)
-    {
-        currentWeight = number;
-    }
-
     
     //called after adding or removing items from the inventory
     public void updateCarryWeight()
     {
         int tempweight = 0;
         foreach (Item item in inventory)
-        {
+        
             tempweight += item.getWeight();
-        }
-        setCurrentWeight(tempweight);
+        
+        currentWeight = tempweight;
     }
 
     //returns description of items held. called by ITEMS command
     public string itemsText()
     {
-        string returnString = "";
-        returnString += "You are holding";
-        
+        var iText = new System.Text.StringBuilder();
+        iText.Append("You are holding");
+
         if (inventory.Count > 0)
         {
-            returnString += ":";
+            iText.Append(":");
             foreach (Item item in inventory)
-            {
-                returnString += "  " + item.getName();
-            }
-
-            returnString += "\n";
-
+                iText.Append("  " + item.getName());
+            iText.AppendLine();
         }
         else
         {
-            returnString += " nothing. \n";
+            iText.AppendLine(" nothing.");
         }
-        
-        
-        returnString += "Current weight: " + getCurrentWeight();
 
-        return returnString;
+        iText.Append("Current weight: " + currentWeight);
+        return iText.ToString();
     }
 
-    
-    //methods for interaction with inventory
-    public bool hasItemByName(string name)
+    //Helper method
+    private Item findItem(string name)
     {
         foreach (Item item in inventory)
         {
             if (item.getName().Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Item getItemByName(string name) 
-    {
-        foreach (Item item in inventory)
-        {
-            if (item.getName().Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
                 return item;
-            }
         }
         return null;
     }
 
+    //methods for interaction with inventory
+    public bool hasItemByName(string name)
+    {
+        return findItem(name) != null;
+    }
+
+    public Item getItemByName(string name)
+    {
+        return findItem(name);
+    }
+
+
     public void removeItemByName(string name)
     {
-        foreach (Item item in inventory)
+        Item item = findItem(name);
+        if (item != null)
         {
-            if (item.getName().Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                inventory.Remove(item);
-                updateCarryWeight();
-                return;
-            }
+            inventory.Remove(item);
+            updateCarryWeight();
         }
     }
 
@@ -181,48 +164,27 @@ public class Player
      */
     public int back()
     {
-        int a = lastRooms.Count;
-        if(lastRooms.Count != 0)
-        {
-            currentRoom = lastRooms.Pop();
-        }
-        return a;
+        if (lastRooms.Count == 0)
+            return 0;
+
+        currentRoom = lastRooms.Pop();
+        return lastRooms.Count + 1;
     }
 
-    public int goRoom(Command command) 
+    public int goRoom(Command command)
     {
-        //have to check this first
-        if(!command.HasSecondWord()) {
-            //return zero for no second word
+        if (!command.HasSecondWord())
             return 0;
-        }
-        
-        string direction = command.GetSecondWord();
-        // Try to leave current room.
-        Room nextRoom = null;
-        if (currentRoom.getExits().ContainsKey(direction))
-        {
-            //will be set to null if there's no matching exit
-            nextRoom = currentRoom.getExits()[direction];
-        }
 
-        if (nextRoom == null) {
-            //return -1 if there isn't an exit
+        string direction = command.GetSecondWord();
+
+        if (!currentRoom.getExits().TryGetValue(direction, out Room nextRoom) || nextRoom == null)
             return -1;
-        }
-        
-        if (direction.Equals("slide", StringComparison.OrdinalIgnoreCase))
-        {
-            lastRooms.Push(currentRoom);
-            currentRoom = nextRoom;
-            //return 2 if we slidin
-            return 2;
-        }
-        
+
         lastRooms.Push(currentRoom);
         currentRoom = nextRoom;
-        //return 1 if successful
-        return 1;
+
+        return direction.Equals("slide", StringComparison.OrdinalIgnoreCase) ? 2 : 1;
     }
 
     //moves the protagonist. called after every command.
