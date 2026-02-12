@@ -1,0 +1,17 @@
+# Build artifacts
+**/bin/
+**/obj/
+
+# Git
+.git
+.gitignore
+
+# IDE folders
+.idea
+.vs
+
+# OS files
+.DS_Store
+
+# Testing
+TestResults
