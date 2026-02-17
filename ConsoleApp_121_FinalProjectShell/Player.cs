@@ -3,7 +3,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ConsoleApp_121_FinalProjectShell;
+using ConsoleApp_121_FinalProjectShell.Commands;
+using ConsoleApp_121_FinalProjectShell.Core;
 
 /**
  * This class is part of the "FUGwACL Adventure" application. 

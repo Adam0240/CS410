@@ -1,4 +1,4 @@
-﻿using ConsoleApp_121_FinalProjectShell;
+﻿using ConsoleApp_121_FinalProjectShell.Commands;
 using Xunit;
 
 
@@ -22,9 +22,11 @@ public class PlayerTests
         return room;
     }
 
-    private Item CreateItem(string name, int weight)
+    private Item CreateItem(string name, int weight, int id = 0)
     {
-        return new Item(name, "test item", weight, 1);
+        // Item is abstract now, so we create a concrete item through the factory.
+        // ID doesn't matter for Player inventory/weight tests, but must map to a valid item type.
+        return ItemFactory.Create(name, "test item", weight, id);
     }
 
     private Command CreateGoCommand(string direction)

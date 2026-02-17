@@ -6,7 +6,7 @@
 
 using System;
 
-namespace ConsoleApp_121_FinalProjectShell;
+namespace ConsoleApp_121_FinalProjectShell.Commands;
 
 public class Parser 
 {

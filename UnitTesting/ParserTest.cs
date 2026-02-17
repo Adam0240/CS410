@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Xunit;
-using ConsoleApp_121_FinalProjectShell;
+using ConsoleApp_121_FinalProjectShell.Commands;
 
 public class ParserTests
 {

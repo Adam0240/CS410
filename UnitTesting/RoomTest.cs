@@ -1,12 +1,25 @@
 ﻿using ConsoleApp_121_FinalProjectShell;
+using System;
 using Xunit;
 
 public class RoomTests
 {
-    // Helper item for tests
-    private Item CreateTestItem(string name, string desc)
+    // Helper: reset static progression flags so tests don't interfere with each other
+    private void ResetClearCons()
     {
-        return new Item(name, desc, 1, 10);
+        bool[] flags = Room.getClearCons();
+        for (int i = 0; i < flags.Length; i++)
+        {
+            Room.setClearCon(i, false);
+        }
+    }
+
+    // Helper item for tests (Item is abstract now, so we must create a concrete item via the factory)
+    private Item CreateTestItem(string name, string desc, int weight = 1, int id = 3)
+    {
+        // id just needs to map to a valid item type in your factory.
+        // 3 is "ore" in your game mapping, but the actual behavior doesn't matter for Room inventory tests.
+        return ItemFactory.Create(name, desc, weight, id);
     }
 
     [Fact]
@@ -43,6 +56,8 @@ public class RoomTests
     public void GetExitString_ShowsAllExits_WhenNoRestrictions()
     {
         // Arrange
+        ResetClearCons();
+
         var room = new Room("Test", 1);
         room.setExit("north", new Room("North", 2));
         room.setExit("south", new Room("South", 3));
@@ -59,7 +74,9 @@ public class RoomTests
     public void GroveExit_Hidden_WhenSwampNotCleared()
     {
         // Arrange
+        ResetClearCons();
         Room.setClearCon(0, false); // swampCleared = false
+
         var room = new Room("Swamp", 1);
         room.setExit("grove", new Room("Grove", 8));
 
@@ -74,7 +91,9 @@ public class RoomTests
     public void GroveExit_Shown_WhenSwampCleared()
     {
         // Arrange
+        ResetClearCons();
         Room.setClearCon(0, true); // swampCleared = true
+
         var room = new Room("Swamp", 1);
         room.setExit("grove", new Room("Grove", 8));
 
@@ -96,8 +115,9 @@ public class RoomTests
         room.addItem(item);
 
         // Assert
-        Assert.True(room.hasItem(item));
+        // Avoid room.hasItem(item) in case your Room class doesn't support that overload
         Assert.True(room.hasItemByName("key"));
+        Assert.NotNull(room.getItemByName("key"));
     }
 
     [Fact]
@@ -113,6 +133,7 @@ public class RoomTests
 
         // Assert
         Assert.False(room.hasItemByName("key"));
+        Assert.Null(room.getItemByName("key"));
     }
 
     [Fact]
@@ -135,7 +156,9 @@ public class RoomTests
     public void GetDescription_Changes_WhenForgePrepared()
     {
         // Arrange
+        ResetClearCons();
         Room.setClearCon(1, true); // forgePrepared = true
+
         var room = new Room("Old forge", 4);
 
         // Act
@@ -149,7 +172,9 @@ public class RoomTests
     public void GetDescription_Changes_WhenGateOpen()
     {
         // Arrange
+        ResetClearCons();
         Room.setClearCon(3, true); // gateOpen = true
+
         var room = new Room("Castle Gate", 6);
 
         // Act
@@ -162,9 +187,6 @@ public class RoomTests
     [Fact]
     public void GetClearCons_ReturnsCorrectLength()
     {
-        // Arrange
-        // (static flags already exist)
-
         // Act
         var flags = Room.getClearCons();
 
@@ -176,9 +198,10 @@ public class RoomTests
     public void SetClearCon_UpdatesCorrectFlag()
     {
         // Arrange
-        Room.setClearCon(2, true); // swordPlaced
+        ResetClearCons();
 
         // Act
+        Room.setClearCon(2, true); // swordPlaced
         var flags = Room.getClearCons();
 
         // Assert
@@ -197,6 +220,7 @@ public class RoomTests
         var exit = room.getRandomExit();
 
         // Assert
+        Assert.NotNull(exit);
         Assert.Contains(exit, room.getExits().Keys);
     }
 }

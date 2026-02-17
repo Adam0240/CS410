@@ -1,7 +1,10 @@
+using ConsoleApp_121_FinalProjectShell.Commands;
+using ConsoleApp_121_FinalProjectShell.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using Xunit;
 
@@ -283,27 +286,90 @@ public class GameTest
         Assert.True(_testGame.use(new Command(CommandWord.USE, "axe")));
     }
 
-    //this is similar to useTest, it just tests to ensure that itemSwitch accounts for the correct things
-    //like use test, we also test one of the item use methods for the same reasons, in this case ringUse
+    //test replaced with 
+    //private void itemSwitchTest()
+    //{
+    //    //ARRANGE
+    //    Player player = _testGame.getPlayer();
+    //    StringWriter stringWriter = new StringWriter();
+
+    //    //ACT
+    //    Console.SetOut(stringWriter);
+    //    _testGame.itemSwitch(1);
+    //    _testGame.itemSwitch(10);
+
+    //    //ASSERT
+    //    var output = stringWriter.ToString().Replace("\r\n", "\n");
+    //    Assert.True(player.getCarryWeight() == 150);
+    //    Assert.Equal("By equipping the ring, your maximum carryable weight has increased.\nSomething has gone terribly wrong.\n", output);
+    //}
+
+
+    //This test verifies that when a player uses the ring item from their inventory, the correct polymorphic Use() method executes,
+    //increasing the player's carry weight and printing the expected message.
     [Fact]
-    private void itemSwitchTest()
+    public void ringUseTestage()
     {
-        //ARRANGE
-        Player player = _testGame.getPlayer();
+        // Create references to the test game instance and its player.
+        // _testGame was constructed with Game(true) so randomness is deterministic.
+        Game game = _testGame;
+        Player player = game.getPlayer();
+
+        // Add a ring item directly to the player's inventory.
+        // This ensures the "use ring" command is valid and will trigger the ring's Use() override.
+        player.addItem(ItemFactory.Create(
+            "ring",
+            "a shining RING with a knight's insignia",
+            2,
+            1
+        ));
+
+        // Capture console output 
         StringWriter stringWriter = new StringWriter();
-
-        //ACT
         Console.SetOut(stringWriter);
-        _testGame.itemSwitch(1);
-        _testGame.itemSwitch(10);
 
-        //ASSERT
+        // Simulate the player entering the command: "use ring".
+        // This verifies that Game.processCommand routes correctly to use(),
+        // and that polymorphism dispatches to the RingItem's overridden Use() method.
+        Command cmd = new Command(CommandWord.USE, "ring");
+        game.processCommand(cmd);
+
+        // Normalize newlines for consistent cross-platform comparison.
         var output = stringWriter.ToString().Replace("\r\n", "\n");
-        Assert.True(player.getCarryWeight() == 150);
-        Assert.Equal("By equipping the ring, your maximum carryable weight has increased.\nSomething has gone terribly wrong.\n", output);
+
+        // Verify the ring correctly modified player state.
+        // The ring should increase the player's carry weight to 150.
+        Assert.Equal(150, player.getCarryWeight());
+
+        // Verify the correct message was printed, confirming the correct item behavior executed.
+        Assert.Contains("By equipping the ring, your maximum carryable weight has increased.\n", output);
     }
 
-    //Bug identified to be fixed in sprint 4
+    //This test verifies that attempting to use an item not present in the player’s inventory is correctly rejected,
+    //preventing item behavior execution and displaying the appropriate error message.
+    [Fact]
+    public void useInvalidItemTest()
+    {
+        // Use the test game instance without adding any items to inventory.
+        // This ensures the command should fail validation.
+        Game game = _testGame;
+
+        // Capture console output to verify the correct error message is printed.
+        StringWriter stringWriter = new StringWriter();
+        Console.SetOut(stringWriter);
+
+        // Simulate attempting to use an item that the player does not have.
+        // This verifies Game.use() correctly validates inventory before calling Item.Use().
+        Command cmd = new Command(CommandWord.USE, "notARealItem");
+        game.processCommand(cmd);
+
+        var output = stringWriter.ToString().Replace("\r\n", "\n");
+
+        // Confirm the correct validation message is printed.
+        // This ensures the Game layer properly handles invalid use commands.
+        Assert.Contains("You don't have an item like that.\n", output);
+    }
+
     [Fact]
     private void hammerUseTest()
     {

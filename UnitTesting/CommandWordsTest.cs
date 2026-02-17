@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using ConsoleApp_121_FinalProjectShell;
+using ConsoleApp_121_FinalProjectShell.Commands;
 using Xunit;
+
 
 public class CommandWordsTests
 {
