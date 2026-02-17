@@ -1,6 +1,6 @@
 ﻿//Transcribed Rooms.java.java file - Dan Tager
 
-using ConsoleApp_121_FinalProjectShell;
+using ConsoleApp_121_FinalProjectShell.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

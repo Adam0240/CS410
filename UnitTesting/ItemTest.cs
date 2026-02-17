@@ -8,8 +8,9 @@ public class ItemTest
 
     public ItemTest()
     {
-        // This runs before each test
-        _testItem = new Item("Sword", "A sharp blade", 10, 1);
+        // Item is abstract now, so we must construct a concrete subclass.
+        // We use the factory so the test stays consistent with how the game creates items.
+        _testItem = ItemFactory.Create("Sword", "A sharp blade", 10, 5);
     }
 
     [Fact]
@@ -31,5 +32,5 @@ public class ItemTest
     public void GetWeight_ReturnsCorrectWeight() => Assert.Equal(10, _testItem.getWeight());
 
     [Fact]
-    public void GetID_ReturnsCorrectID() => Assert.Equal(1, _testItem.getID());
+    public void GetID_ReturnsCorrectID() => Assert.Equal(5, _testItem.getID());
 }

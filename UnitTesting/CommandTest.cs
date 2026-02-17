@@ -1,5 +1,9 @@
 ﻿using ConsoleApp_121_FinalProjectShell;
 using Xunit;
+using ConsoleApp_121_FinalProjectShell.Commands;
+using ConsoleApp_121_FinalProjectShell.Core;
+
+namespace ConsoleApp_121_FinalProjectShell.Tests;
 
 public class CommandTests
 {

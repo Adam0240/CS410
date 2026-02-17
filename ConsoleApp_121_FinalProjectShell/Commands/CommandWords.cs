@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ConsoleApp_121_FinalProjectShell;
+namespace ConsoleApp_121_FinalProjectShell.Commands;
 
 public class CommandWords 
 {
