@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.Items;
+using ConsoleApp_121_FinalProjectShell.People;
 
 // ADDED FOR TESTING:
 // This exposes internal members to the UnitTesting project so we can unit test without making everything public.
@@ -27,7 +28,7 @@ public partial class Game
     // Core game dependencies (instances created in the constructor)
     private Parser parser;
     private Player player;
-    private Player protag;
+    private Protagonist protag;
 
     // Shared RNG. This is seeded deterministically during tests for predictable behavior.
     public static Random random = new Random();
@@ -76,8 +77,8 @@ public partial class Game
 
         // Instantiate core game objects.
         parser = new Parser();
-        player = new Player(false);
-        protag = new Player(true);
+        player = new Player();
+        protag = new Protagonist();
 
         this.isTestInstance = isTestInstance;
 
@@ -492,7 +493,7 @@ public partial class Game
 
     // Internal getters used by rules and item behaviors (kept internal for tests + cross-namespace access).
     internal Player getPlayer() { return player; }
-    internal Player getProtag() { return protag; }
+    internal Protagonist getProtag() { return protag; }
 
     // Exposes the spawnable items list to UseRules (ore/sword).
     internal List<Item> GetGivenItems() { return givenItems; }

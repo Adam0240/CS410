@@ -1,13 +1,18 @@
 ﻿using ConsoleApp_121_FinalProjectShell.Commands;
+using ConsoleApp_121_FinalProjectShell.People;
 using Xunit;
 
 
-public class PlayerTests
+public class CharacterTests
 {
      //Helper Methods
-    private Player CreatePlayer(bool isProtag = false)
+    private Player CreatePlayer()
     {
-        return new Player(isProtag);
+        return new Player();
+    }
+    private Protagonist CreateProtagonist()
+    {
+        return new Protagonist();
     }
 
     private Room CreateRoom(string name = "Room", int id = 0)
@@ -166,11 +171,11 @@ public class PlayerTests
     public void ProtagSteps_ReturnsFalse_WhenStepsNotReached()
     {
         // Arrange
-        var player = CreatePlayer(isProtag: true);
+        var protag = CreateProtagonist();
         var command = CreateGoCommand("north");
 
         // Act
-        bool moved = player.protagSteps(command);
+        bool moved = protag.protagSteps(command);
 
         // Assert
         Assert.False(moved);
