@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using ConsoleApp_121_FinalProjectShell.People;
 using Xunit;
 
 namespace ConsoleApp_121_FinalProjectShell.Tests;
@@ -44,7 +45,7 @@ public class GameTest
         Assert.NotNull(_testGame.getProtag());
 
         Player player = _testGame.getPlayer();
-        Player protage = _testGame.getProtag();
+        Protagonist protag = _testGame.getProtag();
         List<Room> rooms = _testGame.allRooms;
         List<Item> items = _testGame.allItems;
 
@@ -119,14 +120,14 @@ public class GameTest
         StringWriter stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
 
-        Player protag = _testGame.getProtag();
+        Protagonist protag = _testGame.getProtag();
 
         // Grab known rooms from the test instance (IDs from Game.createRooms)
         Room hub = _testGame.allRooms.Single(r => r.getID() == 0);
         Room graves = _testGame.allRooms.Single(r => r.getID() == 5);
 
         // Reflection helper to set protagStepsCount deterministically
-        FieldInfo? stepsField = typeof(Player).GetField(
+        FieldInfo? stepsField = typeof(Protagonist).GetField(
             "protagStepsCount",
             BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -345,7 +346,7 @@ public class GameTest
         Assert.Contains("By equipping the ring, your maximum carryable weight has increased.\n", output);
     }
 
-    //This test verifies that attempting to use an item not present in the player’s inventory is correctly rejected,
+    //This test verifies that attempting to use an item not present in the playerï¿½s inventory is correctly rejected,
     //preventing item behavior execution and displaying the appropriate error message.
     [Fact]
     public void useInvalidItemTest()
@@ -446,7 +447,7 @@ public class GameTest
     {
         //ARRANGE
         Player player = _testGame.getPlayer();
-        Player protag = _testGame.getProtag();
+        Protagonist protag = _testGame.getProtag();
         List<Room> rooms = _testGame.allRooms;
         List<Item> items = _testGame.allItems;
         player.setCurrentRoom(rooms[0]);
@@ -478,7 +479,7 @@ public class GameTest
     {
         //ARRANGE
         Player player = _testGame.getPlayer();
-        Player protag = _testGame.getProtag();
+        Protagonist protag = _testGame.getProtag();
         List<Room> rooms = _testGame.allRooms;
 
         //Reset progression flags in case other tests ran first
@@ -580,7 +581,7 @@ public class GameTest
     {
         //ARRANGE
         Player player = _testGame.getPlayer();
-        Player protag = _testGame.getProtag();
+        Protagonist protag = _testGame.getProtag();
         StringWriter stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
 
