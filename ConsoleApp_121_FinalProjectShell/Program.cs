@@ -3,4 +3,4 @@
 using ConsoleApp_121_FinalProjectShell.Core;
 
 Game game = new Game(false);
-game.play();
+game.Play();

@@ -82,7 +82,7 @@ public sealed class AxeItem : Item
     public override bool Use(Game game)
     {
         // Calls into Game logic (Game must expose axeUse as internal for this to compile)
-        return game.axeUse();
+        return game.AxeUse();
     }
 }
 
@@ -94,7 +94,7 @@ public sealed class RingItem : Item
     public override bool Use(Game game)
     {
         // Game must expose ringUse as internal for this to compile
-        game.ringUse();
+        game.RingUse();
         return false;
     }
 }
@@ -106,7 +106,7 @@ public sealed class HammerItem : Item
 
     public override bool Use(Game game)
     {
-        game.hammerUse();
+        game.HammerUse();
         return false;
     }
 }
@@ -131,7 +131,7 @@ public sealed class HiltItem : Item
 
     public override bool Use(Game game)
     {
-        game.hiltUse();
+        game.HiltUse();
         return false;
     }
 }
@@ -143,7 +143,7 @@ public sealed class SwordItem : Item
 
     public override bool Use(Game game)
     {
-        return game.swordUse();
+        return game.SwordUse();
     }
 }
 

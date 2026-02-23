@@ -12,7 +12,7 @@ public sealed class HelpCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.printHelp();
+        game.PrintHelp();
         return false;
     }
 }
@@ -21,23 +21,23 @@ public sealed class GoCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.goTo(command);
-        game.printLocationInfo(game.getPlayer().getCurrentRoom());
+        game.GoTo(command);
+        game.PrintLocationInfo(game.GetPlayer().getCurrentRoom());
         return false;
     }
 }
 
 public sealed class QuitCommandAction : CommandActionBase
 {
-    public override bool Execute(Game game, Command command) => game.quit(command);
+    public override bool Execute(Game game, Command command) => game.Quit(command);
 }
 
 public sealed class BackCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.backTo();
-        game.printLocationInfo(game.getPlayer().getCurrentRoom());
+        game.BackTo();
+        game.PrintLocationInfo(game.GetPlayer().getCurrentRoom());
         return false;
     }
 }
@@ -46,7 +46,7 @@ public sealed class LookCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.printLocationInfo(game.getPlayer().getCurrentRoom());
+        game.PrintLocationInfo(game.GetPlayer().getCurrentRoom());
         return false;
     }
 }
@@ -55,7 +55,7 @@ public sealed class TakeCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.take(command);
+        game.Take(command);
         return false;
     }
 }
@@ -64,7 +64,7 @@ public sealed class DropCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.drop(command);
+        game.Drop(command);
         return false;
     }
 }
@@ -73,28 +73,28 @@ public sealed class ItemsCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.itemsPrint();
+        game.ItemsPrint();
         return false;
     }
 }
 
 public sealed class UseCommandAction : CommandActionBase
 {
-    public override bool Execute(Game game, Command command) => game.use(command);
+    public override bool Execute(Game game, Command command) => game.Use(command);
 }
 
 public sealed class TalkCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.talk();
+        game.Talk();
         return false;
     }
 }
 
 public sealed class SleepCommandAction : CommandActionBase
 {
-    public override bool Execute(Game game, Command command) => game.sleep();
+    public override bool Execute(Game game, Command command) => game.Sleep();
 }
 
 public sealed class UnknownCommandAction : CommandActionBase
