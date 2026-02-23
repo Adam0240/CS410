@@ -55,10 +55,10 @@ public static class UseRuleExecutor
 public class ProtagKillRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom() == game.getProtag().getCurrentRoom();
+        game.GetPlayer().getCurrentRoom() == game.GetProtag().getCurrentRoom();
 
     public bool Execute(Game game) =>
-        game.protagKill();
+        game.ProtagKill();
 }
 
 // ============================
@@ -104,7 +104,7 @@ public static class UseRuleSets
 public class AxeSwampLogRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 1 &&
+        game.GetPlayer().getCurrentRoom().getID() == 1 &&
         !Room.getClearCons()[0];
 
     public bool Execute(Game game)
@@ -119,7 +119,7 @@ public class AxeSwampLogRule : IUseRule
 public class AxeCastleGateRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 6 &&
+        game.GetPlayer().getCurrentRoom().getID() == 6 &&
         !Room.getClearCons()[3];
 
     public bool Execute(Game game)
@@ -137,18 +137,18 @@ public class AxeCastleGateRule : IUseRule
 public class HammerQuarrySpawnOreRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 3;
+        game.GetPlayer().getCurrentRoom().getID() == 3;
 
     public bool Execute(Game game)
     {
-        if (game.getPlayer().hasItemByName("ore") ||
-            game.getPlayer().getCurrentRoom().hasItemByName("ore"))
+        if (game.GetPlayer().hasItemByName("ore") ||
+            game.GetPlayer().getCurrentRoom().hasItemByName("ore"))
         {
             Console.WriteLine("Nothing to do with that here.");
             return false;
         }
 
-        game.getPlayer().getCurrentRoom()
+        game.GetPlayer().getCurrentRoom()
             .addItem(game.GetGivenItems()[0]);
 
         Console.WriteLine("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
@@ -159,20 +159,20 @@ public class HammerQuarrySpawnOreRule : IUseRule
 public class HammerForgePrepareRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 4;
+        game.GetPlayer().getCurrentRoom().getID() == 4;
 
     public bool Execute(Game game)
     {
-        Item hammerItem = game.getPlayer().getItemByName("hammer");
+        Item hammerItem = game.GetPlayer().getItemByName("hammer");
 
         if (hammerItem != null)
         {
-            game.getPlayer().getCurrentRoom().addItem(hammerItem);
-            game.getPlayer().removeItemByName("hammer");
+            game.GetPlayer().getCurrentRoom().addItem(hammerItem);
+            game.GetPlayer().removeItemByName("hammer");
         }
-        else if (!game.getPlayer().getCurrentRoom().hasItemByName("hammer"))
+        else if (!game.GetPlayer().getCurrentRoom().hasItemByName("hammer"))
         {
-            game.getPlayer().getCurrentRoom().addItem(
+            game.GetPlayer().getCurrentRoom().addItem(
                 ItemFactory.Create(
                     "hammer",
                     "a standard issue craft HAMMER with a flat head",
@@ -199,8 +199,8 @@ public class RingEquipRule : IUseRule
 
     public bool Execute(Game game)
     {
-        game.getPlayer().setCarryWeight(150);
-        game.getPlayer().removeItemByName("ring");
+        game.GetPlayer().setCarryWeight(150);
+        game.GetPlayer().removeItemByName("ring");
         Console.WriteLine("By equipping the ring, your maximum carryable weight has increased.");
         return false;
     }
@@ -213,17 +213,17 @@ public class RingEquipRule : IUseRule
 public class HiltForgeSwordRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().hasItemByName("ore") &&
-        game.getPlayer().hasItemByName("hilt") &&
-        game.getPlayer().getCurrentRoom().getID() == 4 &&
+        game.GetPlayer().hasItemByName("ore") &&
+        game.GetPlayer().hasItemByName("hilt") &&
+        game.GetPlayer().getCurrentRoom().getID() == 4 &&
         Room.getClearCons()[1];
 
     public bool Execute(Game game)
     {
-        game.getPlayer().removeItemByName("ore");
-        game.getPlayer().removeItemByName("hilt");
+        game.GetPlayer().removeItemByName("ore");
+        game.GetPlayer().removeItemByName("hilt");
 
-        game.getPlayer().getCurrentRoom().addItem(game.GetGivenItems()[1]);
+        game.GetPlayer().getCurrentRoom().addItem(game.GetGivenItems()[1]);
         Console.WriteLine("Forged the hilt into a new sword!");
         return false;
     }
@@ -236,11 +236,11 @@ public class HiltForgeSwordRule : IUseRule
 public class SwordAltarRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 8;
+        game.GetPlayer().getCurrentRoom().getID() == 8;
 
     public bool Execute(Game game)
     {
-        game.getPlayer().removeItemByName("sword");
+        game.GetPlayer().removeItemByName("sword");
         Room.setClearCon(2, true);
         Console.WriteLine("You place the sword within the altar, now only to be obtained by a true hero.");
         return false;
