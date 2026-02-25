@@ -4,245 +4,247 @@
 using System;
 using System.Collections.Generic;
 using ConsoleApp_121_FinalProjectShell.Core;
+using ConsoleApp_121_FinalProjectShell.Items;
 
-namespace ConsoleApp_121_FinalProjectShell.Items;
-
-// ============================
-// RULE INTERFACE
-// ============================
-
-/// INTERFACE (Abstraction):
-//Defines a contract for "use rules".
-//Any rule can be executed the same way (via Applies + Execute),
-//which allows the executor to treat all rules polymorphically.
-public interface IUseRule
+namespace ConsoleApp_121_FinalProjectShell.Items
 {
-    bool Applies(Game game);        // Determines if this rule is relevant for the current game state
+    // ============================
+    // RULE INTERFACE
+    // ============================
 
-    bool Execute(Game game);        // Runs the rule's behavior if applicable (return value matches the game's "quit" meaning)
-}
-
-// ============================
-// EXECUTOR
-// ============================
-
-//Centralizes the logic of scanning rules, selecting the first applicable rule,
-//and executing it. This avoids large if/else chains in Game.
-public static class UseRuleExecutor
-{
-    public static bool ExecuteFirstRuleOrDefault(
-        Game game,
-        List<IUseRule> rules,
-        Action defaultAction)
+    /// INTERFACE (Abstraction):
+    //Defines a contract for "use rules".
+    //Any rule can be executed the same way (via Applies + Execute),
+    //which allows the executor to treat all rules polymorphically.
+    public interface IUseRule
     {
-        foreach (var rule in rules)
-        {
-            if (rule.Applies(game))
-            {
-                return rule.Execute(game);
-            }
-        }
+        bool Applies(Game game);        // Determines if this rule is relevant for the current game state
 
-        defaultAction();
-        return false;
+        bool Execute(Game game);        // Runs the rule's behavior if applicable (return value matches the game's "quit" meaning)
     }
-}
 
-// ============================
-// COMMON RULES
-// ============================
+    // ============================
+    // EXECUTOR
+    // ============================
 
-public class ProtagKillRule : IUseRule
-{
-    public bool Applies(Game game) =>
-        game.GetPlayer().getCurrentRoom() == game.GetProtag().getCurrentRoom();
-
-    public bool Execute(Game game) =>
-        game.ProtagKill();
-}
-
-// ============================
-// RULE SETS (DISPATCH HELPERS)
-// ============================
-
-public static class UseRuleSets
-{
-    public static List<IUseRule> AxeRules() => new()
+    //Centralizes the logic of scanning rules, selecting the first applicable rule,
+    //and executing it. This avoids large if/else chains in Game.
+    public static class UseRuleExecutor
     {
+        public static bool ExecuteFirstRuleOrDefault(
+            Game game,
+            List<IUseRule> rules,
+            Action defaultAction)
+        {
+            foreach (var rule in rules)
+            {
+                if (rule.Applies(game))
+                {
+                    return rule.Execute(game);
+                }
+            }
+
+            defaultAction();
+            return false;
+        }
+    }
+
+    // ============================
+    // COMMON RULES
+    // ============================
+
+    public class ProtagKillRule : IUseRule
+    {
+        public bool Applies(Game game) =>
+            game.GetPlayer().getCurrentRoom() == game.GetProtag().getCurrentRoom();
+
+        public bool Execute(Game game) =>
+            game.ProtagKill();
+    }
+
+    // ============================
+    // RULE SETS (DISPATCH HELPERS)
+    // ============================
+
+    public static class UseRuleSets
+    {
+        public static List<IUseRule> AxeRules() =>
+    [
         new AxeSwampLogRule(),
         new AxeCastleGateRule(),
         new ProtagKillRule()
-    };
+    ];
 
-    public static List<IUseRule> HammerRules() => new()
-    {
+        public static List<IUseRule> HammerRules() =>
+    [
         new HammerQuarrySpawnOreRule(),
         new HammerForgePrepareRule()
-    };
+    ];
 
-    public static List<IUseRule> SwordRules() => new()
-    {
+        public static List<IUseRule> SwordRules() =>
+    [
         new SwordAltarRule(),
         new ProtagKillRule()
-    };
+    ];
 
-    public static List<IUseRule> RingRules() => new()
-    {
+        public static List<IUseRule> RingRules() =>
+    [
         new RingEquipRule()
-    };
+    ];
 
-    public static List<IUseRule> HiltRules() => new()
-    {
+        public static List<IUseRule> HiltRules() =>
+    [
         new HiltForgeSwordRule()
-    };
-}
-
-// ============================
-// AXE RULES
-// ============================
-
-public class AxeSwampLogRule : IUseRule
-{
-    public bool Applies(Game game) =>
-        game.GetPlayer().getCurrentRoom().getID() == 1 &&
-        !Room.getClearCons()[0];
-
-    public bool Execute(Game game)
-    {
-        Room.setClearCon(0, true);
-        Console.WriteLine("You chop the large log into several more easily navigable pieces.");
-        Console.WriteLine("Beyond where it stood is revealed the entrance to a hidden grove.");
-        return false;
+    ];
     }
-}
 
-public class AxeCastleGateRule : IUseRule
-{
-    public bool Applies(Game game) =>
-        game.GetPlayer().getCurrentRoom().getID() == 6 &&
-        !Room.getClearCons()[3];
+    // ============================
+    // AXE RULES
+    // ============================
 
-    public bool Execute(Game game)
+    public class AxeSwampLogRule : IUseRule
     {
-        Room.setClearCon(3, true);
-        Console.WriteLine("Utilizing the hefty weight of the axe, you smash a hole through the wooden gate.");
-        return false;
-    }
-}
+        public bool Applies(Game game) =>
+            game.GetPlayer().getCurrentRoom().getID() == 1 &&
+            !Room.getClearCons()[0];
 
-// ============================
-// HAMMER RULES
-// ============================
-
-public class HammerQuarrySpawnOreRule : IUseRule
-{
-    public bool Applies(Game game) =>
-        game.GetPlayer().getCurrentRoom().getID() == 3;
-
-    public bool Execute(Game game)
-    {
-        if (game.GetPlayer().hasItemByName("ore") ||
-            game.GetPlayer().getCurrentRoom().hasItemByName("ore"))
+        public bool Execute(Game game)
         {
-            Console.WriteLine("Nothing to do with that here.");
+            Room.setClearCon(0, true);
+            Console.WriteLine("You chop the large log into several more easily navigable pieces.");
+            Console.WriteLine("Beyond where it stood is revealed the entrance to a hidden grove.");
             return false;
         }
-
-        game.GetPlayer().getCurrentRoom()
-            .addItem(game.GetGivenItems()[0]);
-
-        Console.WriteLine("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
-        return false;
     }
-}
 
-public class HammerForgePrepareRule : IUseRule
-{
-    public bool Applies(Game game) =>
-        game.GetPlayer().getCurrentRoom().getID() == 4;
-
-    public bool Execute(Game game)
+    public class AxeCastleGateRule : IUseRule
     {
-        Item hammerItem = game.GetPlayer().getItemByName("hammer");
+        public bool Applies(Game game) =>
+            game.GetPlayer().getCurrentRoom().getID() == 6 &&
+            !Room.getClearCons()[3];
 
-        if (hammerItem != null)
+        public bool Execute(Game game)
         {
-            game.GetPlayer().getCurrentRoom().addItem(hammerItem);
-            game.GetPlayer().removeItemByName("hammer");
+            Room.setClearCon(3, true);
+            Console.WriteLine("Utilizing the hefty weight of the axe, you smash a hole through the wooden gate.");
+            return false;
         }
-        else if (!game.GetPlayer().getCurrentRoom().hasItemByName("hammer"))
+    }
+
+    // ============================
+    // HAMMER RULES
+    // ============================
+
+    public class HammerQuarrySpawnOreRule : IUseRule
+    {
+        public bool Applies(Game game) =>
+            game.GetPlayer().getCurrentRoom().getID() == 3;
+
+        public bool Execute(Game game)
         {
-            game.GetPlayer().getCurrentRoom().addItem(
-                ItemFactory.Create(
-                    "hammer",
-                    "a standard issue craft HAMMER with a flat head",
-                    34,
-                    2
-                )
-            );
+            if (game.GetPlayer().hasItemByName("ore") ||
+                game.GetPlayer().getCurrentRoom().hasItemByName("ore"))
+            {
+                Console.WriteLine("Nothing to do with that here.");
+                return false;
+            }
+
+            game.GetPlayer().getCurrentRoom()
+                .addItem(game.GetGivenItems()[0]);
+
+            Console.WriteLine("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
+            return false;
         }
-
-        Room.setClearCon(1, true);
-        Console.WriteLine("You place the hammer with the set of forge tools, completing the set.");
-        return false;
     }
-}
 
-// ============================
-// RING RULES (MOVES ringUse)
-// ============================
-
-public class RingEquipRule : IUseRule
-{
-    // Ring can be used anywhere as long as you have it.
-    public bool Applies(Game game) => true;
-
-    public bool Execute(Game game)
+    public class HammerForgePrepareRule : IUseRule
     {
-        game.GetPlayer().setCarryWeight(150);
-        game.GetPlayer().removeItemByName("ring");
-        Console.WriteLine("By equipping the ring, your maximum carryable weight has increased.");
-        return false;
+        public bool Applies(Game game) =>
+            game.GetPlayer().getCurrentRoom().getID() == 4;
+
+        public bool Execute(Game game)
+        {
+            Item hammerItem = game.GetPlayer().getItemByName("hammer");
+
+            if (hammerItem != null)
+            {
+                game.GetPlayer().getCurrentRoom().addItem(hammerItem);
+                game.GetPlayer().removeItemByName("hammer");
+            }
+            else if (!game.GetPlayer().getCurrentRoom().hasItemByName("hammer"))
+            {
+                game.GetPlayer().getCurrentRoom().addItem(
+                    ItemFactory.Create(
+                        "hammer",
+                        "a standard issue craft HAMMER with a flat head",
+                        34,
+                        2
+                    )
+                );
+            }
+
+            Room.setClearCon(1, true);
+            Console.WriteLine("You place the hammer with the set of forge tools, completing the set.");
+            return false;
+        }
     }
-}
 
-// ============================
-// HILT RULES (MOVES hiltUse)
-// ============================
+    // ============================
+    // RING RULES (MOVES ringUse)
+    // ============================
 
-public class HiltForgeSwordRule : IUseRule
-{
-    public bool Applies(Game game) =>
-        game.GetPlayer().hasItemByName("ore") &&
-        game.GetPlayer().hasItemByName("hilt") &&
-        game.GetPlayer().getCurrentRoom().getID() == 4 &&
-        Room.getClearCons()[1];
-
-    public bool Execute(Game game)
+    public class RingEquipRule : IUseRule
     {
-        game.GetPlayer().removeItemByName("ore");
-        game.GetPlayer().removeItemByName("hilt");
+        // Ring can be used anywhere as long as you have it.
+        public bool Applies(Game game) => true;
 
-        game.GetPlayer().getCurrentRoom().addItem(game.GetGivenItems()[1]);
-        Console.WriteLine("Forged the hilt into a new sword!");
-        return false;
+        public bool Execute(Game game)
+        {
+            game.GetPlayer().setCarryWeight(150);
+            game.GetPlayer().removeItemByName("ring");
+            Console.WriteLine("By equipping the ring, your maximum carryable weight has increased.");
+            return false;
+        }
     }
-}
 
-// ============================
-// SWORD RULES
-// ============================
+    // ============================
+    // HILT RULES (MOVES hiltUse)
+    // ============================
 
-public class SwordAltarRule : IUseRule
-{
-    public bool Applies(Game game) =>
-        game.GetPlayer().getCurrentRoom().getID() == 8;
-
-    public bool Execute(Game game)
+    public class HiltForgeSwordRule : IUseRule
     {
-        game.GetPlayer().removeItemByName("sword");
-        Room.setClearCon(2, true);
-        Console.WriteLine("You place the sword within the altar, now only to be obtained by a true hero.");
-        return false;
+        public bool Applies(Game game) =>
+            game.GetPlayer().hasItemByName("ore") &&
+            game.GetPlayer().hasItemByName("hilt") &&
+            game.GetPlayer().getCurrentRoom().getID() == 4 &&
+            Room.getClearCons()[1];
+
+        public bool Execute(Game game)
+        {
+            game.GetPlayer().removeItemByName("ore");
+            game.GetPlayer().removeItemByName("hilt");
+
+            game.GetPlayer().getCurrentRoom().addItem(game.GetGivenItems()[1]);
+            Console.WriteLine("Forged the hilt into a new sword!");
+            return false;
+        }
+    }
+
+    // ============================
+    // SWORD RULES
+    // ============================
+
+    public class SwordAltarRule : IUseRule
+    {
+        public bool Applies(Game game) =>
+            game.GetPlayer().getCurrentRoom().getID() == 8;
+
+        public bool Execute(Game game)
+        {
+            game.GetPlayer().removeItemByName("sword");
+            Room.setClearCon(2, true);
+            Console.WriteLine("You place the sword within the altar, now only to be obtained by a true hero.");
+            return false;
+        }
     }
 }

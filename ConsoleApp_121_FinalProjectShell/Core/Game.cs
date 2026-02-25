@@ -5,6 +5,7 @@ using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.Items;
 using ConsoleApp_121_FinalProjectShell.People;
 
+
 // ADDED FOR TESTING:
 // This exposes internal members to the UnitTesting project so we can unit test without making everything public.
 [assembly: InternalsVisibleTo("UnitTesting")]
@@ -289,14 +290,14 @@ public partial class Game
 
         if (tempItem != null)
         {
-            if (player.weightCheck(tempItem.getWeight()))
+            if (player.weightCheck(tempItem.GetWeight()))
             {
                 player.addItem(tempItem);
                 player.getCurrentRoom().removeItemByName(itemName);
-                Console.WriteLine("Picked up the " + tempItem.getName() + "!");
+                Console.WriteLine("Picked up the " + tempItem.GetName() + "!");
 
                 // Legacy puzzle flag behavior kept as-is (forge tool set completeness).
-                if (tempItem.getName() == "hammer" && player.getCurrentRoom().getID() == 4)
+                if (tempItem.GetName() == "hammer" && player.getCurrentRoom().getID() == 4)
                 {
                     Room.setClearCon(1, false);
                     Console.WriteLine("The forge's tool set is once again incomplete.");
@@ -328,7 +329,7 @@ public partial class Game
         {
             player.getCurrentRoom().addItem(tempItem);
             player.removeItemByName(itemName);
-            Console.WriteLine("Dropped the " + tempItem.getName() + "!");
+            Console.WriteLine("Dropped the " + tempItem.GetName() + "!");
         }
         else
         {

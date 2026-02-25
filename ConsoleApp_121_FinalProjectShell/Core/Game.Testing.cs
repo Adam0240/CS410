@@ -2,6 +2,7 @@
 //Removes some of the testing logic out of Game.cs
 
 using System.Collections.Generic;
+using ConsoleApp_121_FinalProjectShell.Items;
 
 namespace ConsoleApp_121_FinalProjectShell.Core;
 

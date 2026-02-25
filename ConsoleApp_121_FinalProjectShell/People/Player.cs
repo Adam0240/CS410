@@ -4,7 +4,7 @@ using System.Collections;
 using System.Transactions;
 using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.Core;
-
+using ConsoleApp_121_FinalProjectShell.Items;
 namespace ConsoleApp_121_FinalProjectShell.People;
 
 
@@ -60,7 +60,7 @@ public class Player : Character
         int tempweight = 0;
         foreach (Item item in _inventory)
         
-            tempweight += item.getWeight();
+            tempweight += item.GetWeight();
         
         _currentWeight = tempweight;
     }
@@ -80,7 +80,7 @@ public class Player : Character
         {
             iText.Append(":");
             foreach (Item item in _inventory)
-                iText.Append("  " + item.getName());
+                iText.Append("  " + item.GetName());
             iText.AppendLine();
         }
         else
@@ -102,7 +102,7 @@ public class Player : Character
     {
         foreach (Item item in _inventory)
         {
-            if (item.getName().Equals(name, StringComparison.OrdinalIgnoreCase))
+            if (item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
                 return item;
         }
         return null;

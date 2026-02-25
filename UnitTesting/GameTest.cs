@@ -7,6 +7,8 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using ConsoleApp_121_FinalProjectShell.People;
+using ConsoleApp_121_FinalProjectShell.Items;
+
 using Xunit;
 
 namespace ConsoleApp_121_FinalProjectShell.Tests;
