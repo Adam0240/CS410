@@ -4,6 +4,7 @@ using ConsoleApp_121_FinalProjectShell.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ConsoleApp_121_FinalProjectShell.Items;
 
 /**
  * This class is part of the "FUGwACL Adventure" application. 
@@ -111,7 +112,7 @@ public class Room
     public Item? getItemByName(string name)
     {
         return roomItems.FirstOrDefault(item =>
-            item.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
+            item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
     public void removeItemByName(string name)
@@ -125,7 +126,7 @@ public class Room
 
     public bool hasItemByName(string name)
     {
-        return roomItems.Any(item => item.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
+        return roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
 
@@ -195,7 +196,7 @@ public class Room
                     itemText.Append("and ");
                 }
             }
-            itemText.Append(roomItems[i].getDesc());
+            itemText.Append(roomItems[i].GetDesc());
         }
         return itemText.ToString();
     }
