@@ -1,117 +1,108 @@
 ﻿//Transcribed Rooms.java.java file - Dan Tager
 
 using ConsoleApp_121_FinalProjectShell.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
+namespace ConsoleApp_121_FinalProjectShell;
 
 /**
- * This class is part of the "FUGwACL Adventure" application. 
- * "FUGwACL Adventure" is a slightly less simple, text based adventure game.  
- * 
- * Room - a single room, static fields are flags that track completion of certain events.
- * 
- * Exits are stored in a String + Room HashMap.
- * 
- * @author  Michael Kölling, David J. Barnes, and Christian Byrne
- * @version 2023-12-03
- */
-public class Room 
+* This class is part of the "FUGwACL Adventure" application.
+* "FUGwACL Adventure" is a slightly less simple, text based adventure game.
+*
+* Room - a single room, static fields are flags that track completion of certain events.
+*
+* Exits are stored in a String + Room HashMap.
+*
+* @author  Michael Kölling, David J. Barnes, and Christian Byrne
+* @version 2023-12-03
+*/
+public class Room(string description, int roomId)
 {
-    private string description = string.Empty;
-    private Dictionary<string, Room> exits = new();
-    private List<Item> roomItems = new();
-    private int roomID;
+    private readonly Dictionary<string, Room> _exits = new();
+    private readonly List<Item?> _roomItems = [];
 
     //fields used to track game progress
-    private static bool swampCleared;
-    private static bool forgePrepared;
-    private static bool swordPlaced;
-    private static bool gateOpen;
-    private static bool toldProtagGate;
-    private static bool toldProtagSword;
+    private static bool _swampCleared;
+    private static bool _forgePrepared;
+    private static bool _swordPlaced;
+    private static bool _gateOpen;
+    private static bool _toldProtagGate;
+    private static bool _toldProtagSword;
 
     //object constructor
-    public Room(string description, int roomID) 
-    {
-        this.description = description;
-        this.roomID = roomID;
-    }
 
     /**
-     * Define an exit of this room. 
-     * String is the exit name typed as part of a GO command
-     * Room is where that exit leads
-     */
+ * Define an exit of this room.
+ * String is the exit name typed as part of a GO command
+ * Room is where that exit leads
+ */
     public void setExit(string direction, Room room) 
     {
-        exits[direction] = room;
+        _exits[direction] = room;
     } 
     //accessor for the room's exits
     public Dictionary<string, Room> getExits()
     {
-        return exits;
+        return _exits;
     }
 
     /**
-     * mutator and accessor for the game's clear conditions.
-     * 
-     * accessor returns as a boolean array to reduce number of methods
-     * an integer value is used to refer to each flag to stay concise
-     */
-    public static void setClearCon(int ID, bool state)
+ * mutator and accessor for the game's clear conditions.
+ *
+ * accessor returns as a boolean array to reduce number of methods
+ * an integer value is used to refer to each flag to stay concise
+ */
+    public static void setClearCon(int id, bool state)
     {
-        switch (ID)
+        switch (id)
         {
             case 0:
-                swampCleared = state;
+                _swampCleared = state;
                 break;
             case 1:
-                forgePrepared = state;
+                _forgePrepared = state;
                 break;
             case 2:
-                swordPlaced = state;
+                _swordPlaced = state;
                 break;
             case 3:
-                gateOpen = state;
+                _gateOpen = state;
                 break;
             case 4:
-                toldProtagGate = state;
+                _toldProtagGate = state;
                 break;
             case 5:
-                toldProtagSword = state;
+                _toldProtagSword = state;
                 break;
         }
     }
 
-    public static bool[] getClearCons() => new bool[]
-        {
-        swampCleared,
-        forgePrepared,
-        swordPlaced,
-        gateOpen,
-        toldProtagGate,
-        toldProtagSword
-        };
+    public static bool[] getClearCons() =>
+    [
+        _swampCleared,
+        _forgePrepared,
+        _swordPlaced,
+        _gateOpen,
+        _toldProtagGate,
+        _toldProtagSword
+    ];
 
     //returns ID, used for several checks in Game
-    public int getID()
+    public int GetId()
     {
-        return roomID;
+        return roomId;
     }
 
     //accessors, mutators, and the like for items in the room
-    public void addItem(Item item)
+    public void addItem(Item? item)
     {
-        roomItems.Add(item);
+        _roomItems.Add(item);
     }
 
-    public bool hasItem(Item item) => roomItems.Contains(item);
+    public bool hasItem(Item? item) => _roomItems.Contains(item);
 
     public Item? getItemByName(string name)
     {
-        return roomItems.FirstOrDefault(item =>
-            item.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
+        return _roomItems.FirstOrDefault(item => item!.getName().Equals(name, StringComparison.OrdinalIgnoreCase), null);
     }
 
     public void removeItemByName(string name)
@@ -119,13 +110,13 @@ public class Room
         Item? itemToRemove = getItemByName(name);
         if (itemToRemove != null)
         {
-            roomItems.Remove(itemToRemove);
+            _roomItems.Remove(itemToRemove);
         }
     }
 
     public bool hasItemByName(string name)
     {
-        return roomItems.Any(item => item.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
+        return _roomItems.Any(item => item!.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
 
@@ -137,27 +128,27 @@ public class Room
     //alternative description. Factory pattern could also be implemented to add each room with a clear condition
     //to a static list in Room to allow for easier checking of all clearcons. 
     /**
-     * @return The description of the room.
-     * returns unique descriptions depending on the room and what flags are true
-     */
+ * @return The description of the room.
+ * returns unique descriptions depending on the room and what flags are true
+ */
     public string getDescription()
     {
-        if (roomID == 4 && forgePrepared)
+        if (roomId == 4 && _forgePrepared)
         {
             return "Lava flows through the channels dug into the rock around a vacant smith's shop. \nThe forge and its tools stand complete.";
         }
 
-        if (roomID == 6 && gateOpen)
+        if (roomId == 6 && _gateOpen)
         {
             return "The castle gate stands tall and imposing as before. Now however, \na large hole has been hacked through to the other side.";
         }
 
-        if (roomID == 1 && swampCleared)
+        if (roomId == 1 && _swampCleared)
         {
             return "Your boots catch in the stiff and stinking muck of the swamp. \nThe large log lies in pieces now, revealing a hidden path.";
         }
 
-        if (roomID == 8 && swordPlaced)
+        if (roomId == 8 && _swordPlaced)
         {
             return "Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center, now bearing a shining sword.";
         }
@@ -170,9 +161,9 @@ public class Room
     public string getExitString()
     {
         var exitString = new System.Text.StringBuilder("Exits:");
-        foreach (string exit in exits.Keys)
+        foreach (string exit in _exits.Keys)
         {
-            if (exit != "grove" || swampCleared)
+            if (exit != "grove" || _swampCleared)
             {
                 exitString.Append(" ").Append(exit);
             }
@@ -185,17 +176,17 @@ public class Room
     {
         var itemText = new System.Text.StringBuilder("There is ");
 
-        for (int i = 0; i < roomItems.Count; i++)
+        for (int i = 0; i < _roomItems.Count; i++)
         {
             if (i > 0)
             {
                 itemText.Append(", \n");
-                if (i == roomItems.Count - 1)
+                if (i == _roomItems.Count - 1)
                 {
                     itemText.Append("and ");
                 }
             }
-            itemText.Append(roomItems[i].getDesc());
+            itemText.Append(_roomItems[i]!.getDesc());
         }
         return itemText.ToString();
     }
@@ -203,29 +194,29 @@ public class Room
     //@returns a string compiled from several others
     public string getLongDesc()
     {
-        var description = new System.Text.StringBuilder(getDescription());
-        description.Append("\n");
+        var builtDescription = new System.Text.StringBuilder(getDescription());
+        builtDescription.Append("\n");
 
-        if (roomItems.Count > 0)
+        if (_roomItems.Count > 0)
         {
-            description.Append(getItemsText()).Append(". \n");
+            builtDescription.Append(getItemsText()).Append(". \n");
         }
 
-        description.Append(getExitString());
-        return description.ToString();
+        builtDescription.Append(getExitString());
+        return builtDescription.ToString();
     }
 
     //@returns the String from the key to a randomly chosen exit
     public string getRandomExit()
     {
-        var exitsArray = exits.Keys.ToArray();
+        var exitsArray = _exits.Keys.ToArray();
         return exitsArray[Game.random.Next(exitsArray.Length)];
     }
 
     //For testing, returns the number of items in roomItems
     public int getItemsCount()
     {
-        return roomItems.Count;
+        return _roomItems.Count;
     }
 
 }

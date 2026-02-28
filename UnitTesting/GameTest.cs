@@ -47,15 +47,15 @@ public class GameTest
         Player player = _testGame.getPlayer();
         Protagonist protag = _testGame.getProtag();
         List<Room> rooms = _testGame.allRooms;
-        List<Item> items = _testGame.allItems;
+        List<Item?> items = _testGame.allItems;
 
         //ensure the player and protagonist were placed in the correct rooms
-        Assert.True(_testGame.getPlayer().getCurrentRoom().getID() == 0);
-        Assert.True(_testGame.getProtag().getCurrentRoom().getID() == 5);
+        Assert.True(_testGame.getPlayer().getCurrentRoom().GetId() == 0);
+        Assert.True(_testGame.getProtag().getCurrentRoom().GetId() == 5);
 
         foreach (Room room in _testGame.allRooms)
         {
-            switch (room.getID())
+            switch (room.GetId())
             {
                 case 2: //battleground, checking for the axe
                     Assert.True(room.hasItemByName("axe"));
@@ -123,12 +123,12 @@ public class GameTest
         Protagonist protag = _testGame.getProtag();
 
         // Grab known rooms from the test instance (IDs from Game.createRooms)
-        Room hub = _testGame.allRooms.Single(r => r.getID() == 0);
-        Room graves = _testGame.allRooms.Single(r => r.getID() == 5);
+        Room hub = _testGame.allRooms.Single(r => r.GetId() == 0);
+        Room graves = _testGame.allRooms.Single(r => r.GetId() == 5);
 
         // Reflection helper to set protagStepsCount deterministically
         FieldInfo? stepsField = typeof(Protagonist).GetField(
-            "protagStepsCount",
+            "_protagStepsCount",
             BindingFlags.Instance | BindingFlags.NonPublic);
 
         Assert.NotNull(stepsField);
@@ -417,7 +417,7 @@ public class GameTest
         //ARRANGE
         Player player = _testGame.getPlayer();
         List<Room> rooms = _testGame.allRooms;
-        List<Item> items = _testGame.allItems;
+        List<Item?> items = _testGame.allItems;
         player.setCurrentRoom(rooms[0]);
         player.addItem(items[3]);
         player.addItem(items[4]);
@@ -449,7 +449,7 @@ public class GameTest
         Player player = _testGame.getPlayer();
         Protagonist protag = _testGame.getProtag();
         List<Room> rooms = _testGame.allRooms;
-        List<Item> items = _testGame.allItems;
+        List<Item?> items = _testGame.allItems;
         player.setCurrentRoom(rooms[0]);
         player.addItem(items[5]);
         bool protagdead;

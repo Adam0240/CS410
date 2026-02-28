@@ -1,4 +1,5 @@
-﻿using ConsoleApp_121_FinalProjectShell.Commands;
+﻿using ConsoleApp_121_FinalProjectShell;
+using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.People;
 using Xunit;
 
@@ -27,7 +28,7 @@ public class CharacterTests
         return room;
     }
 
-    private Item CreateItem(string name, int weight, int id = 0)
+    private Item? CreateItem(string name, int weight, int id = 0)
     {
         // Item is abstract now, so we create a concrete item through the factory.
         // ID doesn't matter for Player inventory/weight tests, but must map to a valid item type.

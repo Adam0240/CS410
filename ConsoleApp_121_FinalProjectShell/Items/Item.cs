@@ -155,7 +155,7 @@ public sealed class SwordItem : Item
  * ------------------------------------------------------------------------- */
 public static class ItemFactory
 {
-    public static Item Create(string name, string desc, int weight, int id)
+    public static Item? Create(string name, string desc, int weight, int id)
     {
         return id switch
         {

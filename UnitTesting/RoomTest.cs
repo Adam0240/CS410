@@ -15,7 +15,7 @@ public class RoomTests
     }
 
     // Helper item for tests (Item is abstract now, so we must create a concrete item via the factory)
-    private Item CreateTestItem(string name, string desc, int weight = 1, int id = 3)
+    private Item? CreateTestItem(string name, string desc, int weight = 1, int id = 3)
     {
         // id just needs to map to a valid item type in your factory.
         // 3 is "ore" in your game mapping, but the actual behavior doesn't matter for Room inventory tests.
@@ -29,7 +29,7 @@ public class RoomTests
         var room = new Room("Test room", 99);
 
         // Act
-        var id = room.getID();
+        var id = room.GetId();
         var description = room.getLongDesc();
 
         // Assert

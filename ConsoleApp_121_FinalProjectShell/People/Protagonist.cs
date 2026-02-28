@@ -9,32 +9,27 @@ namespace ConsoleApp_121_FinalProjectShell.People;
 ///</summary>
 public class Protagonist : Character
 {
-    private int protagStepsCount;
+    private int _protagStepsCount = Game.random.Next(6);
 
-    public Protagonist() : base()
-    {
-        protagStepsCount = Game.random.Next(6);
-    }
-    
-    
+
     //Moves the protagonist through a random room exit. Very simple function.
     public bool protagSteps(Command command)
     {
-        if (protagStepsCount >= 8)
+        if (_protagStepsCount >= 8)
         {
-            protagStepsCount -= 8;
+            _protagStepsCount -= 8;
             goRoom(command);
             return true;
         }
         
-        protagStepsCount += Game.random.Next(4);
+        _protagStepsCount += Game.random.Next(4);
         return false;
     }
     
     //Method needed for testing purposes. 
     public int getProtagStepsCount()
     {
-        return protagStepsCount;
+        return _protagStepsCount;
     }
     
 }

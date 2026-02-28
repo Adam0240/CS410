@@ -4,7 +4,7 @@ using Xunit;
 
 public class ItemTest
 {
-    private readonly Item _testItem;
+    private readonly Item? _testItem;
 
     public ItemTest()
     {

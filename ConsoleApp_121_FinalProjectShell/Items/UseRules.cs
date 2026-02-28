@@ -104,7 +104,7 @@ public static class UseRuleSets
 public class AxeSwampLogRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 1 &&
+        game.getPlayer().getCurrentRoom().GetId() == 1 &&
         !Room.getClearCons()[0];
 
     public bool Execute(Game game)
@@ -119,7 +119,7 @@ public class AxeSwampLogRule : IUseRule
 public class AxeCastleGateRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 6 &&
+        game.getPlayer().getCurrentRoom().GetId() == 6 &&
         !Room.getClearCons()[3];
 
     public bool Execute(Game game)
@@ -137,7 +137,7 @@ public class AxeCastleGateRule : IUseRule
 public class HammerQuarrySpawnOreRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 3;
+        game.getPlayer().getCurrentRoom().GetId() == 3;
 
     public bool Execute(Game game)
     {
@@ -159,11 +159,11 @@ public class HammerQuarrySpawnOreRule : IUseRule
 public class HammerForgePrepareRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 4;
+        game.getPlayer().getCurrentRoom().GetId() == 4;
 
     public bool Execute(Game game)
     {
-        Item hammerItem = game.getPlayer().getItemByName("hammer");
+        Item? hammerItem = game.getPlayer().getItemByName("hammer");
 
         if (hammerItem != null)
         {
@@ -215,7 +215,7 @@ public class HiltForgeSwordRule : IUseRule
     public bool Applies(Game game) =>
         game.getPlayer().hasItemByName("ore") &&
         game.getPlayer().hasItemByName("hilt") &&
-        game.getPlayer().getCurrentRoom().getID() == 4 &&
+        game.getPlayer().getCurrentRoom().GetId() == 4 &&
         Room.getClearCons()[1];
 
     public bool Execute(Game game)
@@ -236,7 +236,7 @@ public class HiltForgeSwordRule : IUseRule
 public class SwordAltarRule : IUseRule
 {
     public bool Applies(Game game) =>
-        game.getPlayer().getCurrentRoom().getID() == 8;
+        game.getPlayer().getCurrentRoom().GetId() == 8;
 
     public bool Execute(Game game)
     {

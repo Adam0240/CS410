@@ -39,7 +39,7 @@ public partial class Game
 
     // givenItems holds items that are "spawned" or "given" by puzzle logic (ore, sword, etc.)
     // This is used by UseRules (example: hammer spawning ore, hilt forging sword).
-    private List<Item> givenItems;
+    private List<Item?> givenItems;
 
     // ---------------------------
     // Command dispatch
@@ -58,7 +58,7 @@ public partial class Game
 
     // Exposed internally for unit testing (because of InternalsVisibleTo).
     internal List<Room> allRooms;
-    internal List<Item> allItems;
+    internal List<Item?> allItems;
 
     /*
      * Create the game and initialise its internal map.
@@ -70,7 +70,7 @@ public partial class Game
     public Game(bool isTestInstance)
     {
         // Stores "spawnable" items used by puzzle logic (ore, sword).
-        givenItems = new List<Item>();
+        givenItems = new List<Item?>();
 
         // REFACTOR: deterministic randomness for repeatable unit tests.
         random = isTestInstance ? new Random(0) : new Random();
@@ -90,7 +90,7 @@ public partial class Game
         if (isTestInstance)
         {
             allRooms = new List<Room>();
-            allItems = new List<Item>();
+            allItems = new List<Item?>();
         }
 
         createRooms();
@@ -103,7 +103,12 @@ public partial class Game
     internal void createRooms()
     {
         Room hub, swamp, battleGr, rocky, lava, graves, castleGate, castleTown, altarGrove;
-        Item axe, ring, hammer, ore, hilt, sword;
+        Item? axe;
+        Item? ring;
+        Item? hammer;
+        Item? ore;
+        Item? hilt;
+        Item? sword;
 
         // Create the rooms (instances).
         hub = new Room("This campsite, used by travelers passing through, right now houses only you. \nA fitting place to rest when the job is done.", 0);
@@ -287,7 +292,7 @@ public partial class Game
         }
 
         string itemName = command.GetSecondWord();
-        Item tempItem = player.getCurrentRoom().getItemByName(itemName);
+        Item? tempItem = player.getCurrentRoom().getItemByName(itemName);
 
         if (tempItem != null)
         {
@@ -298,7 +303,7 @@ public partial class Game
                 Console.WriteLine("Picked up the " + tempItem.getName() + "!");
 
                 // Legacy puzzle flag behavior kept as-is (forge tool set completeness).
-                if (tempItem.getName() == "hammer" && player.getCurrentRoom().getID() == 4)
+                if (tempItem.getName() == "hammer" && player.getCurrentRoom().GetId() == 4)
                 {
                     Room.setClearCon(1, false);
                     Console.WriteLine("The forge's tool set is once again incomplete.");
@@ -324,7 +329,7 @@ public partial class Game
         }
 
         string itemName = command.GetSecondWord();
-        Item tempItem = player.getItemByName(itemName);
+        Item? tempItem = player.getItemByName(itemName);
 
         if (tempItem != null)
         {
@@ -457,7 +462,7 @@ public partial class Game
     {
         bool quitSleep = false;
 
-        if (player.getCurrentRoom().getID() == 0)
+        if (player.getCurrentRoom().GetId() == 0)
         {
             if (Room.getClearCons()[4] && Room.getClearCons()[5])
             {
@@ -496,5 +501,5 @@ public partial class Game
     internal Protagonist getProtag() { return protag; }
 
     // Exposes the spawnable items list to UseRules (ore/sword).
-    internal List<Item> GetGivenItems() { return givenItems; }
+    internal List<Item?> GetGivenItems() { return givenItems; }
 }
