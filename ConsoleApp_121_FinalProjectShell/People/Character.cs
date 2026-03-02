@@ -12,12 +12,13 @@ public abstract class Character
 {
     //Basic location-storing parameters, necessary for every character
     //Gives them the ability to move around
-    private Room _currentRoom;
-    private Stack<Room> _lastRooms;
+    private Room? _currentRoom;
+    private readonly Stack<Room> _lastRooms;
 
     //Basic constructor.
     protected Character()
     {
+        _currentRoom = null;
         _lastRooms = new Stack<Room>();
     }
     //Overloaded constructor to allow for providing an initial location.
@@ -28,7 +29,7 @@ public abstract class Character
     }
 
     //Accessors and mutators
-    public Room getCurrentRoom() { return _currentRoom; }
+    public Room? getCurrentRoom() { return _currentRoom; }
     
     public void setCurrentRoom(Room room) { _currentRoom = room; }
     
@@ -49,7 +50,7 @@ public abstract class Character
 
         string direction = command.GetSecondWord();
 
-        if (!_currentRoom.getExits().TryGetValue(direction, out Room nextRoom) || nextRoom == null)
+        if (!_currentRoom!.getExits().TryGetValue(direction, out Room? nextRoom) || nextRoom == null)
             return -1;
 
         _lastRooms.Push(_currentRoom);

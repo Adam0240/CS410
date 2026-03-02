@@ -17,7 +17,7 @@ public class Player : Character
 {
     //inventory-based parameters
     //may be tied into an interface in the future
-    private ArrayList _inventory;
+    private readonly ArrayList _inventory;
     private int _carryWeight;
     private int _currentWeight;
 
@@ -26,7 +26,7 @@ public class Player : Character
     /// Creates a new instance of Player and initializes default values.
     /// Barring testing there should only be one of these in a given game.
     /// </summary>
-    public Player() : base()
+    public Player()
     {
         _inventory = new ArrayList();
         _carryWeight = 100;
@@ -78,7 +78,7 @@ public class Player : Character
 
         if (_inventory.Count > 0)
         {
-            iText.Append(":");
+            iText.Append(':');
             foreach (Item item in _inventory)
                 iText.Append("  " + item.GetName());
             iText.AppendLine();
@@ -98,9 +98,9 @@ public class Player : Character
     /// </summary>
     /// <param name="name">The name of the item to find.</param>
     /// <returns>The instance of Item with a matching name, or null if there is none.</returns>
-    private Item findItem(string name)
+    private Item? findItem(string name)
     {
-        foreach (Item item in _inventory)
+        foreach (Item? item in _inventory)
         {
             if (item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
                 return item;
@@ -124,7 +124,7 @@ public class Player : Character
     /// </summary>
     /// <param name="name">The name of the item to retrieve.</param>
     /// <returns>The object instance of the item needed, or null if it doesn't exist.</returns>
-    public Item getItemByName(string name)
+    public Item? getItemByName(string name)
     {
         return findItem(name);
     }
@@ -136,7 +136,7 @@ public class Player : Character
     /// <param name="name">The name of the item to remove.</param>
     public void removeItemByName(string name)
     {
-        Item item = findItem(name);
+        Item? item = findItem(name);
         if (item != null)
         {
             _inventory.Remove(item);
@@ -149,7 +149,7 @@ public class Player : Character
     /// potentially be bypassed for some reason)>
     /// </summary>
     /// <param name="item">The Item to add to the player's inventory.</param>
-    public void addItem(Item item)
+    public void addItem(Item? item)
     {
         _inventory.Add(item);
         updateCarryWeight();

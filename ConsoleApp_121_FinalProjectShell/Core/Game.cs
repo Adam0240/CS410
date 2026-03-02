@@ -59,7 +59,7 @@ public partial class Game
 
     // Exposed internally for unit testing (because of InternalsVisibleTo).
     internal List<Room> allRooms;
-    internal List<Item> allItems;
+    internal List<Item?> allItems;
 
     /*
      * Create the game and initialise its internal map.
@@ -102,7 +102,12 @@ public partial class Game
     internal void CreateRooms()
     {
         Room hub, swamp, battleGr, rocky, lava, graves, castleGate, castleTown, altarGrove;
-        Item axe, ring, hammer, ore, hilt, sword;
+        Item? axe;
+        Item? ring;
+        Item? hammer;
+        Item? ore;
+        Item? hilt;
+        Item? sword;
 
         // Create the rooms (instances).
         hub = new Room("This campsite, used by travelers passing through, right now houses only you. \nA fitting place to rest when the job is done.", 0);
@@ -323,7 +328,7 @@ public partial class Game
         }
 
         string itemName = command.GetSecondWord();
-        Item tempItem = player.getItemByName(itemName);
+        Item? tempItem = player.getItemByName(itemName);
 
         if (tempItem != null)
         {
@@ -456,7 +461,7 @@ public partial class Game
     {
         bool quitSleep = false;
 
-        if (player.getCurrentRoom().getID() == 0)
+        if (player.getCurrentRoom().GetId() == 0)
         {
             if (Room.getClearCons()[4] && Room.getClearCons()[5])
             {
@@ -495,5 +500,5 @@ public partial class Game
     internal Protagonist GetProtag() { return protag; }
 
     // Exposes the spawnable items list to UseRules (ore/sword).
-    internal List<Item> GetGivenItems() { return givenItems; }
+    internal List<Item?> GetGivenItems() { return givenItems; }
 }
