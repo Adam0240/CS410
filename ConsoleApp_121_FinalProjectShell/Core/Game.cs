@@ -295,7 +295,7 @@ public partial class Game
 
         if (tempItem != null)
         {
-            if (player.isValidItem(tempItem.GetWeight()))
+            if (player.isValidItem(tempItem))
             {
                 player.addItem(tempItem);
                 player.getCurrentRoom().removeItemByName(itemName);
