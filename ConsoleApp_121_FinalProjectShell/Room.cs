@@ -104,7 +104,7 @@ public class Room(string description, int roomId)
 
     public Item? getItemByName(string name)
     {
-        return roomItems.FirstOrDefault(item =>
+        return _roomItems.FirstOrDefault(item =>
             item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
@@ -119,7 +119,7 @@ public class Room(string description, int roomId)
 
     public bool hasItemByName(string name)
     {
-        return roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
+        return _roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
 
@@ -189,7 +189,7 @@ public class Room(string description, int roomId)
                     itemText.Append("and ");
                 }
             }
-            itemText.Append(roomItems[i].GetDesc());
+            itemText.Append(_roomItems[i].GetDesc());
         }
         return itemText.ToString();
     }

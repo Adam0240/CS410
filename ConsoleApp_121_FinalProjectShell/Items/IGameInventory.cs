@@ -1,9 +1,18 @@
 namespace ConsoleApp_121_FinalProjectShell.Items;
 
 /**
- * Placeholder file to be used to implement item inventories as an interface 
+ * 
  */
 public interface IGameInventory
 {
+    String itemsText();
+    bool hasItemByName(string name);
     
+    Item getItemByName(string name);
+    
+    void removeItemByName(string name);
+    
+    void addItem(Item item);
+    
+    bool isValidItem(Item item);
 }

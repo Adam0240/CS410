@@ -105,7 +105,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class AxeSwampLogRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().getID() == 1 &&
+            game.GetPlayer().getCurrentRoom().GetId() == 1 &&
             !Room.getClearCons()[0];
 
         public bool Execute(Game game)
@@ -120,7 +120,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class AxeCastleGateRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().getID() == 6 &&
+            game.GetPlayer().getCurrentRoom().GetId() == 6 &&
             !Room.getClearCons()[3];
 
         public bool Execute(Game game)
@@ -138,7 +138,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class HammerQuarrySpawnOreRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().getID() == 3;
+            game.GetPlayer().getCurrentRoom().GetId() == 3;
 
         public bool Execute(Game game)
         {
@@ -160,7 +160,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class HammerForgePrepareRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().getID() == 4;
+            game.GetPlayer().getCurrentRoom().GetId() == 4;
 
         public bool Execute(Game game)
         {
@@ -216,7 +216,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
         public bool Applies(Game game) =>
             game.GetPlayer().hasItemByName("ore") &&
             game.GetPlayer().hasItemByName("hilt") &&
-            game.GetPlayer().getCurrentRoom().getID() == 4 &&
+            game.GetPlayer().getCurrentRoom().GetId() == 4 &&
             Room.getClearCons()[1];
 
         public bool Execute(Game game)
@@ -237,7 +237,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class SwordAltarRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().getID() == 8;
+            game.GetPlayer().getCurrentRoom().GetId() == 8;
 
         public bool Execute(Game game)
         {

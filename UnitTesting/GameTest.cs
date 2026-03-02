@@ -52,8 +52,8 @@ public class GameTest
         List<Item?> items = _testGame.allItems;
 
         //ensure the player and protagonist were placed in the correct rooms
-        Assert.True(_testGame.GetPlayer().getCurrentRoom().getID() == 0);
-        Assert.True(_testGame.GetProtag().getCurrentRoom().getID() == 5);
+        Assert.True(_testGame.GetPlayer().getCurrentRoom().GetId() == 0);
+        Assert.True(_testGame.GetProtag().getCurrentRoom().GetId() == 5);
 
         foreach (Room room in _testGame.allRooms)
         {
