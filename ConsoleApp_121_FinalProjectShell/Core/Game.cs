@@ -295,14 +295,14 @@ public partial class Game
 
         if (tempItem != null)
         {
-            if (player.weightCheck(tempItem.GetWeight()))
+            if (player.isValidItem(tempItem.GetWeight()))
             {
                 player.addItem(tempItem);
                 player.getCurrentRoom().removeItemByName(itemName);
                 Console.WriteLine("Picked up the " + tempItem.GetName() + "!");
 
                 // Legacy puzzle flag behavior kept as-is (forge tool set completeness).
-                if (tempItem.GetName() == "hammer" && player.getCurrentRoom().getID() == 4)
+                if (tempItem.GetName() == "hammer" && player.getCurrentRoom().GetId() == 4)
                 {
                     Room.setClearCon(1, false);
                     Console.WriteLine("The forge's tool set is once again incomplete.");

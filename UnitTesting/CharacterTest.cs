@@ -96,7 +96,7 @@ public class CharacterTests
         player.setCarryWeight(5);
 
         // Act
-        bool canCarry = player.weightCheck(10);
+        bool canCarry = player.isValidItem(10);
 
         // Assert
         Assert.False(canCarry);

@@ -13,7 +13,7 @@ namespace ConsoleApp_121_FinalProjectShell.People;
 /// Holds items in an arraylist and manages it using a weight limit.
 /// Would have much more functionality in an actually complex game. 
 ///</summary>
-public class Player : Character
+public class Player : Character, IGameInventory
 {
     //inventory-based parameters
     //may be tied into an interface in the future
@@ -64,6 +64,21 @@ public class Player : Character
         
         _currentWeight = tempweight;
     }
+    
+    /// <summary>
+    /// Helper method that keeps inventory searching contained to a single method to prevent duplication.
+    /// </summary>
+    /// <param name="name">The name of the item to find.</param>
+    /// <returns>The instance of Item with a matching name, or null if there is none.</returns>
+    private Item? findItem(string name)
+    {
+        foreach (Item? item in _inventory)
+        {
+            if (item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
+                return item;
+        }
+        return null;
+    }
 
     //returns description of items held. called by ITEMS command
     /// <summary>
@@ -91,21 +106,6 @@ public class Player : Character
 
         iText.Append("Current weight: " + _currentWeight);
         return iText.ToString();
-    }
-
-    /// <summary>
-    /// Helper method that keeps inventory searching contained to a single method to prevent duplication.
-    /// </summary>
-    /// <param name="name">The name of the item to find.</param>
-    /// <returns>The instance of Item with a matching name, or null if there is none.</returns>
-    private Item? findItem(string name)
-    {
-        foreach (Item? item in _inventory)
-        {
-            if (item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
-                return item;
-        }
-        return null;
     }
 
     /// <summary>
@@ -156,9 +156,9 @@ public class Player : Character
     }
     
     //Helper method that tells whether something can be added to the inventory without overcapping the weight limit.
-    public bool weightCheck(int itemWeight)
+    public bool isValidItem(Item item)
     {
-        return getCarryWeight() >= getCurrentWeight() + itemWeight;
+        return getCarryWeight() >= getCurrentWeight();
     }
     
 }
