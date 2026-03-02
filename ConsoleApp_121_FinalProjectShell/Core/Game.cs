@@ -5,6 +5,7 @@ using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.Items;
 using ConsoleApp_121_FinalProjectShell.People;
 
+
 // ADDED FOR TESTING:
 // This exposes internal members to the UnitTesting project so we can unit test without making everything public.
 [assembly: InternalsVisibleTo("UnitTesting")]
@@ -26,12 +27,12 @@ namespace ConsoleApp_121_FinalProjectShell.Core;
 public partial class Game
 {
     // Core game dependencies (instances created in the constructor)
-    private Parser parser;
-    private Player player;
-    private Protagonist protag;
+    private readonly Parser parser;
+    private readonly Player player;
+    private readonly  Protagonist protag;
 
     // Shared RNG. This is seeded deterministically during tests for predictable behavior.
-    public static Random random = new Random();
+    public static Random random = new();
 
     // Centralized default action used by multiple "use" behaviors.
     // This reduces repeated lambda allocations and keeps the message consistent.
@@ -39,7 +40,7 @@ public partial class Game
 
     // givenItems holds items that are "spawned" or "given" by puzzle logic (ore, sword, etc.)
     // This is used by UseRules (example: hammer spawning ore, hilt forging sword).
-    private List<Item?> givenItems;
+    private readonly List<Item> givenItems;
 
     // ---------------------------
     // Command dispatch
@@ -54,7 +55,7 @@ public partial class Game
     // ---------------------------
 
     // Flag used to enable additional state tracking during tests (room/item lists, deterministic random, etc.)
-    private bool isTestInstance;
+    private readonly bool isTestInstance;
 
     // Exposed internally for unit testing (because of InternalsVisibleTo).
     internal List<Room> allRooms;
@@ -67,10 +68,10 @@ public partial class Game
      * Now takes a boolean determining whether to perform extra functions
      * to enable easier testing
      */
-    public Game(bool isTestInstance)
+    public Game (bool isTestInstance)
     {
         // Stores "spawnable" items used by puzzle logic (ore, sword).
-        givenItems = new List<Item?>();
+        givenItems = [];
 
         // REFACTOR: deterministic randomness for repeatable unit tests.
         random = isTestInstance ? new Random(0) : new Random();
@@ -87,20 +88,18 @@ public partial class Game
         commandActions = CommandActionRegistry.CreateDefault();
 
         // Test-only collections so unit tests can verify room/item creation and placement.
-        if (isTestInstance)
-        {
-            allRooms = new List<Room>();
-            allItems = new List<Item?>();
-        }
 
-        createRooms();
+        allRooms = [];
+        allItems = [];
+
+        CreateRooms();
     }
 
     /**
      * Create all the rooms and link their exits together.
      * In addition, creates and places all items in their respective places.
      */
-    internal void createRooms()
+    internal void CreateRooms()
     {
         Room hub, swamp, battleGr, rocky, lava, graves, castleGate, castleTown, altarGrove;
         Item? axe;
@@ -185,15 +184,15 @@ public partial class Game
     /**
      *  Main play routine. Loops until end of play.
      */
-    public void play()
+    public void Play()
     {
-        printWelcome();
+        PrintWelcome();
 
         bool finished = false;
         while (!finished)
         {
             Command command = parser.getCommand();
-            finished = processCommand(command);
+            finished = ProcessCommand(command);
         }
 
         Console.WriteLine("Play again, if you'd like.");
@@ -202,28 +201,28 @@ public partial class Game
     /**
      * Print out the opening message for the player.
      */
-    private void printWelcome()
+    private void PrintWelcome()
     {
         Console.WriteLine();
         Console.WriteLine("Welcome to Messed Up NPC with a Creepy Laugh!");
         Console.WriteLine("Help the dumb protagonist have the slimmest chance to survive.");
         Console.WriteLine("Type 'help' if you need help.");
         Console.WriteLine();
-        printLocationInfo(player.getCurrentRoom());
+        PrintLocationInfo(player.getCurrentRoom());
     }
 
     /**
      * Given a command, process (that is: execute) the command.
      * @return true If the command ends the game, false otherwise.
      */
-    internal bool processCommand(Command command)
+    internal bool ProcessCommand(Command command)
     {
         // Extract the enum that represents the parsed command word.
         CommandWord commandWord = command.GetCommandWord();
 
         // REFACTOR: command dispatch through a registry (Command Pattern).
         // If no handler is found, fallback to the Unknown handler.
-        if (!commandActions.TryGetValue(commandWord, out ICommandAction action) || action == null)
+        if (!commandActions.TryGetValue(commandWord, out ICommandAction? action) || action is null)
         {
             // This assumes UnknownCommandAction exists in the Commands layer (not nested in Game anymore).
             action = new UnknownCommandAction();
@@ -236,7 +235,7 @@ public partial class Game
         // Sprint 4 fix: Protagonist should not move on UNKNOWN commands.
         if (commandWord != CommandWord.UNKNOWN)
         {
-            protagMove();
+            ProtagMove();
         }
 
         return wantToQuit;
@@ -248,7 +247,7 @@ public partial class Game
     // REFACTOR: These are internal so the command handlers in the Commands folder can call them
     // without making them public API.
 
-    internal void printHelp()
+    internal void PrintHelp()
     {
         Console.WriteLine("Assist the protagonist in progressing through the beginning areas. \nThey will need to be able to obtain a weapon and have a way into the castle.");
         Console.WriteLine();
@@ -256,7 +255,7 @@ public partial class Game
         parser.showCommands();
     }
 
-    internal void printLocationInfo(Room currentRoom)
+    internal void PrintLocationInfo(Room currentRoom)
     {
         if (protag.getCurrentRoom() == currentRoom)
         {
@@ -268,7 +267,7 @@ public partial class Game
         }
     }
 
-    internal bool quit(Command command)
+    internal bool Quit(Command command)
     {
         if (command.HasSecondWord())
         {
@@ -283,7 +282,7 @@ public partial class Game
     // Inventory methods
     // ---------------------------
 
-    internal void take(Command command)
+    internal void Take(Command command)
     {
         if (!command.HasSecondWord())
         {
@@ -296,14 +295,14 @@ public partial class Game
 
         if (tempItem != null)
         {
-            if (player.weightCheck(tempItem.getWeight()))
+            if (player.weightCheck(tempItem.GetWeight()))
             {
                 player.addItem(tempItem);
                 player.getCurrentRoom().removeItemByName(itemName);
-                Console.WriteLine("Picked up the " + tempItem.getName() + "!");
+                Console.WriteLine("Picked up the " + tempItem.GetName() + "!");
 
                 // Legacy puzzle flag behavior kept as-is (forge tool set completeness).
-                if (tempItem.getName() == "hammer" && player.getCurrentRoom().GetId() == 4)
+                if (tempItem.GetName() == "hammer" && player.getCurrentRoom().getID() == 4)
                 {
                     Room.setClearCon(1, false);
                     Console.WriteLine("The forge's tool set is once again incomplete.");
@@ -320,7 +319,7 @@ public partial class Game
         }
     }
 
-    internal void drop(Command command)
+    internal void Drop(Command command)
     {
         if (!command.HasSecondWord())
         {
@@ -335,7 +334,7 @@ public partial class Game
         {
             player.getCurrentRoom().addItem(tempItem);
             player.removeItemByName(itemName);
-            Console.WriteLine("Dropped the " + tempItem.getName() + "!");
+            Console.WriteLine("Dropped the " + tempItem.GetName() + "!");
         }
         else
         {
@@ -343,7 +342,7 @@ public partial class Game
         }
     }
 
-    internal void itemsPrint()
+    internal void ItemsPrint()
     {
         Console.WriteLine(player.itemsText());
     }
@@ -352,7 +351,7 @@ public partial class Game
     // Movement methods
     // ---------------------------
 
-    internal void goTo(Command command)
+    internal void GoTo(Command command)
     {
         switch (player.goRoom(command))
         {
@@ -373,7 +372,7 @@ public partial class Game
         }
     }
 
-    internal void backTo()
+    internal void BackTo()
     {
         if (player.back() == 0)
         {
@@ -385,7 +384,7 @@ public partial class Game
     // Item behavior entry point
     // ---------------------------
 
-    internal bool use(Command command)
+    internal bool Use(Command command)
     {
         if (!command.HasSecondWord())
         {
@@ -411,16 +410,16 @@ public partial class Game
     // REFACTOR (abstraction + rule pattern):
     // Item-specific logic is now expressed as lists of IUseRule and executed by UseRuleExecutor.
 
-    internal bool axeUse() =>
+    internal bool AxeUse() =>
         UseRuleExecutor.ExecuteFirstRuleOrDefault(this, UseRuleSets.AxeRules(), DefaultNothing);
 
-    internal void ringUse() =>
+    internal void RingUse() =>
         UseRuleExecutor.ExecuteFirstRuleOrDefault(this, UseRuleSets.RingRules(), DefaultNothing);
 
-    internal void hammerUse() =>
+    internal void HammerUse() =>
         UseRuleExecutor.ExecuteFirstRuleOrDefault(this, UseRuleSets.HammerRules(), DefaultNothing);
 
-    internal void hiltUse()
+    internal void HiltUse()
     {
         // Hilt is still void, but its behavior is now driven by the HiltRules set (HiltForgeSwordRule).
         UseRuleExecutor.ExecuteFirstRuleOrDefault(
@@ -430,10 +429,10 @@ public partial class Game
         );
     }
 
-    internal bool swordUse() =>
+    internal bool SwordUse() =>
         UseRuleExecutor.ExecuteFirstRuleOrDefault(this, UseRuleSets.SwordRules(), DefaultNothing);
 
-    internal void talk()
+    internal void Talk()
     {
         if (player.getCurrentRoom() == protag.getCurrentRoom())
         {
@@ -458,7 +457,7 @@ public partial class Game
         }
     }
 
-    internal bool sleep()
+    internal bool Sleep()
     {
         bool quitSleep = false;
 
@@ -482,23 +481,23 @@ public partial class Game
         return quitSleep;
     }
 
-    internal bool protagKill()
+    internal bool ProtagKill()
     {
         Console.WriteLine("In a single mighty blow, you strike down the oblivious protagonist.");
         Console.WriteLine("With this character's death the thread of prophecy... et cetera.");
         return true;
     }
 
-    private void protagMove()
+    private void ProtagMove()
     {
         // Protagonist movement is automated by generating a "GO" command with a random exit.
-        Command command = new Command(CommandWord.GO, protag.getCurrentRoom().getRandomExit());
+        Command command = new(CommandWord.GO, protag.getCurrentRoom().getRandomExit());
         protag.protagSteps(command);
     }
 
     // Internal getters used by rules and item behaviors (kept internal for tests + cross-namespace access).
-    internal Player getPlayer() { return player; }
-    internal Protagonist getProtag() { return protag; }
+    internal Player GetPlayer() { return player; }
+    internal Protagonist GetProtag() { return protag; }
 
     // Exposes the spawnable items list to UseRules (ore/sword).
     internal List<Item?> GetGivenItems() { return givenItems; }

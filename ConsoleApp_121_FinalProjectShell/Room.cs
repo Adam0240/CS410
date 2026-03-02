@@ -1,8 +1,10 @@
 ﻿//Transcribed Rooms.java.java file - Dan Tager
 
 using ConsoleApp_121_FinalProjectShell.Core;
-
-namespace ConsoleApp_121_FinalProjectShell;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ConsoleApp_121_FinalProjectShell.Items;
 
 /**
 * This class is part of the "FUGwACL Adventure" application.
@@ -102,7 +104,8 @@ public class Room(string description, int roomId)
 
     public Item? getItemByName(string name)
     {
-        return _roomItems.FirstOrDefault(item => item!.getName().Equals(name, StringComparison.OrdinalIgnoreCase), null);
+        return roomItems.FirstOrDefault(item =>
+            item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
     public void removeItemByName(string name)
@@ -116,7 +119,7 @@ public class Room(string description, int roomId)
 
     public bool hasItemByName(string name)
     {
-        return _roomItems.Any(item => item!.getName().Equals(name, StringComparison.OrdinalIgnoreCase));
+        return roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
 
@@ -186,7 +189,7 @@ public class Room(string description, int roomId)
                     itemText.Append("and ");
                 }
             }
-            itemText.Append(_roomItems[i]!.getDesc());
+            itemText.Append(roomItems[i].GetDesc());
         }
         return itemText.ToString();
     }

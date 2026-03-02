@@ -1,6 +1,7 @@
 ﻿using ConsoleApp_121_FinalProjectShell;
 using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.People;
+using ConsoleApp_121_FinalProjectShell.Items;
 using Xunit;
 
 

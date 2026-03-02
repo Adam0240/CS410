@@ -7,6 +7,8 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using ConsoleApp_121_FinalProjectShell.People;
+using ConsoleApp_121_FinalProjectShell.Items;
+
 using Xunit;
 
 namespace ConsoleApp_121_FinalProjectShell.Tests;
@@ -41,17 +43,17 @@ public class GameTest
         Assert.True(_testGame.allItems.Count == 6);
 
         //ensure the player and protagonist were created
-        Assert.NotNull(_testGame.getPlayer());
-        Assert.NotNull(_testGame.getProtag());
+        Assert.NotNull(_testGame.GetPlayer());
+        Assert.NotNull(_testGame.GetProtag());
 
-        Player player = _testGame.getPlayer();
-        Protagonist protag = _testGame.getProtag();
+        Player player = _testGame.GetPlayer();
+        Protagonist protag = _testGame.GetProtag();
         List<Room> rooms = _testGame.allRooms;
         List<Item?> items = _testGame.allItems;
 
         //ensure the player and protagonist were placed in the correct rooms
-        Assert.True(_testGame.getPlayer().getCurrentRoom().GetId() == 0);
-        Assert.True(_testGame.getProtag().getCurrentRoom().GetId() == 5);
+        Assert.True(_testGame.GetPlayer().getCurrentRoom().getID() == 0);
+        Assert.True(_testGame.GetProtag().getCurrentRoom().getID() == 5);
 
         foreach (Room room in _testGame.allRooms)
         {
@@ -87,8 +89,8 @@ public class GameTest
         Console.SetOut(stringWriter);
 
         //ACT
-        _testGame.printLocationInfo(room1);
-        _testGame.printLocationInfo(room2);
+        _testGame.PrintLocationInfo(room1);
+        _testGame.PrintLocationInfo(room2);
 
         //ASSERT
         var output = stringWriter.ToString().Replace("\r\n", "\n");
@@ -103,8 +105,8 @@ public class GameTest
         Command commandtrue = new Command(CommandWord.QUIT, null);
 
         //ACT
-        bool commandfalseResult = _testGame.quit(commandfalse);
-        bool commandtrueResult = _testGame.quit(commandtrue);
+        bool commandfalseResult = _testGame.Quit(commandfalse);
+        bool commandtrueResult = _testGame.Quit(commandtrue);
 
         //ASSERT
         Assert.False(commandfalseResult);
@@ -120,7 +122,7 @@ public class GameTest
         StringWriter stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
 
-        Protagonist protag = _testGame.getProtag();
+        Protagonist protag = _testGame.GetProtag();
 
         // Grab known rooms from the test instance (IDs from Game.createRooms)
         Room hub = _testGame.allRooms.Single(r => r.GetId() == 0);
@@ -146,7 +148,7 @@ public class GameTest
 
             // ACT
             string? secondWord = (commandWord == CommandWord.QUIT) ? null : "foobar";
-            _testGame.processCommand(new Command(commandWord, secondWord));
+            _testGame.ProcessCommand(new Command(commandWord, secondWord));
 
             int afterSteps = protag.getProtagStepsCount();
             Room afterRoom = protag.getCurrentRoom();
@@ -179,7 +181,7 @@ public class GameTest
     public void takeTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
+        Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
         StringWriter stringWriter = new StringWriter();
         int weight1;
@@ -189,25 +191,25 @@ public class GameTest
         //ACT
 
         player.setCurrentRoom(rooms[8]);
-        _testGame.take(new Command(CommandWord.TAKE, "hilt"));
+        _testGame.Take(new Command(CommandWord.TAKE, "hilt"));
         weight1 = player.getCurrentWeight();
 
         player.setCurrentRoom(rooms[6]);
-        _testGame.take(new Command(CommandWord.TAKE, "ring"));
+        _testGame.Take(new Command(CommandWord.TAKE, "ring"));
         weight2 = player.getCurrentWeight();
 
         player.setCurrentRoom(rooms[5]);
-        _testGame.take(new Command(CommandWord.TAKE, "hammer"));
+        _testGame.Take(new Command(CommandWord.TAKE, "hammer"));
         weight3 = player.getCurrentWeight();
 
         player.setCurrentRoom(rooms[2]);
-        _testGame.take(new Command(CommandWord.TAKE, "axe"));
+        _testGame.Take(new Command(CommandWord.TAKE, "axe"));
 
         //We have to set this here to ensure we're not capturing output from the other actions, which
         //can be tested in other ways.
         Console.SetOut(stringWriter);
-        _testGame.take(new Command(CommandWord.TAKE, "foobar"));
-        _testGame.take(new Command(CommandWord.TAKE, null));
+        _testGame.Take(new Command(CommandWord.TAKE, "foobar"));
+        _testGame.Take(new Command(CommandWord.TAKE, null));
 
         //
         //ASSERT
@@ -230,7 +232,7 @@ public class GameTest
     public void dropTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
+        Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
         int weight1;
         int roomInvCount;
@@ -238,14 +240,14 @@ public class GameTest
 
         //ACT
         player.setCurrentRoom(rooms[2]);
-        _testGame.take(new Command(CommandWord.TAKE, "axe"));
+        _testGame.Take(new Command(CommandWord.TAKE, "axe"));
         weight1 = player.getCurrentWeight();
         roomInvCount = rooms[2].getItemsCount();
-        _testGame.drop(new Command(CommandWord.DROP, "axe"));
+        _testGame.Drop(new Command(CommandWord.DROP, "axe"));
 
         Console.SetOut(stringWriter);
-        _testGame.drop(new Command(CommandWord.DROP, null));
-        _testGame.drop(new Command(CommandWord.DROP, "somethang"));
+        _testGame.Drop(new Command(CommandWord.DROP, null));
+        _testGame.Drop(new Command(CommandWord.DROP, "somethang"));
 
         //ASSERT
         var output = stringWriter.ToString().Replace("\r\n", "\n");
@@ -265,26 +267,26 @@ public class GameTest
     private void useTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
+        Player player = _testGame.GetPlayer();
         player.addItem(_testGame.allItems[0]);
         player.setCurrentRoom(_testGame.allRooms[6]);
         StringWriter stringWriter = new StringWriter();
 
         //ACT
-        _testGame.use(new Command(CommandWord.USE, "axe"));
+        _testGame.Use(new Command(CommandWord.USE, "axe"));
         Console.SetOut(stringWriter);
-        _testGame.use(new Command(CommandWord.USE, null));
-        _testGame.use(new Command(CommandWord.USE, "nothingburger"));
+        _testGame.Use(new Command(CommandWord.USE, null));
+        _testGame.Use(new Command(CommandWord.USE, "nothingburger"));
         player.setCurrentRoom(_testGame.allRooms[4]);
-        _testGame.use(new Command(CommandWord.USE, "axe"));
+        _testGame.Use(new Command(CommandWord.USE, "axe"));
 
         //ASSERT
         Assert.True(Room.getClearCons()[3]);
         var output = stringWriter.ToString().Replace("\r\n", "\n");
         Assert.Equal("Use what?\nYou don't have an item like that.\nNothing to do with that here.\n", output);
 
-        player.setCurrentRoom(_testGame.getProtag().getCurrentRoom());
-        Assert.True(_testGame.use(new Command(CommandWord.USE, "axe")));
+        player.setCurrentRoom(_testGame.GetProtag().getCurrentRoom());
+        Assert.True(_testGame.Use(new Command(CommandWord.USE, "axe")));
     }
 
     //test replaced with 
@@ -314,7 +316,7 @@ public class GameTest
         // Create references to the test game instance and its player.
         // _testGame was constructed with Game(true) so randomness is deterministic.
         Game game = _testGame;
-        Player player = game.getPlayer();
+        Player player = game.GetPlayer();
 
         // Add a ring item directly to the player's inventory.
         // This ensures the "use ring" command is valid and will trigger the ring's Use() override.
@@ -333,7 +335,7 @@ public class GameTest
         // This verifies that Game.processCommand routes correctly to use(),
         // and that polymorphism dispatches to the RingItem's overridden Use() method.
         Command cmd = new Command(CommandWord.USE, "ring");
-        game.processCommand(cmd);
+        game.ProcessCommand(cmd);
 
         // Normalize newlines for consistent cross-platform comparison.
         var output = stringWriter.ToString().Replace("\r\n", "\n");
@@ -362,7 +364,7 @@ public class GameTest
         // Simulate attempting to use an item that the player does not have.
         // This verifies Game.use() correctly validates inventory before calling Item.Use().
         Command cmd = new Command(CommandWord.USE, "notARealItem");
-        game.processCommand(cmd);
+        game.ProcessCommand(cmd);
 
         var output = stringWriter.ToString().Replace("\r\n", "\n");
 
@@ -375,7 +377,7 @@ public class GameTest
     private void hammerUseTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
+        Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
         StringWriter stringWriter = new StringWriter();
         int roomItems1;
@@ -383,18 +385,18 @@ public class GameTest
         player.setCurrentRoom(rooms[3]);
 
         //ACT
-        _testGame.hammerUse();
+        _testGame.HammerUse();
         roomItems1 = player.getCurrentRoom().getItemsCount();
-        _testGame.take(new Command(CommandWord.TAKE, "ore"));
-        _testGame.hammerUse();
+        _testGame.Take(new Command(CommandWord.TAKE, "ore"));
+        _testGame.HammerUse();
         roomItems2 = player.getCurrentRoom().getItemsCount();
 
         player.setCurrentRoom(rooms[4]);
-        _testGame.hammerUse();
+        _testGame.HammerUse();
 
         player.setCurrentRoom(rooms[0]);
         Console.SetOut(stringWriter);
-        _testGame.hammerUse();
+        _testGame.HammerUse();
 
         //ASSERT
         //make sure error dialogue is displayed when there's nothing to do
@@ -415,7 +417,7 @@ public class GameTest
     private void hiltUseTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
+        Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
         List<Item?> items = _testGame.allItems;
         player.setCurrentRoom(rooms[0]);
@@ -426,12 +428,12 @@ public class GameTest
         Console.SetOut(stringWriter);
 
         //ACT
-        _testGame.hiltUse();
+        _testGame.HiltUse();
         var output = stringWriter.ToString().Replace("\r\n", "\n");
 
         player.setCurrentRoom(rooms[4]);
-        _testGame.hammerUse();
-        _testGame.hiltUse();
+        _testGame.HammerUse();
+        _testGame.HiltUse();
 
         //ASSERT
         Assert.Equal("Can't do anything with that right now.\n", output);
@@ -446,8 +448,8 @@ public class GameTest
     private void swordUseTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
-        Protagonist protag = _testGame.getProtag();
+        Player player = _testGame.GetPlayer();
+        Protagonist protag = _testGame.GetProtag();
         List<Room> rooms = _testGame.allRooms;
         List<Item?> items = _testGame.allItems;
         player.setCurrentRoom(rooms[0]);
@@ -457,14 +459,14 @@ public class GameTest
 
         //ACT
         Console.SetOut(stringWriter);
-        _testGame.swordUse();
+        _testGame.SwordUse();
         var output = stringWriter.ToString().Replace("\r\n", "\n");
 
         player.setCurrentRoom(protag.getCurrentRoom());
-        protagdead = _testGame.swordUse();
+        protagdead = _testGame.SwordUse();
 
         player.setCurrentRoom(rooms[8]);
-        _testGame.swordUse();
+        _testGame.SwordUse();
 
         //ASSERT
         Assert.True(protagdead);
@@ -478,8 +480,8 @@ public class GameTest
     public void talkTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
-        Protagonist protag = _testGame.getProtag();
+        Player player = _testGame.GetPlayer();
+        Protagonist protag = _testGame.GetProtag();
         List<Room> rooms = _testGame.allRooms;
 
         //Reset progression flags in case other tests ran first
@@ -495,21 +497,21 @@ public class GameTest
         //ACT
         //1) Not in same room as protag
         player.setCurrentRoom(rooms[0]);
-        _testGame.processCommand(new Command(CommandWord.TALK, null));
+        _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
 
         //2) Same room, weapon-location dialogue (clearCon[2] -> clearCon[5])
         player.setCurrentRoom(protag.getCurrentRoom());
         Room.setClearCon(2, true);
         Room.setClearCon(5, false);
-        _testGame.processCommand(new Command(CommandWord.TALK, null));
+        _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
 
         //3) Same room, way-forward dialogue (clearCon[3] -> clearCon[4])
         Room.setClearCon(3, true);
         Room.setClearCon(4, false);
-        _testGame.processCommand(new Command(CommandWord.TALK, null));
+        _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
 
         //4) Same room, nothing left to say
-        _testGame.processCommand(new Command(CommandWord.TALK, null));
+        _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
 
         //ASSERT
         var output = stringWriter.ToString().Replace("\r\n", "\n");
@@ -536,7 +538,7 @@ public class GameTest
     public void sleepTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
+        Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
 
         //Reset progression flags in case other tests ran first
@@ -552,16 +554,16 @@ public class GameTest
         //ACT
         //1) Sleeping outside the start room should fail
         player.setCurrentRoom(rooms[2]);
-        bool badRoomResult = _testGame.processCommand(new Command(CommandWord.SLEEP, null));
+        bool badRoomResult = _testGame.ProcessCommand(new Command(CommandWord.SLEEP, null));
 
         //2) Sleeping in the start room without progression flags should fail
         player.setCurrentRoom(rooms[0]);
-        bool notDoneResult = _testGame.processCommand(new Command(CommandWord.SLEEP, null));
+        bool notDoneResult = _testGame.ProcessCommand(new Command(CommandWord.SLEEP, null));
 
         //3) Sleeping in the start room with progression flags should end the game
         Room.setClearCon(4, true);
         Room.setClearCon(5, true);
-        bool doneResult = _testGame.processCommand(new Command(CommandWord.SLEEP, null));
+        bool doneResult = _testGame.ProcessCommand(new Command(CommandWord.SLEEP, null));
 
         //ASSERT
         Assert.False(badRoomResult);
@@ -580,14 +582,14 @@ public class GameTest
     public void protagKillTest()
     {
         //ARRANGE
-        Player player = _testGame.getPlayer();
-        Protagonist protag = _testGame.getProtag();
+        Player player = _testGame.GetPlayer();
+        Protagonist protag = _testGame.GetProtag();
         StringWriter stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
 
         //ACT
         player.setCurrentRoom(protag.getCurrentRoom());
-        bool result = _testGame.swordUse(); //calls protagKill() when in the same room
+        bool result = _testGame.SwordUse(); //calls protagKill() when in the same room
 
         //ASSERT
         Assert.True(result);
