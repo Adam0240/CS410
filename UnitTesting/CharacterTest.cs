@@ -93,10 +93,11 @@ public class CharacterTests
     {
         // Arrange
         var player = CreatePlayer();
+        var item = CreateItem("Key", 10);
         player.setCarryWeight(5);
 
         // Act
-        bool canCarry = player.isValidItem(10);
+        bool canCarry = player.isValidItem(item);
 
         // Assert
         Assert.False(canCarry);

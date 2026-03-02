@@ -44,12 +44,10 @@ public class Player : Character, IGameInventory
         _currentWeight = 0;
     }
 
-    //Accessors and Mutators 
-    public int getCurrentWeight() { return _currentWeight; }
-    
-    public int getCarryWeight() { return _carryWeight; }
-    
-    public void setCarryWeight(int number) { _carryWeight = number; }
+    //weight manipulation methods for ease of use and readability
+    internal int getCurrentWeight() { return _currentWeight; }
+    internal int getCarryWeight() { return _carryWeight; }
+    internal void setCarryWeight(int number) { _carryWeight = number; }
 
     /// <summary>
     /// Called when adding or removing items from the inventory, recalculates current total inventory weight
@@ -80,12 +78,7 @@ public class Player : Character, IGameInventory
         return null;
     }
 
-    //returns description of items held. called by ITEMS command
-    /// <summary>
-    /// Returns the list of descriptions of every item held in the inventory, exclusively called when using the ITEMS
-    /// command in-game.
-    /// </summary>
-    /// <returns>A string description of the Player object's inventory.</returns>
+    
     public string itemsText()
     {
         var iText = new System.Text.StringBuilder();
@@ -108,32 +101,17 @@ public class Player : Character, IGameInventory
         return iText.ToString();
     }
 
-    /// <summary>
-    /// Uses findItem() to check if an Item is in the player's inventory. 
-    /// </summary>
-    /// <param name="name">The name of the item to look for.</param>
-    /// <returns>True if the named item is in the inventory, false otherwise. </returns>
+    
     public bool hasItemByName(string name)
     {
         return findItem(name) != null;
     }
-
-    /// <summary>
-    /// Uses findItem() to fetch a named Item from the player's inventory. Note that this does not  remove the Item
-    /// from the inventory.
-    /// </summary>
-    /// <param name="name">The name of the item to retrieve.</param>
-    /// <returns>The object instance of the item needed, or null if it doesn't exist.</returns>
+    
     public Item? getItemByName(string name)
     {
         return findItem(name);
     }
-
-    /// <summary>
-    /// Uses findItem() to identify a named Item in the player's inventory and removes it.
-    /// Does not return the removed item.
-    /// </summary>
-    /// <param name="name">The name of the item to remove.</param>
+    
     public void removeItemByName(string name)
     {
         Item? item = findItem(name);
@@ -143,22 +121,17 @@ public class Player : Character, IGameInventory
             updateCarryWeight();
         }
     }
-
-    /// <summary>
-    /// Takes in an Item and adds it to the player's inventory. Weight checking is done externally (to allow for it to
-    /// potentially be bypassed for some reason)>
-    /// </summary>
-    /// <param name="item">The Item to add to the player's inventory.</param>
+    
     public void addItem(Item? item)
     {
         _inventory.Add(item);
         updateCarryWeight();
     }
     
-    //Helper method that tells whether something can be added to the inventory without overcapping the weight limit.
+    
     public bool isValidItem(Item item)
     {
-        return getCarryWeight() >= getCurrentWeight();
+        return getCarryWeight() >= getCurrentWeight() + item.GetWeight();
     }
     
 }
