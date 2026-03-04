@@ -1,0 +1,195 @@
+﻿// Follower.cs
+// Companion character that can follow/stay and maintain its own inventory.
+// Designed to match Player + Character coding style in this project.
+
+using System.Collections;
+using ConsoleApp_121_FinalProjectShell.Items;
+
+namespace ConsoleApp_121_FinalProjectShell.People;
+
+/// <summary>
+/// A companion NPC that can follow the player or stay in a room.
+/// The follower has its own inventory and can trade items with the player.
+/// </summary>
+public class Follower : Character, IGameInventory
+{
+    // Inventory and weight tracking (mirrors Player pattern).
+    private readonly ArrayList _inventory;
+    private int _carryWeight;
+    private int _currentWeight;
+
+    // Follow-state control.
+    // true  = follower auto-moves with player
+    // false = follower waits in place
+    private bool _isFollowing;
+
+    // Optional flavor/name for dialogue/output.
+    private readonly string _name;
+
+    // Default constructor.
+    // Starts with no room, in following mode, and a modest carry limit.
+    public Follower(string name = "companion", int carryWeight = 80)
+    {
+        _inventory = new ArrayList();
+        _carryWeight = carryWeight;
+        _currentWeight = 0;
+        _isFollowing = true;
+        _name = name;
+    }
+
+    // Overloaded constructor with a starting room.
+    public Follower(Room startRoom, string name = "companion", int carryWeight = 80) : base(startRoom)
+    {
+        _inventory = new ArrayList();
+        _carryWeight = carryWeight;
+        _currentWeight = 0;
+        _isFollowing = true;
+        _name = name;
+    }
+
+    // ---------------------------
+    // Follow / stay behavior
+    // ---------------------------
+
+    public bool isFollowing() { return _isFollowing; }
+
+    public void follow()
+    {
+        _isFollowing = true;
+    }
+
+    public void stay()
+    {
+        _isFollowing = false;
+    }
+
+    public string getName() { return _name; }
+
+    // ---------------------------
+    // Inventory helpers
+    // ---------------------------
+
+    internal int getCurrentWeight() { return _currentWeight; }
+    internal int getCarryWeight() { return _carryWeight; }
+    internal void setCarryWeight(int number) { _carryWeight = number; }
+
+    private void updateCarryWeight()
+    {
+        int tempWeight = 0;
+        foreach (Item item in _inventory)
+        {
+            tempWeight += item.GetWeight();
+        }
+        _currentWeight = tempWeight;
+    }
+
+    private Item? findItem(string name)
+    {
+        foreach (Item? item in _inventory)
+        {
+            if (item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
+                return item;
+        }
+        return null;
+    }
+
+    // ---------------------------
+    // IGameInventory implementation
+    // ---------------------------
+
+    public string itemsText()
+    {
+        var iText = new System.Text.StringBuilder();
+        iText.Append($"{_name} is holding");
+
+        if (_inventory.Count > 0)
+        {
+            iText.Append(':');
+            foreach (Item item in _inventory)
+                iText.Append("  " + item.GetName());
+            iText.AppendLine();
+        }
+        else
+        {
+            iText.AppendLine(" nothing.");
+        }
+
+        iText.Append("Current weight: " + _currentWeight);
+        return iText.ToString();
+    }
+
+    public bool hasItemByName(string name)
+    {
+        return findItem(name) != null;
+    }
+
+    public Item? getItemByName(string name)
+    {
+        return findItem(name);
+    }
+
+    public void removeItemByName(string name)
+    {
+        Item? item = findItem(name);
+        if (item != null)
+        {
+            _inventory.Remove(item);
+            updateCarryWeight();
+        }
+    }
+
+    public void addItem(Item? item)
+    {
+        _inventory.Add(item);
+        updateCarryWeight();
+    }
+
+    public bool isValidItem(Item? item)
+    {
+        if (item == null) return false;
+        return getCarryWeight() >= getCurrentWeight() + item.GetWeight();
+    }
+
+    // ---------------------------
+    // Trading helpers
+    // ---------------------------
+
+    // Moves an item from the player inventory to follower inventory.
+    // Caller (Game) should check that both are in the same room first.
+    // Returns true on success.
+    public bool receiveFromPlayer(Player player, string itemName)
+    {
+        Item? item = player.getItemByName(itemName);
+        if (item == null) return false;
+        if (!isValidItem(item)) return false;
+
+        player.removeItemByName(itemName);
+        addItem(item);
+        return true;
+    }
+
+    // Moves an item from follower inventory to player inventory.
+    // Caller (Game) should check room proximity first.
+    // Returns true on success.
+    public bool giveToPlayer(Player player, string itemName)
+    {
+        Item? item = getItemByName(itemName);
+        if (item == null) return false;
+        if (!player.isValidItem(item)) return false;
+
+        removeItemByName(itemName);
+        player.addItem(item);
+        return true;
+    }
+}
+
+// TODO NEXT STEPS (integration work outside this file):
+// 1) Add new command words in Commands/CommandWord.cs (FOLLOW, STAY, TRADE, and a follower-inventory command token).
+// 2) Map command strings in Commands/CommandWords.cs ("follow", "stay", "trade", and e.g. "finv" or "followerinventory").
+// 3) Create command actions in Commands/CommandActions.cs for follow/stay/trade/follower-inventory.
+// 4) Register those actions in Commands/CommandActionRegistry.cs.
+// 5) Add a Follower field to Core/Game.cs, initialize it in CreateRooms, and expose an internal getter for tests.
+// 6) Implement Game methods for follow/stay/trade/follower inventory output + same-room validation.
+// 7) Update Game movement flow so follower moves with player only while in follow mode.
+// 8) Extend Talk() with follower intro/recruit dialogue and normal companion responses.
+// 9) Add unit tests for recruitment, follow/stay behavior, item trading in both directions, and follower inventory output.
