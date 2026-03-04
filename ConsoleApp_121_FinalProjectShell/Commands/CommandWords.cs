@@ -27,7 +27,10 @@ public class CommandWords
             { "items", CommandWord.ITEMS },
             { "use", CommandWord.USE },
             { "talk", CommandWord.TALK },
-            { "sleep", CommandWord.SLEEP }
+            { "sleep", CommandWord.SLEEP },
+            { "follow", CommandWord.FOLLOW },
+            { "stay", CommandWord.STAY},
+            { "trade", CommandWord.TRADE}, 
         };
     }
 

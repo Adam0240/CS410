@@ -20,7 +20,11 @@ public static class CommandActionRegistry
             { CommandWord.USE, new UseCommandAction() },
             { CommandWord.TALK, new TalkCommandAction() },
             { CommandWord.SLEEP, new SleepCommandAction() },
-            { CommandWord.UNKNOWN, new UnknownCommandAction() }
+            { CommandWord.UNKNOWN, new UnknownCommandAction() },
+            { CommandWord.FOLLOW, new FollowCommandAction() },
+            { CommandWord.STAY, new StayCommandAction() },
+            { CommandWord.TRADE, new TradeCommandAction() },
+            
         };
     }
 }

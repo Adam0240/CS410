@@ -16,7 +16,6 @@ namespace ConsoleApp_121_FinalProjectShell.People;
 public class Player : Character, IGameInventory
 {
     //inventory-based parameters
-    //may be tied into an interface in the future
     private readonly ArrayList _inventory;
     private int _carryWeight;
     private int _currentWeight;

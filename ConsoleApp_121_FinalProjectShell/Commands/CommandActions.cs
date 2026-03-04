@@ -105,3 +105,30 @@ public sealed class UnknownCommandAction : CommandActionBase
         return false;
     }
 }
+
+public sealed class FollowCommandAction : CommandActionBase
+{
+    public override bool Execute(Game game, Command command)
+    {
+        
+        return false;
+    }
+}
+
+public sealed class StayCommandAction : CommandActionBase
+{
+    public override bool Execute(Game game, Command command)
+    {
+        
+        return false;
+    }
+}
+
+public sealed class TradeCommandAction : CommandActionBase
+{
+    public override bool Execute(Game game, Command command)
+    {
+        
+        return false;
+    }
+}
