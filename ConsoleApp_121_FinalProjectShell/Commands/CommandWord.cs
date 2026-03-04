@@ -17,5 +17,8 @@ public enum CommandWord
     ITEMS,
     USE,
     TALK,
-    SLEEP
+    SLEEP,
+    FOLLOW,
+    STAY,
+    TRADE,
 }
