@@ -30,6 +30,7 @@ public partial class Game
     private readonly Parser parser;
     private readonly Player player;
     private readonly  Protagonist protag;
+    private readonly Follower oldHorseFollower;
 
     // Shared RNG. This is seeded deterministically during tests for predictable behavior.
     public static Random random = new();
@@ -179,6 +180,7 @@ public partial class Game
         // Start locations.
         player.setCurrentRoom(hub);
         protag.setCurrentRoom(graves);
+        oldHorseFollower.setCurrentRoom(castleGate);
     }
 
     /**
@@ -498,6 +500,7 @@ public partial class Game
     // Internal getters used by rules and item behaviors (kept internal for tests + cross-namespace access).
     internal Player GetPlayer() { return player; }
     internal Protagonist GetProtag() { return protag; }
+    internal Follower GetFollower() { return oldHorseFollower; }
 
     // Exposes the spawnable items list to UseRules (ore/sword).
     internal List<Item?> GetGivenItems() { return givenItems; }

@@ -187,8 +187,8 @@ public class Follower : Character, IGameInventory
 // 1) Add new command words in Commands/CommandWord.cs (FOLLOW, STAY, TRADE, and a follower-inventory command token). Done (follower inventory viewable with command "items follower")
 // 2) Map command strings in Commands/CommandWords.cs ("follow", "stay", "trade", and e.g. "finv" or "followerinventory"). Done
 // 3) Create command actions in Commands/CommandActions.cs for follow/stay/trade/follower-inventory. Done
-// 4) Register those actions in Commands/CommandActionRegistry.cs.
-// 5) Add a Follower field to Core/Game.cs, initialize it in CreateRooms, and expose an internal getter for tests.
+// 4) Register those actions in Commands/CommandActionRegistry.cs. Done 
+// 5) Add a Follower field to Core/Game.cs, initialize it in CreateRooms, and expose an internal getter for tests. Done
 // 6) Implement Game methods for follow/stay/trade/follower inventory output + same-room validation.
 // 7) Update Game movement flow so follower moves with player only while in follow mode.
 // 8) Extend Talk() with follower intro/recruit dialogue and normal companion responses.
