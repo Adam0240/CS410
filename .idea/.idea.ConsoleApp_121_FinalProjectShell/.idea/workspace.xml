@@ -8,8 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="238f02c3-c02e-46fa-9d12-9c8efe80e1f5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Follower.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Follower.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Player.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +27,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Player.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d42e0f8caefc46588c255e232c1414bbc29200/02/40cc0b83/EventHandler`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3ad82f9910d5c82d76b445db10584a60305639dcad2533e08e6c47f85e3b6d83/MethodBaseInvoker.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3b92f859131bde25d0f7a63de08963e995d1e1426e584dfd4b8e833d2d3dba/ExecutionTimer.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5e14a4e27990972fa4ae94975603bd298aaf328ee083c03b10569ee4724d57/TestInvoker.cs" root0="FORCE_HIGHLIGHTING" />
@@ -48,12 +52,13 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    ".NET Project.ConsoleApp_121_FinalProjectShell.executor": "Run",
     "4b375b65-c593-424f-885f-41f9bf147764.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "d7ba7add-3481-401f-b2b5-dd04b472b86c.executor": "Debug",
     "ebfabe5d-7938-4e76-bbcb-a30855117461.executor": "Debug",
-    "git-widget-placeholder": "follower-integration-foundation",
+    "git-widget-placeholder": "Follower-Trading-and-Follow-Logic",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -116,7 +121,10 @@
       <workItem from="1772460412600" duration="4079000" />
       <workItem from="1772547332745" duration="2333000" />
       <workItem from="1772635646078" duration="1263000" />
-      <workItem from="1772719420682" duration="536000" />
+      <workItem from="1773062479184" duration="8000" />
+      <workItem from="1773062499806" duration="1864000" />
+      <workItem from="1773150508426" duration="13980000" />
+      <workItem from="1773234687725" duration="4883000" />
     </task>
     <servers />
   </component>
@@ -124,7 +132,26 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="Type#ConsoleApp_121_FinalProjectShell.Core.Game" memberName="_oldHorseFollower" />
+        <PinnedItemInfo parentTag="Type#ConsoleApp_121_FinalProjectShell.Core.Game" memberName="_player" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>

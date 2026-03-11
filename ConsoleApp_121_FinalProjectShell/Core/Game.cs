@@ -42,7 +42,7 @@ public partial class Game
 
     // givenItems holds items that are "spawned" or "given" by puzzle logic (ore, sword, etc.)
     // This is used by UseRules (example: hammer spawning ore, hilt forging sword).
-    private readonly List<Item> givenItems;
+    private readonly List<Item> _givenItems;
 
     // ---------------------------
     // Command dispatch
@@ -50,19 +50,21 @@ public partial class Game
 
     // REFACTOR: Command Pattern dispatch table.
     // Instead of Game owning many nested command classes, we now look up a handler by CommandWord.
-    private readonly Dictionary<CommandWord, ICommandAction> commandActions;
+    private readonly Dictionary<CommandWord, ICommandAction> _commandActions;
 
     // ---------------------------
     // Testing helpers
     // ---------------------------
 
     // Flag used to enable additional state tracking during tests (room/item lists, deterministic random, etc.)
-    private readonly bool isTestInstance;
+    private readonly bool _isTestInstance;
 
     // Exposed internally for unit testing (because of InternalsVisibleTo).
     internal List<Room> allRooms;
     internal List<Item?> allItems;
-
+    
+    //event handler for player movement
+    public event EventHandler<Command> PlayerMovement;
     /*
      * Create the game and initialise its internal map.
      *
@@ -73,7 +75,7 @@ public partial class Game
     public Game (bool isTestInstance)
     {
         // Stores "spawnable" items used by puzzle logic (ore, sword).
-        givenItems = [];
+        _givenItems = [];
 
         // REFACTOR: deterministic randomness for repeatable unit tests.
         random = isTestInstance ? new Random(0) : new Random();
@@ -82,6 +84,7 @@ public partial class Game
         parser = new Parser();
         player = new Player();
         protag = new Protagonist();
+        oldHorseFollower = new Follower(this);
         progress = new GameProgress();
 
         this.isTestInstance = isTestInstance;
@@ -176,13 +179,15 @@ public partial class Game
         altarGrove.addItem(hilt);
 
         // givenItems[0] must be ore, givenItems[1] must be sword (used by UseRules logic).
-        givenItems.Add(ore);
-        givenItems.Add(sword);
+        _givenItems.Add(ore);
+        _givenItems.Add(sword);
 
         // Start locations.
-        player.setCurrentRoom(hub);
-        protag.setCurrentRoom(graves);
-        oldHorseFollower.setCurrentRoom(castleGate);
+        _player.setCurrentRoom(hub);
+        _protag.setCurrentRoom(graves);
+        
+        _oldHorseFollower.setCurrentRoom(castleGate);
+        _oldHorseFollower.AddIdleText("Your mule brays softly.");
     }
 
     /**
@@ -195,7 +200,7 @@ public partial class Game
         bool finished = false;
         while (!finished)
         {
-            Command command = parser.getCommand();
+            Command command = _parser.getCommand();
             finished = ProcessCommand(command);
         }
 
@@ -212,7 +217,7 @@ public partial class Game
         Console.WriteLine("Help the dumb protagonist have the slimmest chance to survive.");
         Console.WriteLine("Type 'help' if you need help.");
         Console.WriteLine();
-        PrintLocationInfo(player.getCurrentRoom());
+        PrintLocationInfo(_player.getCurrentRoom());
     }
 
     /**
@@ -226,7 +231,7 @@ public partial class Game
 
         // REFACTOR: command dispatch through a registry (Command Pattern).
         // If no handler is found, fallback to the Unknown handler.
-        if (!commandActions.TryGetValue(commandWord, out ICommandAction? action) || action is null)
+        if (!_commandActions.TryGetValue(commandWord, out ICommandAction? action) || action is null)
         {
             // This assumes UnknownCommandAction exists in the Commands layer (not nested in Game anymore).
             action = new UnknownCommandAction();
@@ -256,21 +261,24 @@ public partial class Game
         Console.WriteLine("Assist the protagonist in progressing through the beginning areas. \nThey will need to be able to obtain a weapon and have a way into the castle.");
         Console.WriteLine();
         Console.WriteLine("Your command words are:");
-        parser.showCommands();
+        _parser.showCommands();
     }
 
     internal void PrintLocationInfo(Room currentRoom)
     {
         string roomText = RoomTextService.GetLongDescription(currentRoom, progress);
 
+        if (oldHorseFollower.getCurrentRoom() == currentRoom)
+        {
+            roomText += "\n" + oldHorseFollower.getRandomIdleText();
+        }
+
         if (protag.getCurrentRoom() == currentRoom)
         {
-            Console.WriteLine(roomText + "\nThe protagonist is here, bumbling about the area.");
+            roomText += "\nThe protagonist is here, bumbling about the area.";
         }
-        else
-        {
-            Console.WriteLine(roomText);
-        }
+
+        Console.WriteLine(roomText);
     }
 
     internal bool Quit(Command command)
@@ -297,18 +305,18 @@ public partial class Game
         }
 
         string itemName = command.GetSecondWord();
-        Item? tempItem = player.getCurrentRoom().getItemByName(itemName);
+        Item? tempItem = _player.getCurrentRoom().getItemByName(itemName);
 
         if (tempItem != null)
         {
-            if (player.isValidItem(tempItem))
+            if (_player.isValidItem(tempItem))
             {
-                player.addItem(tempItem);
-                player.getCurrentRoom().removeItemByName(itemName);
+                _player.addItem(tempItem);
+                _player.getCurrentRoom().removeItemByName(itemName);
                 Console.WriteLine("Picked up the " + tempItem.GetName() + "!");
 
                 // Legacy puzzle flag behavior kept as-is (forge tool set completeness).
-                if (tempItem.GetName() == "hammer" && player.getCurrentRoom().GetId() == 4)
+                if (tempItem.GetName() == "hammer" && _player.getCurrentRoom().GetId() == 4)
                 {
                     progress.ForgePrepared = false;
                     Console.WriteLine("The forge's tool set is once again incomplete.");
@@ -325,6 +333,11 @@ public partial class Game
         }
     }
 
+    private Boolean _isFollowerPresent()
+    {
+        return _oldHorseFollower.getCurrentRoom() == _player.getCurrentRoom();
+    }
+
     internal void Drop(Command command)
     {
         if (!command.HasSecondWord())
@@ -334,12 +347,12 @@ public partial class Game
         }
 
         string itemName = command.GetSecondWord();
-        Item? tempItem = player.getItemByName(itemName);
+        Item? tempItem = _player.getItemByName(itemName);
 
         if (tempItem != null)
         {
-            player.getCurrentRoom().addItem(tempItem);
-            player.removeItemByName(itemName);
+            _player.getCurrentRoom().addItem(tempItem);
+            _player.removeItemByName(itemName);
             Console.WriteLine("Dropped the " + tempItem.GetName() + "!");
         }
         else
@@ -348,9 +361,92 @@ public partial class Game
         }
     }
 
+    internal void Follow(Command command)
+    {
+        if (!_isFollowerPresent())
+        {
+            Console.WriteLine("Your trusty mule isn't around right now.");
+            return;
+        }
+
+        if (_oldHorseFollower.isFollowing())
+        {
+            Console.WriteLine("Your mule is already following you!");
+            return;
+        }
+        Console.WriteLine("You untether your mule.");
+        _oldHorseFollower.follow();
+    }
+    
+    internal void Stay(Command command)
+    {
+        if (!_isFollowerPresent())
+        {
+            Console.WriteLine("Your trusty mule isn't around right now.");
+            return;
+        }
+        if (!_oldHorseFollower.isFollowing())
+        {
+            Console.WriteLine("Your mule has already been tethered here!");
+            return;
+        }
+        Console.WriteLine("You tie your mule's reins to a nearby post or fixture.");
+        _oldHorseFollower.stay();
+    }
+
+    internal void Trade(Command command)
+    {
+        if (!_isFollowerPresent())
+        {
+            Console.WriteLine("Your trusty mule isn't around right now.");
+            return;
+        }
+        
+        Console.WriteLine("What do you want to trade?");
+        bool finished = false;
+        while (!finished)
+        {
+            DisplayTradeInfo();
+            String word = _parser.getSingleCommand();
+            finished = TryTrade(word);
+        }
+    }
+
+    private bool TryTrade(string word)
+    {
+        if (word.Equals("quit"))
+        {
+            Console.WriteLine("Stopping trading.");
+            return true;
+        }
+
+        if (_oldHorseFollower.receiveFromPlayer(_player, word))
+        {
+            Console.WriteLine("Gave the " + word + " to your mule.");
+            return false;
+        }
+        
+        if (_oldHorseFollower.giveToPlayer(_player, word))
+        {
+            Console.WriteLine("Took the " + word + " from your mule.");
+        }
+            
+        Console.WriteLine("Invalid trade!");
+        return false;
+    }
+
+    private void DisplayTradeInfo()
+    {
+        ItemsPrint();
+        Console.WriteLine("[Type QUIT to stop trading]");
+    }
+
+
     internal void ItemsPrint()
     {
-        Console.WriteLine(player.itemsText());
+        Console.WriteLine(_player.itemsText());
+        Console.WriteLine("-------------------------------------------------");
+        Console.WriteLine(_oldHorseFollower.itemsText());
     }
 
     // ---------------------------
@@ -359,7 +455,7 @@ public partial class Game
 
     internal void GoTo(Command command)
     {
-        switch (player.goRoom(command))
+        switch (_player.goRoom(command))
         {
             case 0:
                 Console.WriteLine("Go where?");
@@ -368,9 +464,11 @@ public partial class Game
                 Console.WriteLine("There is no path!");
                 break;
             case 1:
+                OnPlayerMove(this, command);
                 break;
             case 2:
                 Console.WriteLine("Woohoo!");
+                OnPlayerMove(this, command);
                 break;
             default:
                 Console.WriteLine("Something has gone terribly wrong.");
@@ -380,7 +478,7 @@ public partial class Game
 
     internal void BackTo()
     {
-        if (player.back() == 0)
+        if (_player.back() == 0)
         {
             Console.WriteLine("You haven't gone anywhere!");
         }
@@ -403,9 +501,9 @@ public partial class Game
         // REFACTOR (polymorphism):
         // Instead of Game checking item IDs and branching, the item decides its own behavior
         // via Item.Use(Game) implemented by each concrete subclass (AxeItem, RingItem, etc.).
-        if (player.hasItemByName(item))
+        if (_player.hasItemByName(item))
         {
-            return player.getItemByName(item).Use(this);
+            return _player.getItemByName(item).Use(this);
         }
 
         Console.WriteLine("You don't have an item like that.");
@@ -440,7 +538,7 @@ public partial class Game
 
     internal void Talk()
     {
-        if (player.getCurrentRoom() == protag.getCurrentRoom())
+        if (_player.getCurrentRoom() == _protag.getCurrentRoom())
         {
             if (progress.SwordPlaced && !progress.ToldProtagSword)
             {
@@ -467,7 +565,7 @@ public partial class Game
     {
         bool quitSleep = false;
 
-        if (player.getCurrentRoom().GetId() == 0)
+        if (_player.getCurrentRoom().GetId() == 0)
         {
             if (progress.ToldProtagGate && progress.ToldProtagSword)
             {
@@ -497,8 +595,13 @@ public partial class Game
     private void ProtagMove()
     {
         // Protagonist movement is automated by generating a "GO" command with a random exit.
-        Command command = new(CommandWord.GO, protag.getCurrentRoom().getRandomExit());
-        protag.protagSteps(command);
+        Command command = new(CommandWord.GO, _protag.getCurrentRoom().getRandomExit());
+        _protag.protagSteps(command);
+    }
+
+    protected virtual void OnPlayerMove(object sender, Command command)
+    {
+        PlayerMovement?.Invoke(sender, command);
     }
 
     // Internal getters used by rules and item behaviors (kept internal for tests + cross-namespace access).
@@ -509,4 +612,3 @@ public partial class Game
     // Exposes the spawnable items list to UseRules (ore/sword).
     internal List<Item?> GetGivenItems() { return givenItems; }
     internal GameProgress GetProgress() { return progress; }
-}

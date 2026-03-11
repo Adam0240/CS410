@@ -15,6 +15,7 @@ namespace ConsoleApp_121_FinalProjectShell.People;
 ///</summary>
 public class Player : Character, IGameInventory
 {
+    
     //inventory-based parameters
     private readonly ArrayList _inventory;
     private int _carryWeight;
@@ -96,7 +97,7 @@ public class Player : Character, IGameInventory
             
         }
 
-        iText.Append("Current weight: " + _currentWeight);
+        iText.Append("Current weight: " + _currentWeight + "/" + _carryWeight);
         return iText.ToString();
     }
 
