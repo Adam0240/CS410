@@ -11,7 +11,7 @@ public partial class Game
     // Test-only helper: keeps createRooms() readable by pushing tracking code out of Game.cs
     private void TrackTestArtifacts(IEnumerable<Room> rooms, IEnumerable<Item?> items)
     {
-        if (!_isTestInstance)
+        if (!isTestInstance)
             return;
 
         // Safety: in case someone changes constructor init later

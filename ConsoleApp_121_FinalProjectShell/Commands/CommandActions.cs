@@ -110,7 +110,7 @@ public sealed class FollowCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.Follow(command);
+        
         return false;
     }
 }
@@ -119,7 +119,7 @@ public sealed class StayCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.Stay(command);
+        
         return false;
     }
 }
@@ -128,7 +128,7 @@ public sealed class TradeCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.Trade(command);
+        
         return false;
     }
 }
