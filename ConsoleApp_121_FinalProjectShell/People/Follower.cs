@@ -3,8 +3,6 @@
 // Designed to match Player + Character coding style in this project.
 
 using System.Collections;
-using ConsoleApp_121_FinalProjectShell.Commands;
-using ConsoleApp_121_FinalProjectShell.Core;
 using ConsoleApp_121_FinalProjectShell.Items;
 
 namespace ConsoleApp_121_FinalProjectShell.People;
@@ -28,31 +26,25 @@ public class Follower : Character, IGameInventory
     // Optional flavor/name for dialogue/output.
     private readonly string _name;
 
-    //required for event listener implementation
-    private readonly EventHandler<Command> _playerMovement;
-    
     // Default constructor.
     // Starts with no room, in following mode, and a modest carry limit.
-    public Follower(EventHandler<Command> playerMovement = null, string name = "companion", int carryWeight = 80)
+    public Follower(string name = "companion", int carryWeight = 80)
     {
         _inventory = new ArrayList();
         _carryWeight = carryWeight;
         _currentWeight = 0;
         _isFollowing = true;
         _name = name;
-        _playerMovement = playerMovement;
     }
 
     // Overloaded constructor with a starting room.
-    public Follower(Room startRoom, EventHandler<Command> playerMovement = null, string name = "Old Mule", int carryWeight = 80) : base(startRoom)
+    public Follower(Room startRoom, string name = "companion", int carryWeight = 80) : base(startRoom)
     {
         _inventory = new ArrayList();
         _carryWeight = carryWeight;
         _currentWeight = 0;
         _isFollowing = true;
         _name = name;
-        _playerMovement = playerMovement;
-        _playerMovement += PlayerMovement_PlayerMoved;
     }
 
     // ---------------------------
@@ -72,15 +64,6 @@ public class Follower : Character, IGameInventory
     }
 
     public string getName() { return _name; }
-    
-    void PlayerMovement_PlayerMoved(object? sender, Command command)
-    {
-        if (_isFollowing && getCurrentRoom() == (sender as Game).GetPlayer().getCurrentRoom())
-        {
-            goRoom(command);
-        }
-    }
-
 
     // ---------------------------
     // Inventory helpers
@@ -206,7 +189,7 @@ public class Follower : Character, IGameInventory
 // 3) Create command actions in Commands/CommandActions.cs for follow/stay/trade/follower-inventory. Done
 // 4) Register those actions in Commands/CommandActionRegistry.cs. Done 
 // 5) Add a Follower field to Core/Game.cs, initialize it in CreateRooms, and expose an internal getter for tests. Done
-// 6) Implement Game methods for follow/stay/trade/follower inventory output + same-room validation. Done
-// 7) Update Game movement flow so follower moves with player only while in follow mode.  Done
-// 8) Extend Talk() with follower intro/recruit dialogue and normal companion responses. 
+// 6) Implement Game methods for follow/stay/trade/follower inventory output + same-room validation.
+// 7) Update Game movement flow so follower moves with player only while in follow mode.
+// 8) Extend Talk() with follower intro/recruit dialogue and normal companion responses.
 // 9) Add unit tests for recruitment, follow/stay behavior, item trading in both directions, and follower inventory output.

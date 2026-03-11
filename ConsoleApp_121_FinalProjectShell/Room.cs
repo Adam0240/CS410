@@ -98,9 +98,9 @@ public class Room(string description, int roomId) : IGameInventory
     //unique room descriptions for rooms with alternate descriptions are all stored here
     //rooms are dependent on an instance in a class, and adding more rooms with clear conditions
     //requires modifying this method
-    //potential solution: refactor Room to allow rooms to store their own flag for an alternative description.
-    //Factory pattern could also be implemented to add each room with a clear condition to a static list in Game
-    //to allow for easier checking of all clear conditions. 
+    //potential solution: refactor Room to allow rooms to store their own Clear Condition flag or
+    //alternative description. Factory pattern could also be implemented to add each room with a clear condition
+    //to a static list in Room to allow for easier checking of all clearcons. 
     /**
  * @return The description of the room.
  * returns unique descriptions depending on the room and what flags are true
