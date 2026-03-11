@@ -45,6 +45,29 @@ public class Parser
         //bug: may cause error if word1 is null
         return new Command(_commands.GetCommandWord(word1), word2);
     }
+    
+    /**
+     * Get a singular word as input from the player. Used for selections in submenus.
+     */
+    public String getSingleCommand() 
+    {
+        String word = null;
+
+        Console.Write("> ");
+
+        var inputLine = Console.ReadLine();
+
+        string[] tokenizer = inputLine.Split(' ');
+        if(tokenizer.Length > 0) {
+            word = tokenizer[0];
+        }
+
+        if (word == null)
+        {
+            return String.Empty;
+        }
+        return word.ToLower();
+    }
 
     /**
      * Print out a list of valid command words.
