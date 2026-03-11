@@ -97,7 +97,7 @@ public class Player : Character, IGameInventory
             
         }
 
-        iText.Append("Current weight: " + _currentWeight);
+        iText.Append("Current weight: " + _currentWeight + "/" + _carryWeight);
         return iText.ToString();
     }
 

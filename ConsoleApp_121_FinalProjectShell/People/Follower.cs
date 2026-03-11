@@ -20,6 +20,8 @@ public class Follower : Character, IGameInventory
     private int _carryWeight;
     private int _currentWeight;
 
+    private List<string> _idleText = new List<string>();
+
     // Follow-state control.
     // true  = follower auto-moves with player
     // false = follower waits in place
@@ -33,26 +35,25 @@ public class Follower : Character, IGameInventory
     
     // Default constructor.
     // Starts with no room, in following mode, and a modest carry limit.
-    public Follower(EventHandler<Command> playerMovement = null, string name = "companion", int carryWeight = 80)
+    public Follower(Game game = null, string name = "companion", int carryWeight = 80)
     {
         _inventory = new ArrayList();
         _carryWeight = carryWeight;
         _currentWeight = 0;
-        _isFollowing = true;
+        _isFollowing = false;
         _name = name;
-        _playerMovement = playerMovement;
+        game.PlayerMovement += PlayerMoved;
     }
 
     // Overloaded constructor with a starting room.
-    public Follower(Room startRoom, EventHandler<Command> playerMovement = null, string name = "Old Mule", int carryWeight = 80) : base(startRoom)
+    public Follower(Room startRoom, Game game = null, string name = "Old Mule", int carryWeight = 80) : base(startRoom)
     {
         _inventory = new ArrayList();
         _carryWeight = carryWeight;
         _currentWeight = 0;
-        _isFollowing = true;
+        _isFollowing = false;
         _name = name;
-        _playerMovement = playerMovement;
-        _playerMovement += PlayerMovement_PlayerMoved;
+        
     }
 
     // ---------------------------
@@ -73,9 +74,9 @@ public class Follower : Character, IGameInventory
 
     public string getName() { return _name; }
     
-    void PlayerMovement_PlayerMoved(object? sender, Command command)
+    void PlayerMoved(object? sender, Command command)
     {
-        if (_isFollowing && getCurrentRoom() == (sender as Game).GetPlayer().getCurrentRoom())
+        if (_isFollowing)
         {
             goRoom(command);
         }
@@ -131,7 +132,7 @@ public class Follower : Character, IGameInventory
             iText.AppendLine(" nothing.");
         }
 
-        iText.Append("Current weight: " + _currentWeight);
+        iText.Append("Current weight: " + _currentWeight + "/" + _carryWeight);
         return iText.ToString();
     }
 
@@ -198,7 +199,24 @@ public class Follower : Character, IGameInventory
         player.addItem(item);
         return true;
     }
+
+
+
+    public void AddIdleText(string text)
+    {
+        _idleText.Add(text);
+    }
+    public List<string> GetAllIdleText()
+    {
+        return _idleText;
+    }
+
+    public string getRandomIdleText()
+    {
+        return _idleText[Game.random.Next(_idleText.Count - 1)];
+    }
 }
+
 
 // TODO NEXT STEPS (integration work outside this file):
 // 1) Add new command words in Commands/CommandWord.cs (FOLLOW, STAY, TRADE, and a follower-inventory command token). Done (follower inventory viewable with command "items follower")

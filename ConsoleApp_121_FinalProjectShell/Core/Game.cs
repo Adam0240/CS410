@@ -64,7 +64,6 @@ public partial class Game
     
     //event handler for player movement
     public event EventHandler<Command> PlayerMovement;
-
     /*
      * Create the game and initialise its internal map.
      *
@@ -79,12 +78,12 @@ public partial class Game
 
         // REFACTOR: deterministic randomness for repeatable unit tests.
         random = isTestInstance ? new Random(0) : new Random();
-
+        
         // Instantiate core game objects.
         _parser = new Parser();
         _player = new Player();
         _protag = new Protagonist();
-        _oldHorseFollower = new Follower(PlayerMovement);
+        _oldHorseFollower = new Follower(this);
         
 
         this._isTestInstance = isTestInstance;
@@ -185,7 +184,9 @@ public partial class Game
         // Start locations.
         _player.setCurrentRoom(hub);
         _protag.setCurrentRoom(graves);
+        
         _oldHorseFollower.setCurrentRoom(castleGate);
+        _oldHorseFollower.AddIdleText("Your mule brays softly.");
     }
 
     /**
@@ -268,7 +269,7 @@ public partial class Game
         if (_oldHorseFollower.getCurrentRoom() == currentRoom)
         {
             //maybe add functionality to pick from a random set of 4 varying options?
-            longDescription += "\nYour mule brays softly.";
+            longDescription += "\n" + _oldHorseFollower.getRandomIdleText();
         }
         if (_protag.getCurrentRoom() == currentRoom)
         {
@@ -434,10 +435,7 @@ public partial class Game
 
     private void DisplayTradeInfo()
     {
-        Console.WriteLine("Mule Inventory: ");
-        Console.WriteLine("-------------------------------------------------");
-        Console.WriteLine("Player Inventory: ");
-        Console.WriteLine("Player Weight:" + _player.getCurrentWeight() + "/" + _player.getCurrentWeight());
+        ItemsPrint();
         Console.WriteLine("[Type QUIT to stop trading]");
     }
 
@@ -445,6 +443,8 @@ public partial class Game
     internal void ItemsPrint()
     {
         Console.WriteLine(_player.itemsText());
+        Console.WriteLine("-------------------------------------------------");
+        Console.WriteLine(_oldHorseFollower.itemsText());
     }
 
     // ---------------------------
@@ -462,11 +462,11 @@ public partial class Game
                 Console.WriteLine("There is no path!");
                 break;
             case 1:
-                PlayerMovement?.Invoke(this, command);
+                OnPlayerMove(this, command);
                 break;
             case 2:
                 Console.WriteLine("Woohoo!");
-                PlayerMovement?.Invoke(this, command);
+                OnPlayerMove(this, command);
                 break;
             default:
                 Console.WriteLine("Something has gone terribly wrong.");
@@ -595,6 +595,11 @@ public partial class Game
         // Protagonist movement is automated by generating a "GO" command with a random exit.
         Command command = new(CommandWord.GO, _protag.getCurrentRoom().getRandomExit());
         _protag.protagSteps(command);
+    }
+
+    protected virtual void OnPlayerMove(object sender, Command command)
+    {
+        PlayerMovement?.Invoke(sender, command);
     }
 
     // Internal getters used by rules and item behaviors (kept internal for tests + cross-namespace access).
