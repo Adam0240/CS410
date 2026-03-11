@@ -1,10 +1,11 @@
 ﻿//UseRules.cs
 //Summary: This file implements a Rule Pattern system that controls how items behave when used.
 
-using System;
-using System.Collections.Generic;
 using ConsoleApp_121_FinalProjectShell.Core;
 using ConsoleApp_121_FinalProjectShell.Items;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ConsoleApp_121_FinalProjectShell.Items
 {
@@ -106,11 +107,11 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     {
         public bool Applies(Game game) =>
             game.GetPlayer().getCurrentRoom().GetId() == 1 &&
-            !Room.getClearCons()[0];
+            !game.GetProgress().SwampCleared;
 
         public bool Execute(Game game)
         {
-            Room.setClearCon(0, true);
+            game.GetProgress().SwampCleared = true;
             Console.WriteLine("You chop the large log into several more easily navigable pieces.");
             Console.WriteLine("Beyond where it stood is revealed the entrance to a hidden grove.");
             return false;
@@ -121,11 +122,11 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     {
         public bool Applies(Game game) =>
             game.GetPlayer().getCurrentRoom().GetId() == 6 &&
-            !Room.getClearCons()[3];
+            !game.GetProgress().GateOpen;
 
         public bool Execute(Game game)
         {
-            Room.setClearCon(3, true);
+            game.GetProgress().GateOpen = true;
             Console.WriteLine("Utilizing the hefty weight of the axe, you smash a hole through the wooden gate.");
             return false;
         }
@@ -183,7 +184,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
                 );
             }
 
-            Room.setClearCon(1, true);
+            game.GetProgress().ForgePrepared = true;
             Console.WriteLine("You place the hammer with the set of forge tools, completing the set.");
             return false;
         }
@@ -217,7 +218,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
             game.GetPlayer().hasItemByName("ore") &&
             game.GetPlayer().hasItemByName("hilt") &&
             game.GetPlayer().getCurrentRoom().GetId() == 4 &&
-            Room.getClearCons()[1];
+            game.GetProgress().ForgePrepared;
 
         public bool Execute(Game game)
         {
@@ -242,7 +243,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
         public bool Execute(Game game)
         {
             game.GetPlayer().removeItemByName("sword");
-            Room.setClearCon(2, true);
+            game.GetProgress().SwordPlaced = true;
             Console.WriteLine("You place the sword within the altar, now only to be obtained by a true hero.");
             return false;
         }

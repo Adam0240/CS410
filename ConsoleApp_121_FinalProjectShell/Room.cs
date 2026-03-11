@@ -22,13 +22,7 @@ public class Room(string description, int roomId) : IGameInventory
     private readonly Dictionary<string, Room> _exits = new();
     private readonly List<Item?> _roomItems = [];
 
-    //fields used to track game progress
-    private static bool _swampCleared;
-    private static bool _forgePrepared;
-    private static bool _swordPlaced;
-    private static bool _gateOpen;
-    private static bool _toldProtagGate;
-    private static bool _toldProtagSword;
+
 
     //object constructor
 
@@ -47,46 +41,7 @@ public class Room(string description, int roomId) : IGameInventory
         return _exits;
     }
 
-    /**
- * mutator and accessor for the game's clear conditions.
- *
- * accessor returns as a boolean array to reduce number of methods
- * an integer value is used to refer to each flag to stay concise
- */
-    public static void setClearCon(int id, bool state)
-    {
-        switch (id)
-        {
-            case 0:
-                _swampCleared = state;
-                break;
-            case 1:
-                _forgePrepared = state;
-                break;
-            case 2:
-                _swordPlaced = state;
-                break;
-            case 3:
-                _gateOpen = state;
-                break;
-            case 4:
-                _toldProtagGate = state;
-                break;
-            case 5:
-                _toldProtagSword = state;
-                break;
-        }
-    }
-
-    public static bool[] getClearCons() =>
-    [
-        _swampCleared,
-        _forgePrepared,
-        _swordPlaced,
-        _gateOpen,
-        _toldProtagGate,
-        _toldProtagSword
-    ];
+ 
 
     //returns ID, used for several checks in Game
     public int GetId()
@@ -107,26 +62,6 @@ public class Room(string description, int roomId) : IGameInventory
  */
     public string getDescription()
     {
-        if (roomId == 4 && _forgePrepared)
-        {
-            return "Lava flows through the channels dug into the rock around a vacant smith's shop. \nThe forge and its tools stand complete.";
-        }
-
-        if (roomId == 6 && _gateOpen)
-        {
-            return "The castle gate stands tall and imposing as before. Now however, \na large hole has been hacked through to the other side.";
-        }
-
-        if (roomId == 1 && _swampCleared)
-        {
-            return "Your boots catch in the stiff and stinking muck of the swamp. \nThe large log lies in pieces now, revealing a hidden path.";
-        }
-
-        if (roomId == 8 && _swordPlaced)
-        {
-            return "Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center, now bearing a shining sword.";
-        }
-        
         return description;
     }
 
@@ -137,10 +72,7 @@ public class Room(string description, int roomId) : IGameInventory
         var exitString = new System.Text.StringBuilder("Exits:");
         foreach (string exit in _exits.Keys)
         {
-            if (exit != "grove" || _swampCleared)
-            {
-                exitString.Append(" ").Append(exit);
-            }
+            exitString.Append(" ").Append(exit);
         }
         return exitString.ToString();
     }

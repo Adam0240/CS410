@@ -31,6 +31,7 @@ public partial class Game
     private readonly Player player;
     private readonly  Protagonist protag;
     private readonly Follower oldHorseFollower;
+    private readonly GameProgress progress;
 
     // Shared RNG. This is seeded deterministically during tests for predictable behavior.
     public static Random random = new();
@@ -81,6 +82,7 @@ public partial class Game
         parser = new Parser();
         player = new Player();
         protag = new Protagonist();
+        progress = new GameProgress();
 
         this.isTestInstance = isTestInstance;
 
@@ -259,13 +261,15 @@ public partial class Game
 
     internal void PrintLocationInfo(Room currentRoom)
     {
+        string roomText = RoomTextService.GetLongDescription(currentRoom, progress);
+
         if (protag.getCurrentRoom() == currentRoom)
         {
-            Console.WriteLine(currentRoom.getLongDesc() + "\nThe protagonist is here, bumbling about the area.");
+            Console.WriteLine(roomText + "\nThe protagonist is here, bumbling about the area.");
         }
         else
         {
-            Console.WriteLine(currentRoom.getLongDesc());
+            Console.WriteLine(roomText);
         }
     }
 
@@ -306,7 +310,7 @@ public partial class Game
                 // Legacy puzzle flag behavior kept as-is (forge tool set completeness).
                 if (tempItem.GetName() == "hammer" && player.getCurrentRoom().GetId() == 4)
                 {
-                    Room.setClearCon(1, false);
+                    progress.ForgePrepared = false;
                     Console.WriteLine("The forge's tool set is once again incomplete.");
                 }
             }
@@ -438,14 +442,14 @@ public partial class Game
     {
         if (player.getCurrentRoom() == protag.getCurrentRoom())
         {
-            if (Room.getClearCons()[2] && !Room.getClearCons()[5])
+            if (progress.SwordPlaced && !progress.ToldProtagSword)
             {
-                Room.setClearCon(5, true);
+                progress.ToldProtagSword = true;
                 Console.WriteLine("You inform the protagonist of the location of a weapon.");
             }
-            else if (Room.getClearCons()[3] && !Room.getClearCons()[4])
+            else if (progress.GateOpen && !progress.ToldProtagGate)
             {
-                Room.setClearCon(4, true);
+                progress.ToldProtagGate = true;
                 Console.WriteLine("You inform the protagonist of a way forward.");
             }
             else
@@ -465,7 +469,7 @@ public partial class Game
 
         if (player.getCurrentRoom().GetId() == 0)
         {
-            if (Room.getClearCons()[4] && Room.getClearCons()[5])
+            if (progress.ToldProtagGate && progress.ToldProtagSword)
             {
                 Console.WriteLine("You lay your head down to sleep, your (likely fruitless) endeavors complete.");
                 quitSleep = true;
@@ -504,4 +508,5 @@ public partial class Game
 
     // Exposes the spawnable items list to UseRules (ore/sword).
     internal List<Item?> GetGivenItems() { return givenItems; }
+    internal GameProgress GetProgress() { return progress; }
 }

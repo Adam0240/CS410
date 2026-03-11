@@ -82,19 +82,20 @@ public class GameTest
     [Fact]
     public void printLocationInfoTest()
     {
-        //ARRANGE
         Room room1 = _testGame.allRooms[2];
         Room room2 = _testGame.allRooms[5];
         StringWriter stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
 
-        //ACT
         _testGame.PrintLocationInfo(room1);
         _testGame.PrintLocationInfo(room2);
 
-        //ASSERT
         var output = stringWriter.ToString().Replace("\r\n", "\n");
-        Assert.Equal($"{room1.getLongDesc()}\n{room2.getLongDesc()}\nThe protagonist is here, bumbling about the area.\n", output);
+
+        string expectedRoom1 = RoomTextService.GetLongDescription(room1, _testGame.GetProgress());
+        string expectedRoom2 = RoomTextService.GetLongDescription(room2, _testGame.GetProgress());
+
+        Assert.Equal($"{expectedRoom1}\n{expectedRoom2}\nThe protagonist is here, bumbling about the area.\n", output);
     }
 
     [Fact]
@@ -264,7 +265,7 @@ public class GameTest
     //in addition, this also tests axeUse() as we need to test the use case for a valid item, and it reduces
     //the number of tests we have to write
     [Fact]
-    private void useTest()
+    public void useTest()
     {
         //ARRANGE
         Player player = _testGame.GetPlayer();
@@ -281,7 +282,7 @@ public class GameTest
         _testGame.Use(new Command(CommandWord.USE, "axe"));
 
         //ASSERT
-        Assert.True(Room.getClearCons()[3]);
+        Assert.True(_testGame.GetProgress().GateOpen);
         var output = stringWriter.ToString().Replace("\r\n", "\n");
         Assert.Equal("Use what?\nYou don't have an item like that.\nNothing to do with that here.\n", output);
 
@@ -374,7 +375,7 @@ public class GameTest
     }
 
     [Fact]
-    private void hammerUseTest()
+    public void hammerUseTest()
     {
         //ARRANGE
         Player player = _testGame.GetPlayer();
@@ -404,7 +405,7 @@ public class GameTest
         Assert.Equal("Nothing to do with that here.\n", output);
 
         //ensure the forge is prepared when the hammer is used in the room
-        Assert.True(rooms[4].getItemsCount() == 1 && !player.hasItemByName("hammer") && Room.getClearCons()[1]);
+        Assert.True(rooms[4].getItemsCount() == 1 && !player.hasItemByName("hammer") && _testGame.GetProgress().ForgePrepared);
 
         //ensure that the ore can be obtained AND that it won't be re-placed on use again
         //(currently fails, change this comment once that bug is fixed)
@@ -414,7 +415,7 @@ public class GameTest
     }
 
     [Fact]
-    private void hiltUseTest()
+    public void hiltUseTest()
     {
         //ARRANGE
         Player player = _testGame.GetPlayer();
@@ -445,7 +446,7 @@ public class GameTest
     }
 
     [Fact]
-    private void swordUseTest()
+    public void swordUseTest()
     {
         //ARRANGE
         Player player = _testGame.GetPlayer();
@@ -470,7 +471,7 @@ public class GameTest
 
         //ASSERT
         Assert.True(protagdead);
-        Assert.True(Room.getClearCons()[2]);
+        Assert.True(_testGame.GetProgress().SwordPlaced);
 
     }
 
@@ -485,11 +486,12 @@ public class GameTest
         List<Room> rooms = _testGame.allRooms;
 
         //Reset progression flags in case other tests ran first
-        bool[] cons = Room.getClearCons();
-        for (int i = 0; i < cons.Length; i++)
-        {
-            Room.setClearCon(i, false);
-        }
+        _testGame.GetProgress().SwampCleared = false;
+        _testGame.GetProgress().ForgePrepared = false;
+        _testGame.GetProgress().SwordPlaced = false;
+        _testGame.GetProgress().GateOpen = false;
+        _testGame.GetProgress().ToldProtagGate = false;
+        _testGame.GetProgress().ToldProtagSword = false;
 
         StringWriter stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
@@ -501,13 +503,13 @@ public class GameTest
 
         //2) Same room, weapon-location dialogue (clearCon[2] -> clearCon[5])
         player.setCurrentRoom(protag.getCurrentRoom());
-        Room.setClearCon(2, true);
-        Room.setClearCon(5, false);
+        _testGame.GetProgress().SwordPlaced = true;
+        _testGame.GetProgress().ToldProtagSword = false;
         _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
 
         //3) Same room, way-forward dialogue (clearCon[3] -> clearCon[4])
-        Room.setClearCon(3, true);
-        Room.setClearCon(4, false);
+        _testGame.GetProgress().GateOpen = true;
+        _testGame.GetProgress().ToldProtagGate = false;
         _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
 
         //4) Same room, nothing left to say
@@ -530,8 +532,8 @@ public class GameTest
             "Nothing to say to the protagonist right now.\n",
             output);
 
-        Assert.True(Room.getClearCons()[4]);
-        Assert.True(Room.getClearCons()[5]);
+        Assert.True(_testGame.GetProgress().ToldProtagGate);
+        Assert.True(_testGame.GetProgress().ToldProtagSword);
     }
 
     [Fact]
@@ -542,11 +544,12 @@ public class GameTest
         List<Room> rooms = _testGame.allRooms;
 
         //Reset progression flags in case other tests ran first
-        bool[] cons = Room.getClearCons();
-        for (int i = 0; i < cons.Length; i++)
-        {
-            Room.setClearCon(i, false);
-        }
+        _testGame.GetProgress().SwampCleared = false;
+        _testGame.GetProgress().ForgePrepared = false;
+        _testGame.GetProgress().SwordPlaced = false;
+        _testGame.GetProgress().GateOpen = false;
+        _testGame.GetProgress().ToldProtagGate = false;
+        _testGame.GetProgress().ToldProtagSword = false;
 
         StringWriter stringWriter = new StringWriter();
         Console.SetOut(stringWriter);
@@ -561,8 +564,8 @@ public class GameTest
         bool notDoneResult = _testGame.ProcessCommand(new Command(CommandWord.SLEEP, null));
 
         //3) Sleeping in the start room with progression flags should end the game
-        Room.setClearCon(4, true);
-        Room.setClearCon(5, true);
+        _testGame.GetProgress().ToldProtagGate = true;
+        _testGame.GetProgress().ToldProtagSword = true;
         bool doneResult = _testGame.ProcessCommand(new Command(CommandWord.SLEEP, null));
 
         //ASSERT
