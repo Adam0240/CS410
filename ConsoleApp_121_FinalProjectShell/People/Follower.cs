@@ -233,8 +233,10 @@ public class Follower : Character, IGameInventory
     internal List<string> GetInventoryItemNames()
     {
         var names = new List<string>();
-        foreach (var item in _inventory)
+        foreach (Item item in _inventory)
+        {
             names.Add(item.GetName());
+        }
         return names;
     }
 
