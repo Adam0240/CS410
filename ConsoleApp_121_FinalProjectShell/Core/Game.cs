@@ -130,6 +130,9 @@ public partial class Game
         castleTown = new Room("Standing in the deserted square of the castle's town, \nyou think at one point it must have been bustling with activity.", 7);
         altarGrove = new Room("Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center.", 8);
 
+        allRooms = [hub, swamp, battleGr, rocky, lava, graves, castleGate, castleTown, altarGrove];
+
+
         // REFACTOR (abstraction + polymorphism):
         // Item is now abstract, so items are created via ItemFactory which returns concrete subclasses
         // (AxeItem, RingItem, etc.) that override Use(Game).
