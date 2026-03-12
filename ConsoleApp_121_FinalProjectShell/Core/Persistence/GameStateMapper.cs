@@ -3,6 +3,7 @@ using ConsoleApp_121_FinalProjectShell.Items;
 
 namespace ConsoleApp_121_FinalProjectShell.Core.Persistence;
 
+
 public static class GameStateMapper
 {
     public static GameSaveState Capture(Game game)
