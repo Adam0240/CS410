@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ConsoleApp_121_FinalProjectShell.Commands;
+using ConsoleApp_121_FinalProjectShell.Core.Persistence;
 using ConsoleApp_121_FinalProjectShell.Items;
 using ConsoleApp_121_FinalProjectShell.People;
 
@@ -32,6 +33,8 @@ public partial class Game
     private readonly Protagonist protag;
     private readonly Follower oldHorseFollower;
     private readonly GameProgress progress;
+    //Save State Edit 14
+    private readonly IGameSaveRepository? saveRepository;
 
     // Shared RNG. This is seeded deterministically during tests for predictable behavior.
     internal static Random random = new();
@@ -63,6 +66,10 @@ public partial class Game
     internal List<Room> allRooms;
     internal List<Item> allItems;
 
+    //SaveState addition
+    internal List<Room> GetAllRooms() { return allRooms; }
+
+
     //event handler for player movement
     public event EventHandler<Command>? PlayerMovement;
     /*
@@ -72,7 +79,8 @@ public partial class Game
      * Now takes a boolean determining whether to perform extra functions
      * to enable easier testing
      */
-    public Game(bool isTestInstance)
+    //Save State Edit 15
+    public Game(bool isTestInstance, IGameSaveRepository? saveRepository = null)
     {
         // Stores "spawnable" items used by puzzle logic (ore, sword).
         givenItems = [];
@@ -86,6 +94,9 @@ public partial class Game
         protag = new Protagonist();
         oldHorseFollower = new Follower(this);
         progress = new GameProgress();
+        //Save State Edit 16
+        this.saveRepository = saveRepository;
+        this.saveRepository?.Initialize();
 
         this.isTestInstance = isTestInstance;
 
@@ -125,6 +136,9 @@ public partial class Game
         castleGate = new Room("The wooden castle gate stands tall, imposing, and completely shut.", 6);
         castleTown = new Room("Standing in the deserted square of the castle's town, \nyou think at one point it must have been bustling with activity.", 7);
         altarGrove = new Room("Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center.", 8);
+
+        allRooms = [hub, swamp, battleGr, rocky, lava, graves, castleGate, castleTown, altarGrove];
+
 
         // REFACTOR (abstraction + polymorphism):
         // Item is now abstract, so items are created via ItemFactory which returns concrete subclasses
@@ -246,7 +260,12 @@ if (room != null)
         bool wantToQuit = action.Execute(this, command);
 
         // Sprint 4 fix: Protagonist should not move on UNKNOWN commands.
-        if (commandWord != CommandWord.UNKNOWN)
+        //Save State Edit 17
+        if (commandWord != CommandWord.UNKNOWN &&
+            commandWord != CommandWord.SAVE &&
+            commandWord != CommandWord.LOAD &&
+            //Save State Edit 31
+            commandWord != CommandWord.DELETE)
         {
             ProtagMove();
         }
@@ -433,6 +452,7 @@ if (room != null)
         if (oldHorseFollower.GiveToPlayer(player, word))
         {
             Console.WriteLine("Took the " + word + " from your mule.");
+            return false; 
         }
 
         Console.WriteLine("Invalid trade!");
@@ -588,6 +608,104 @@ if (room != null)
         }
 
         return quitSleep;
+    }
+
+    //Save State Edit 18
+    internal void SaveGame(Command command)
+    {
+        if (command.HasSecondWord())
+        {
+            Console.WriteLine("Save doesn't take any extra words.");
+            return;
+        }
+
+        if (saveRepository is null)
+        {
+            Console.WriteLine("Saving is unavailable right now.");
+            return;
+        }
+
+        //Save State Edit 23
+        try
+        {
+            GameSaveState state = GameStateMapper.Capture(this);
+            string saveJson = GameSaveSerializer.ToJson(state);
+            saveRepository.SaveJson(saveJson);
+            Console.WriteLine("Game saved.");
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Saving failed.");
+        }
+    }
+
+    //Save State Edit 19
+    internal void LoadGame(Command command)
+    {
+        if (command.HasSecondWord())
+        {
+            Console.WriteLine("Load doesn't take any extra words.");
+            return;
+        }
+
+        if (saveRepository is null)
+        {
+            Console.WriteLine("Loading is unavailable right now.");
+            return;
+        }
+
+        //Save State Edit 24
+        try
+        {
+            string? saveJson = saveRepository.LoadJson();
+            if (string.IsNullOrWhiteSpace(saveJson))
+            {
+                Console.WriteLine("No save data found.");
+                return;
+            }
+
+            GameSaveState? state = GameSaveSerializer.FromJson(saveJson);
+            if (state is null)
+            {
+                Console.WriteLine("Save data is invalid.");
+                return;
+            }
+
+            GameStateMapper.Apply(this, state);
+            Console.WriteLine("Game loaded.");
+            PrintLocationInfo(player.GetCurrentRoom());
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Loading failed.");
+        }
+    }
+
+    //Save State Edit 32
+    internal void DeleteSave(Command command)
+    {
+        if (command.HasSecondWord())
+        {
+            Console.WriteLine("Delete doesn't take any extra words.");
+            return;
+        }
+
+        if (saveRepository is null)
+        {
+            Console.WriteLine("Deleting saves is unavailable right now.");
+            return;
+        }
+
+        //Save State Edit 33
+        try
+        {
+            bool deleted = saveRepository.DeleteSave();
+            Console.WriteLine(deleted ? "Save deleted." : "No save data found.");
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Deleting save failed.");
+        }
     }
 
     internal static bool ProtagKill()

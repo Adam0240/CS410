@@ -138,4 +138,19 @@ public class Player : Character, IGameInventory
     {
         return getCurrentRoom();
     }
+
+    //save state addition
+    internal List<string> GetInventoryItemNames()
+    {
+        var names = new List<string>();
+        foreach (Item item in _inventory)
+            names.Add(item.GetName());
+        return names;
+    }
+
+    internal void ClearInventory()
+    {
+        _inventory.Clear();
+        updateCarryWeight();
+    }
 }

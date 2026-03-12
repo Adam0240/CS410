@@ -148,7 +148,7 @@ public class Room(string description, int roomId) : IGameInventory
     {
         return _roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
-    
+
     public void addItem(Item item)
     {
         _roomItems.Add(item);
@@ -157,6 +157,17 @@ public class Room(string description, int roomId) : IGameInventory
     public bool isValidItem(Item item)
     {
         return true;
+    }
+
+    //save state
+    internal List<string> GetItemNames()
+    {
+        return _roomItems.Select(i => i.GetName()).ToList();
+    }
+
+    internal void ClearItems()
+    {
+        _roomItems.Clear();
     }
 
 }

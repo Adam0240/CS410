@@ -132,3 +132,33 @@ public sealed class TradeCommandAction : CommandActionBase
         return false;
     }
 }
+
+//Save State Edit 5
+public sealed class SaveCommandAction : CommandActionBase
+{
+    public override bool Execute(Game game, Command command)
+    {
+        game.SaveGame(command);
+        return false;
+    }
+}
+
+//Save State Edit 6
+public sealed class LoadCommandAction : CommandActionBase
+{
+    public override bool Execute(Game game, Command command)
+    {
+        game.LoadGame(command);
+        return false;
+    }
+}
+
+//Save State Edit 27
+public sealed class DeleteCommandAction : CommandActionBase
+{
+    public override bool Execute(Game game, Command command)
+    {
+        game.DeleteSave(command);
+        return false;
+    }
+}

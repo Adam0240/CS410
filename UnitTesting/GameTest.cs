@@ -155,9 +155,12 @@ public class GameTest
             Room afterRoom = protag.getCurrentRoom()!;
 
             // ASSERT
-            if (commandWord == CommandWord.UNKNOWN)
+            if (commandWord == CommandWord.UNKNOWN ||
+                commandWord == CommandWord.SAVE ||
+                commandWord == CommandWord.LOAD ||
+                commandWord == CommandWord.DELETE)
             {
-                // After your fix, UNKNOWN should NOT trigger protagMove()
+                // UNKNOWN and save-system commands should NOT trigger protagMove().
                 Assert.Equal(initialSteps, afterSteps);
                 Assert.Same(initialRoom, afterRoom);
             }

@@ -228,6 +228,23 @@ public class Follower : Character, IGameInventory
 
         return _idleText[Game.random.Next(_idleText.Count)];
     }
+
+    //save state addition
+    internal List<string> GetInventoryItemNames()
+    {
+        var names = new List<string>();
+        foreach (Item item in _inventory)
+        {
+            names.Add(item.GetName());
+        }
+        return names;
+    } 
+
+    internal void ClearInventory()
+    {
+        _inventory.Clear();
+        UpdateCarryWeight();
+    }
 }
 
 

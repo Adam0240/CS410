@@ -203,9 +203,11 @@ public class ParserTests
                 var text = output.ToString();
 
                 // These strings come from CommandWords.ShowAll() output
+                Assert.Contains("go", text);
                 Assert.Contains("walk", text);
+                Assert.Contains("move", text);
                 Assert.Contains("help", text);
-                Assert.Contains("EndGame", text);
+                Assert.Contains("quit", text);
             }
             finally
             {
