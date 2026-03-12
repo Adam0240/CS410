@@ -440,6 +440,7 @@ if (room != null)
         if (oldHorseFollower.GiveToPlayer(player, word))
         {
             Console.WriteLine("Took the " + word + " from your mule.");
+            return false; 
         }
 
         Console.WriteLine("Invalid trade!");
