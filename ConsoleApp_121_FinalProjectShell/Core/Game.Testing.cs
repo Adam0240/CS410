@@ -14,11 +14,7 @@ public partial class Game
         if (!isTestInstance)
             return;
 
-        // Safety: in case someone changes constructor init later
-        allRooms ??= new List<Room>();
-        allItems ??= new List<Item>();
-
-        allRooms.AddRange(rooms);
-        allItems.AddRange(items);
+        allRooms = new List<Room>(rooms);
+        allItems = new List<Item>(items);
     }
 }

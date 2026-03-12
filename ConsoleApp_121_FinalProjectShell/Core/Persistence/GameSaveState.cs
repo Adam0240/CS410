@@ -3,6 +3,8 @@
 public class GameSaveState
 {
     public int PlayerRoomId { get; set; }
+    //Save State Edit 11
+    public List<int> PlayerBacktrackRoomIds { get; set; } = [];
     public List<string> PlayerInventory { get; set; } = [];
     public int PlayerCarryWeight { get; set; }
 

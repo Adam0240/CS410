@@ -17,9 +17,11 @@ public class CommandWords
     {
         _validCommands = new Dictionary<string, CommandWord>
         {
-            { "walk", CommandWord.GO }, //adds to dictionary with 'add' instead of 'put' - fixed, now uses collection initializer
+            { "go", CommandWord.GO },
+            { "walk", CommandWord.GO },
+            { "move", CommandWord.GO },
             { "help", CommandWord.HELP },
-            { "EndGame", CommandWord.QUIT }, //possible bug doesn't match "quit"
+            { "quit", CommandWord.QUIT },
             { "back", CommandWord.BACK },
             { "look", CommandWord.LOOK },
             { "take", CommandWord.TAKE },
@@ -31,6 +33,12 @@ public class CommandWords
             { "follow", CommandWord.FOLLOW },
             { "stay", CommandWord.STAY},
             { "trade", CommandWord.TRADE}, 
+            //Save State Edit 3
+            { "save", CommandWord.SAVE },
+            //Save State Edit 4
+            { "load", CommandWord.LOAD },
+            //Save State Edit 26
+            { "delete", CommandWord.DELETE },
         };
     }
 

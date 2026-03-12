@@ -148,7 +148,7 @@ public class Room(string description, int roomId) : IGameInventory
     {
         return _roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
-    
+
     public void addItem(Item item)
     {
         _roomItems.Add(item);

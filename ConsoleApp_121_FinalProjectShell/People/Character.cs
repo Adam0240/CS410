@@ -24,6 +24,23 @@ public abstract class Character
 
     public Stack<Room> getLastRooms() { return _lastRooms; }
 
+    //Save State Edit 9
+    internal List<int> GetLastRoomIds()
+    {
+        return _lastRooms.Select(room => room.GetId()).ToList();
+    }
+
+    //Save State Edit 10
+    internal void RestoreLastRooms(IEnumerable<Room> roomsInPopOrder)
+    {
+        _lastRooms.Clear();
+
+        foreach (Room room in roomsInPopOrder.Reverse())
+        {
+            _lastRooms.Push(room);
+        }
+    }
+
     public int goRoom(Command command)
     {
         if (!command.HasSecondWord())

@@ -16,6 +16,8 @@ public static class GameStateMapper
         var state = new GameSaveState
         {
             PlayerRoomId = player.GetCurrentRoom().GetId(),
+            //Save State Edit 12
+            PlayerBacktrackRoomIds = player.GetLastRoomIds(),
             PlayerInventory = player.GetInventoryItemNames(),
             PlayerCarryWeight = player.getCarryWeight(),
 
@@ -54,6 +56,12 @@ public static class GameStateMapper
         // 1) positions
         if (roomsById.TryGetValue(state.PlayerRoomId, out var playerRoom))
             player.setCurrentRoom(playerRoom);
+
+        //Save State Edit 13
+        player.RestoreLastRooms(
+            state.PlayerBacktrackRoomIds
+                .Where(roomsById.ContainsKey)
+                .Select(roomId => roomsById[roomId]));
 
         if (roomsById.TryGetValue(state.ProtagonistRoomId, out var protagRoom))
             protag.setCurrentRoom(protagRoom);

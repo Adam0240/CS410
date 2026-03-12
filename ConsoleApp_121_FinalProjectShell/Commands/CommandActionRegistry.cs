@@ -24,7 +24,12 @@ public static class CommandActionRegistry
             { CommandWord.FOLLOW, new FollowCommandAction() },
             { CommandWord.STAY, new StayCommandAction() },
             { CommandWord.TRADE, new TradeCommandAction() },
-            
+            //Save State Edit 7
+            { CommandWord.SAVE, new SaveCommandAction() },
+            //Save State Edit 8
+            { CommandWord.LOAD, new LoadCommandAction() },
+            //Save State Edit 28
+            { CommandWord.DELETE, new DeleteCommandAction() },
         };
     }
 }

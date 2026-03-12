@@ -13,9 +13,11 @@ namespace UnitTesting
         {
             var cw = new CommandWords();
 
+            Assert.True(cw.IsCommand("go"));
             Assert.True(cw.IsCommand("walk"));
+            Assert.True(cw.IsCommand("move"));
             Assert.True(cw.IsCommand("help"));
-            Assert.True(cw.IsCommand("EndGame"));
+            Assert.True(cw.IsCommand("quit"));
             Assert.True(cw.IsCommand("back"));
             Assert.True(cw.IsCommand("look"));
             Assert.True(cw.IsCommand("take"));
@@ -31,7 +33,7 @@ namespace UnitTesting
         {
             var cw = new CommandWords();
 
-            Assert.False(cw.IsCommand("quit")); // note: dictionary uses "EndGame", not "quit"
+            Assert.False(cw.IsCommand("EndGame"));
             Assert.False(cw.IsCommand("xyz"));
             Assert.False(cw.IsCommand(""));
         }
@@ -49,9 +51,11 @@ namespace UnitTesting
         {
             var cw = new CommandWords();
 
+            Assert.Equal(CommandWord.GO, cw.GetCommandWord("go"));
             Assert.Equal(CommandWord.GO, cw.GetCommandWord("walk"));
+            Assert.Equal(CommandWord.GO, cw.GetCommandWord("move"));
             Assert.Equal(CommandWord.HELP, cw.GetCommandWord("help"));
-            Assert.Equal(CommandWord.QUIT, cw.GetCommandWord("EndGame"));
+            Assert.Equal(CommandWord.QUIT, cw.GetCommandWord("quit"));
             Assert.Equal(CommandWord.BACK, cw.GetCommandWord("back"));
             Assert.Equal(CommandWord.LOOK, cw.GetCommandWord("look"));
             Assert.Equal(CommandWord.TAKE, cw.GetCommandWord("take"));
@@ -67,7 +71,7 @@ namespace UnitTesting
         {
             var cw = new CommandWords();
 
-            Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord("quit")); // not in dictionary
+            Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord("EndGame"));
             Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord("xyz"));
             Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord(""));
         }
@@ -96,9 +100,11 @@ namespace UnitTesting
                 var output = sw.ToString();
 
                 // Must contain all command keys (order not guaranteed)
+                Assert.Contains("go", output);
                 Assert.Contains("walk", output);
+                Assert.Contains("move", output);
                 Assert.Contains("help", output);
-                Assert.Contains("EndGame", output);
+                Assert.Contains("quit", output);
                 Assert.Contains("back", output);
                 Assert.Contains("look", output);
                 Assert.Contains("take", output);

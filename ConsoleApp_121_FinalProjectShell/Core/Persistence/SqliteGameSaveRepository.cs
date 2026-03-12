@@ -64,4 +64,16 @@ public class SqliteGameSaveRepository : IGameSaveRepository
         var result = command.ExecuteScalar();
         return result as string;
     }
+
+    //Save State Edit 30
+    public bool DeleteSave()
+    {
+        using var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM saves WHERE slot_id = 1;";
+
+        return command.ExecuteNonQuery() > 0;
+    }
 }

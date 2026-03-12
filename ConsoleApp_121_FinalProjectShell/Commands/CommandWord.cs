@@ -21,4 +21,10 @@ public enum CommandWord
     FOLLOW,
     STAY,
     TRADE,
+    //Save State Edit 1
+    SAVE,
+    //Save State Edit 2
+    LOAD,
+    //Save State Edit 25
+    DELETE,
 }
