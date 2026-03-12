@@ -159,4 +159,15 @@ public class Room(string description, int roomId) : IGameInventory
         return true;
     }
 
+    //save state
+    internal List<string> GetItemNames()
+    {
+        return _roomItems.Select(i => i.GetName()).ToList();
+    }
+
+    internal void ClearItems()
+    {
+        _roomItems.Clear();
+    }
+
 }

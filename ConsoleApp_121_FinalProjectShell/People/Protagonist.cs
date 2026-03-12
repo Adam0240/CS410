@@ -31,5 +31,11 @@ public class Protagonist : Character
     {
         return _protagStepsCount;
     }
-    
+
+    //savestate
+    internal void setProtagStepsCount(int count)
+    {
+        _protagStepsCount = count;
+    }
+
 }

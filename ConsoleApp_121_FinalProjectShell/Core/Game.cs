@@ -63,6 +63,10 @@ public partial class Game
     internal List<Room> allRooms;
     internal List<Item> allItems;
 
+    //SaveState addition
+    internal List<Room> GetAllRooms() { return allRooms; }
+
+
     //event handler for player movement
     public event EventHandler<Command>? PlayerMovement;
     /*
