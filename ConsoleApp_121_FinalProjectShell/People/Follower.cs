@@ -238,7 +238,7 @@ public class Follower : Character, IGameInventory
             names.Add(item.GetName());
         }
         return names;
-    }
+    } 
 
     internal void ClearInventory()
     {
