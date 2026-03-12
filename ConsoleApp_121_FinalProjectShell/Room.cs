@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ConsoleApp_121_FinalProjectShell.Items;
 
+namespace ConsoleApp_121_FinalProjectShell;
+
 /**
 * This class is part of the "FUGwACL Adventure" application.
 * "FUGwACL Adventure" is a slightly less simple, text based adventure game.
@@ -19,8 +21,8 @@ using ConsoleApp_121_FinalProjectShell.Items;
 */
 public class Room(string description, int roomId) : IGameInventory
 {
-    private readonly Dictionary<string, Room> _exits = new();
-    private readonly List<Item?> _roomItems = [];
+    private readonly Dictionary<string, Room> _exits = [];
+    private readonly List<Item> _roomItems = [];
 
 
 
@@ -31,12 +33,12 @@ public class Room(string description, int roomId) : IGameInventory
  * String is the exit name typed as part of a GO command
  * Room is where that exit leads
  */
-    public void setExit(string direction, Room room) 
+    public void SetExit(string direction, Room room) 
     {
         _exits[direction] = room;
     } 
     //accessor for the room's exits
-    public Dictionary<string, Room> getExits()
+    public Dictionary<string, Room> GetExits()
     {
         return _exits;
     }
@@ -60,47 +62,47 @@ public class Room(string description, int roomId) : IGameInventory
  * @return The description of the room.
  * returns unique descriptions depending on the room and what flags are true
  */
-    public string getDescription()
+    public string GetDescription()
     {
         return description;
     }
 
     //@returns the list of exits
     //skips the grove if the path has not been cleared
-    public string getExitString()
+    public string GetExitString()
     {
         var exitString = new System.Text.StringBuilder("Exits:");
         foreach (string exit in _exits.Keys)
         {
-            exitString.Append(" ").Append(exit);
+            exitString.Append(' ').Append(exit);
         }
         return exitString.ToString();
     }
 
     //@returns a string compiled from several others
-    public string getLongDesc()
+    public string GetLongDesc()
     {
-        var builtDescription = new System.Text.StringBuilder(getDescription());
-        builtDescription.Append("\n");
+        var builtDescription = new System.Text.StringBuilder(GetDescription());
+        builtDescription.Append('\n');
 
         if (_roomItems.Count > 0)
         {
             builtDescription.Append(itemsText()).Append(". \n");
         }
 
-        builtDescription.Append(getExitString());
+        builtDescription.Append(GetExitString());
         return builtDescription.ToString();
     }
 
     //@returns the String from the key to a randomly chosen exit
-    public string getRandomExit()
+    public string GetRandomExit()
     {
         var exitsArray = _exits.Keys.ToArray();
         return exitsArray[Game.random.Next(exitsArray.Length)];
     }
 
     //For testing, returns the number of items in roomItems
-    internal int getItemsCount()
+    internal int GetItemsCount()
     {
         return _roomItems.Count;
     }
@@ -125,7 +127,7 @@ public class Room(string description, int roomId) : IGameInventory
         return itemText.ToString();
     }
     
-    public bool hasItem(Item? item) => _roomItems.Contains(item);
+    public bool HasItem(Item item) => _roomItems.Contains(item);
 
     public Item? getItemByName(string name)
     {
@@ -147,12 +149,12 @@ public class Room(string description, int roomId) : IGameInventory
         return _roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
     
-    public void addItem(Item? item)
+    public void addItem(Item item)
     {
         _roomItems.Add(item);
     }
 
-    public bool isValidItem(Item? item)
+    public bool isValidItem(Item item)
     {
         return true;
     }

@@ -29,7 +29,7 @@ public sealed class GoCommandAction : CommandActionBase
 
 public sealed class QuitCommandAction : CommandActionBase
 {
-    public override bool Execute(Game game, Command command) => game.Quit(command);
+    public override bool Execute(Game game, Command command) => Game.Quit(command);
 }
 
 public sealed class BackCommandAction : CommandActionBase
@@ -46,7 +46,7 @@ public sealed class LookCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.PrintLocationInfo(game.GetPlayer().getCurrentRoom());
+        game.PrintLocationInfo(game.GetPlayer().GetCurrentRoom());
         return false;
     }
 }

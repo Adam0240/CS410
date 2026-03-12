@@ -26,14 +26,14 @@ public static class RoomTextService
             return "Sunlight filters through the treetops into the solitary grove.\nA derelict altar stands at its center, now bearing a shining sword.";
         }
 
-        return room.getDescription();
+        return room.GetDescription();
     }
 
     public static string GetExitString(Room room, GameProgress progress)
     {
         var exitString = new StringBuilder("Exits:");
 
-        foreach (string exit in room.getExits().Keys)
+        foreach (string exit in room.GetExits().Keys)
         {
             if (exit != "grove" || progress.SwampCleared)
             {
@@ -49,7 +49,7 @@ public static class RoomTextService
         var builtDescription = new StringBuilder(GetDescription(room, progress));
         builtDescription.Append("\n");
 
-        if (room.getItemsCount() > 0)
+        if (room.GetItemsCount() > 0)
         {
             builtDescription.Append(room.itemsText()).Append(".\n");
         }

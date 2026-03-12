@@ -10,7 +10,7 @@ namespace ConsoleApp_121_FinalProjectShell.Commands;
 
 public class Parser 
 {
-    private CommandWords _commands;  // holds all valid command words
+    private readonly CommandWords _commands;  // holds all valid command words
 
     /**
      * Create a parser to read from the terminal window.
@@ -23,56 +23,72 @@ public class Parser
     /**
      * @return The next command from the user.
      */
-    public Command getCommand() 
+    public Command GetCommand() 
     {
-        String word1 = null;
-        String word2 = null;
+        String? word1 = null;
+        String? word2 = null;
 
         Console.Write("> ");     // print prompt
 
-        var inputLine = Console.ReadLine(); // will hold the full input line
+        string? inputLine = Console.ReadLine();
 
-        // Find up to two words on the line.
-        string[] tokenizer = inputLine.Split(' ');
-        if(tokenizer.Length > 0) {
-            word1 = tokenizer[0];      // get first word
-            if(tokenizer.Length >= 2) {
-                word2 = tokenizer[1];      // get second word
-                // note: we just ignore the rest of the input line.
+        if (string.IsNullOrWhiteSpace(inputLine))
+        {
+            return new Command(CommandWord.UNKNOWN, null);
+        }
+
+        string[] tokenizer = inputLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (tokenizer.Length > 0)
+        {
+            word1 = tokenizer[0];
+            if (tokenizer.Length >= 2)
+            {
+                word2 = tokenizer[1];
             }
         }
 
-        //bug: may cause error if word1 is null
+        if (word1 == null)
+        {
+            return new Command(CommandWord.UNKNOWN, null);
+        }
+
         return new Command(_commands.GetCommandWord(word1), word2);
     }
-    
+
     /**
      * Get a singular word as input from the player. Used for selections in submenus.
      */
-    public String getSingleCommand() 
+    public static string GetSingleCommand()
     {
-        String word = null;
+        string? word = null;
 
         Console.Write("> ");
 
-        var inputLine = Console.ReadLine();
+        string? inputLine = Console.ReadLine();
 
-        string[] tokenizer = inputLine.Split(' ');
-        if(tokenizer.Length > 0) {
+        if (string.IsNullOrWhiteSpace(inputLine))
+        {
+            return string.Empty;
+        }
+
+        string[] tokenizer = inputLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (tokenizer.Length > 0)
+        {
             word = tokenizer[0];
         }
 
         if (word == null)
         {
-            return String.Empty;
+            return string.Empty;
         }
+
         return word.ToLower();
     }
 
     /**
      * Print out a list of valid command words.
      */
-    public void showCommands()
+    public void ShowCommands()
     {
         _commands.ShowAll();
     }

@@ -10,12 +10,13 @@ using ConsoleApp_121_FinalProjectShell.People;
 using ConsoleApp_121_FinalProjectShell.Items;
 
 using Xunit;
+using ConsoleApp_121_FinalProjectShell;
 
-namespace ConsoleApp_121_FinalProjectShell.Tests;
+namespace UnitTesting;
 
 public class GameTest
 {
-    private Game _testGame;
+    private readonly Game _testGame;
     public GameTest()
     {
         //UNVIERSAL ARRANGE
@@ -39,21 +40,20 @@ public class GameTest
 
         //ensure all rooms and items were created successfully
         //WILL NEED TO BE UPDATED IF THE GAME EXPANDS
-        Assert.True(_testGame.allRooms.Count == 9);
-        Assert.True(_testGame.allItems.Count == 6);
+        Assert.Equal(9, _testGame.allRooms.Count);
+        Assert.Equal(6, _testGame.allItems.Count);
 
         //ensure the player and protagonist were created
         Assert.NotNull(_testGame.GetPlayer());
         Assert.NotNull(_testGame.GetProtag());
-
-        Player player = _testGame.GetPlayer();
-        Protagonist protag = _testGame.GetProtag();
-        List<Room> rooms = _testGame.allRooms;
-        List<Item?> items = _testGame.allItems;
+        _ = _testGame.GetPlayer();
+        _ = _testGame.GetProtag();
+        _ = _testGame.allRooms;
+        _ = _testGame.allItems;
 
         //ensure the player and protagonist were placed in the correct rooms
-        Assert.True(_testGame.GetPlayer().getCurrentRoom().GetId() == 0);
-        Assert.True(_testGame.GetProtag().getCurrentRoom().GetId() == 5);
+        Assert.Equal(0, _testGame.GetPlayer().GetCurrentRoom()!.GetId());
+        Assert.Equal(5, _testGame.GetProtag().getCurrentRoom()!.GetId());
 
         foreach (Room room in _testGame.allRooms)
         {
@@ -84,7 +84,7 @@ public class GameTest
     {
         Room room1 = _testGame.allRooms[2];
         Room room2 = _testGame.allRooms[5];
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         _testGame.PrintLocationInfo(room1);
@@ -102,12 +102,12 @@ public class GameTest
     public void quitTest()
     {
         //ARRANGE 
-        Command commandfalse = new Command(CommandWord.QUIT, "thang");
-        Command commandtrue = new Command(CommandWord.QUIT, null);
+        Command commandfalse = new(CommandWord.QUIT, "thang");
+        Command commandtrue = new(CommandWord.QUIT, null);
 
         //ACT
-        bool commandfalseResult = _testGame.Quit(commandfalse);
-        bool commandtrueResult = _testGame.Quit(commandtrue);
+        bool commandfalseResult = Game.Quit(commandfalse);
+        bool commandtrueResult = Game.Quit(commandtrue);
 
         //ASSERT
         Assert.False(commandfalseResult);
@@ -120,7 +120,7 @@ public class GameTest
     public void protagMoveTest()
     {
         // ARRANGE
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         Protagonist protag = _testGame.GetProtag();
@@ -145,14 +145,14 @@ public class GameTest
             stepsField!.SetValue(protag, 8);
 
             int initialSteps = protag.getProtagStepsCount();
-            Room initialRoom = protag.getCurrentRoom();
+            Room initialRoom = protag.getCurrentRoom()!;
 
             // ACT
             string? secondWord = (commandWord == CommandWord.QUIT) ? null : "foobar";
             _testGame.ProcessCommand(new Command(commandWord, secondWord));
 
             int afterSteps = protag.getProtagStepsCount();
-            Room afterRoom = protag.getCurrentRoom();
+            Room afterRoom = protag.getCurrentRoom()!;
 
             // ASSERT
             if (commandWord == CommandWord.UNKNOWN)
@@ -184,7 +184,7 @@ public class GameTest
         //ARRANGE
         Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         int weight1;
         int weight2;
         int weight3;
@@ -214,10 +214,10 @@ public class GameTest
 
         //
         //ASSERT
-        Assert.Equal(0, rooms[8].getItemsCount());
-        Assert.Equal(0, rooms[6].getItemsCount());
-        Assert.Equal(0, rooms[5].getItemsCount());
-        Assert.Equal(1, rooms[2].getItemsCount());
+        Assert.Equal(0, rooms[8].GetItemsCount());
+        Assert.Equal(0, rooms[6].GetItemsCount());
+        Assert.Equal(0, rooms[5].GetItemsCount());
+        Assert.Equal(1, rooms[2].GetItemsCount());
 
         Assert.Equal(17, weight1);
         Assert.Equal(19, weight2);
@@ -237,13 +237,13 @@ public class GameTest
         List<Room> rooms = _testGame.allRooms;
         int weight1;
         int roomInvCount;
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
 
         //ACT
         player.setCurrentRoom(rooms[2]);
         _testGame.Take(new Command(CommandWord.TAKE, "axe"));
         weight1 = player.getCurrentWeight();
-        roomInvCount = rooms[2].getItemsCount();
+        roomInvCount = rooms[2].GetItemsCount();
         _testGame.Drop(new Command(CommandWord.DROP, "axe"));
 
         Console.SetOut(stringWriter);
@@ -253,7 +253,7 @@ public class GameTest
         //ASSERT
         var output = stringWriter.ToString().Replace("\r\n", "\n");
         Assert.True(weight1 == 55 && player.getCurrentWeight() == 0);
-        Assert.True(roomInvCount == 0 && rooms[2].getItemsCount() == 1);
+        Assert.True(roomInvCount == 0 && rooms[2].GetItemsCount() == 1);
 
         Assert.Equal("Drop what?\nYou don't have anything like that.\n", output);
 
@@ -271,7 +271,7 @@ public class GameTest
         Player player = _testGame.GetPlayer();
         player.addItem(_testGame.allItems[0]);
         player.setCurrentRoom(_testGame.allRooms[6]);
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
 
         //ACT
         _testGame.Use(new Command(CommandWord.USE, "axe"));
@@ -329,13 +329,13 @@ public class GameTest
         ));
 
         // Capture console output 
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         // Simulate the player entering the command: "use ring".
         // This verifies that Game.processCommand routes correctly to use(),
         // and that polymorphism dispatches to the RingItem's overridden Use() method.
-        Command cmd = new Command(CommandWord.USE, "ring");
+        Command cmd = new(CommandWord.USE, "ring");
         game.ProcessCommand(cmd);
 
         // Normalize newlines for consistent cross-platform comparison.
@@ -359,12 +359,12 @@ public class GameTest
         Game game = _testGame;
 
         // Capture console output to verify the correct error message is printed.
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         // Simulate attempting to use an item that the player does not have.
         // This verifies Game.use() correctly validates inventory before calling Item.Use().
-        Command cmd = new Command(CommandWord.USE, "notARealItem");
+        Command cmd = new(CommandWord.USE, "notARealItem");
         game.ProcessCommand(cmd);
 
         var output = stringWriter.ToString().Replace("\r\n", "\n");
@@ -380,17 +380,15 @@ public class GameTest
         //ARRANGE
         Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
-        StringWriter stringWriter = new StringWriter();
-        int roomItems1;
-        int roomItems2;
+        StringWriter stringWriter = new();
         player.setCurrentRoom(rooms[3]);
 
         //ACT
         _testGame.HammerUse();
-        roomItems1 = player.getCurrentRoom().getItemsCount();
+        _ = player.GetCurrentRoom().GetItemsCount();
         _testGame.Take(new Command(CommandWord.TAKE, "ore"));
         _testGame.HammerUse();
-        roomItems2 = player.getCurrentRoom().getItemsCount();
+        _ = player.GetCurrentRoom().GetItemsCount();
 
         player.setCurrentRoom(rooms[4]);
         _testGame.HammerUse();
@@ -405,11 +403,11 @@ public class GameTest
         Assert.Equal("Nothing to do with that here.\n", output);
 
         //ensure the forge is prepared when the hammer is used in the room
-        Assert.True(rooms[4].getItemsCount() == 1 && !player.hasItemByName("hammer") && _testGame.GetProgress().ForgePrepared);
+        Assert.True(rooms[4].GetItemsCount() == 1 && !player.hasItemByName("hammer") && _testGame.GetProgress().ForgePrepared);
 
         //ensure that the ore can be obtained AND that it won't be re-placed on use again
         //(currently fails, change this comment once that bug is fixed)
-        Assert.True(player.hasItemByName("ore") && rooms[3].getItemsCount() == 0);
+        Assert.True(player.hasItemByName("ore") && rooms[3].GetItemsCount() == 0);
 
 
     }
@@ -420,12 +418,12 @@ public class GameTest
         //ARRANGE
         Player player = _testGame.GetPlayer();
         List<Room> rooms = _testGame.allRooms;
-        List<Item?> items = _testGame.allItems;
+        List<Item> items = _testGame.allItems;
         player.setCurrentRoom(rooms[0]);
         player.addItem(items[3]);
         player.addItem(items[4]);
         player.addItem(items[5]);
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         //ACT
@@ -452,18 +450,18 @@ public class GameTest
         Player player = _testGame.GetPlayer();
         Protagonist protag = _testGame.GetProtag();
         List<Room> rooms = _testGame.allRooms;
-        List<Item?> items = _testGame.allItems;
+        List<Item> items = _testGame.allItems;
         player.setCurrentRoom(rooms[0]);
         player.addItem(items[5]);
         bool protagdead;
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
 
         //ACT
         Console.SetOut(stringWriter);
         _testGame.SwordUse();
-        var output = stringWriter.ToString().Replace("\r\n", "\n");
+        _ = stringWriter.ToString().Replace("\r\n", "\n");
 
-        player.setCurrentRoom(protag.getCurrentRoom());
+        player.setCurrentRoom(protag.getCurrentRoom()!);
         protagdead = _testGame.SwordUse();
 
         player.setCurrentRoom(rooms[8]);
@@ -493,7 +491,7 @@ public class GameTest
         _testGame.GetProgress().ToldProtagGate = false;
         _testGame.GetProgress().ToldProtagSword = false;
 
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         //ACT
@@ -502,7 +500,7 @@ public class GameTest
         _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
 
         //2) Same room, weapon-location dialogue (clearCon[2] -> clearCon[5])
-        player.setCurrentRoom(protag.getCurrentRoom());
+        player.setCurrentRoom(protag.getCurrentRoom()!);
         _testGame.GetProgress().SwordPlaced = true;
         _testGame.GetProgress().ToldProtagSword = false;
         _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
@@ -521,7 +519,7 @@ public class GameTest
         // Some builds print a prompt like "> " that gets captured in tests. Strip it.
         while (output.StartsWith("> "))
         {
-            output = output.Substring(2);
+            output = output[2..];
         }
         output = output.Replace("\n> ", "\n");
 
@@ -551,7 +549,7 @@ public class GameTest
         _testGame.GetProgress().ToldProtagGate = false;
         _testGame.GetProgress().ToldProtagSword = false;
 
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         //ACT
@@ -587,11 +585,11 @@ public class GameTest
         //ARRANGE
         Player player = _testGame.GetPlayer();
         Protagonist protag = _testGame.GetProtag();
-        StringWriter stringWriter = new StringWriter();
+        StringWriter stringWriter = new();
         Console.SetOut(stringWriter);
 
         //ACT
-        player.setCurrentRoom(protag.getCurrentRoom());
+        player.setCurrentRoom(protag.getCurrentRoom()!);
         bool result = _testGame.SwordUse(); //calls protagKill() when in the same room
 
         //ASSERT

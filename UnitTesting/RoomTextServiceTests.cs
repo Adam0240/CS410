@@ -75,8 +75,8 @@ public class RoomTextServiceTests
     public void GetExitString_HidesGrove_WhenSwampNotCleared()
     {
         var room = new Room("Swamp", 1);
-        room.setExit("north", new Room("North", 2));
-        room.setExit("grove", new Room("Grove", 8));
+        room.SetExit("north", new Room("North", 2));
+        room.SetExit("grove", new Room("Grove", 8));
 
         var progress = new GameProgress
         {
@@ -93,8 +93,8 @@ public class RoomTextServiceTests
     public void GetExitString_ShowsGrove_WhenSwampCleared()
     {
         var room = new Room("Swamp", 1);
-        room.setExit("north", new Room("North", 2));
-        room.setExit("grove", new Room("Grove", 8));
+        room.SetExit("north", new Room("North", 2));
+        room.SetExit("grove", new Room("Grove", 8));
 
         var progress = new GameProgress
         {

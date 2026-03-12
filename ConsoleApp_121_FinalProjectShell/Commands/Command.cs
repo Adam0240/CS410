@@ -5,7 +5,7 @@ namespace ConsoleApp_121_FinalProjectShell.Commands;
 public class Command
 {
     private CommandWord _commandWord;
-    private string _argument;
+    private string? _argument;
 
     /// <summary>
     /// Create a command object. First and second word must be supplied, but
@@ -15,7 +15,7 @@ public class Command
     /// The first word of the command. Null if the command was not recognised.
     /// </param>
     /// <param name="argument">The second word of the command.</param>
-    public Command(CommandWord commandWord, string argument)
+    public Command(CommandWord commandWord, string? argument)
     {
         _commandWord = commandWord;
         _argument = argument;
@@ -36,7 +36,7 @@ public class Command
     /// second word.
     /// </summary>
     /// <returns>The second word.</returns>
-    public string GetSecondWord()
+    public string? GetSecondWord()
     {
         return _argument;
     }

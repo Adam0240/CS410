@@ -9,14 +9,14 @@ namespace ConsoleApp_121_FinalProjectShell.Core;
 public partial class Game
 {
     // Test-only helper: keeps createRooms() readable by pushing tracking code out of Game.cs
-    private void TrackTestArtifacts(IEnumerable<Room> rooms, IEnumerable<Item?> items)
+    private void TrackTestArtifacts(IEnumerable<Room> rooms, IEnumerable<Item> items)
     {
-        if (!_isTestInstance)
+        if (!isTestInstance)
             return;
 
         // Safety: in case someone changes constructor init later
         allRooms ??= new List<Room>();
-        allItems ??= new List<Item?>();
+        allItems ??= new List<Item>();
 
         allRooms.AddRange(rooms);
         allItems.AddRange(items);

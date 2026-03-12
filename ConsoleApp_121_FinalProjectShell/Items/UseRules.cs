@@ -57,10 +57,10 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class ProtagKillRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom() == game.GetProtag().getCurrentRoom();
+            game.GetPlayer().GetCurrentRoom() == game.GetProtag().getCurrentRoom();
 
         public bool Execute(Game game) =>
-            game.ProtagKill();
+            Game.ProtagKill();
     }
 
     // ============================
@@ -106,7 +106,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class AxeSwampLogRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().GetId() == 1 &&
+            game.GetPlayer().GetCurrentRoom().GetId() == 1 &&
             !game.GetProgress().SwampCleared;
 
         public bool Execute(Game game)
@@ -121,7 +121,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class AxeCastleGateRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().GetId() == 6 &&
+            game.GetPlayer().GetCurrentRoom().GetId() == 6 &&
             !game.GetProgress().GateOpen;
 
         public bool Execute(Game game)
@@ -139,18 +139,18 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class HammerQuarrySpawnOreRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().GetId() == 3;
+            game.GetPlayer().GetCurrentRoom().GetId() == 3;
 
         public bool Execute(Game game)
         {
             if (game.GetPlayer().hasItemByName("ore") ||
-                game.GetPlayer().getCurrentRoom().hasItemByName("ore"))
+                game.GetPlayer().GetCurrentRoom().hasItemByName("ore"))
             {
                 Console.WriteLine("Nothing to do with that here.");
                 return false;
             }
 
-            game.GetPlayer().getCurrentRoom()
+            game.GetPlayer().GetCurrentRoom()
                 .addItem(game.GetGivenItems()[0]);
 
             Console.WriteLine("A chunk of ore falls to the ground as you break it free from the surrounding rock.");
@@ -161,20 +161,20 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class HammerForgePrepareRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().GetId() == 4;
+            game.GetPlayer().GetCurrentRoom().GetId() == 4;
 
         public bool Execute(Game game)
         {
-            Item hammerItem = game.GetPlayer().getItemByName("hammer");
+            Item? hammerItem = game.GetPlayer().getItemByName("hammer");
 
             if (hammerItem != null)
             {
-                game.GetPlayer().getCurrentRoom().addItem(hammerItem);
+                game.GetPlayer().GetCurrentRoom().addItem(hammerItem);
                 game.GetPlayer().removeItemByName("hammer");
             }
-            else if (!game.GetPlayer().getCurrentRoom().hasItemByName("hammer"))
+            else if (!game.GetPlayer().GetCurrentRoom().hasItemByName("hammer"))
             {
-                game.GetPlayer().getCurrentRoom().addItem(
+                game.GetPlayer().GetCurrentRoom().addItem(
                     ItemFactory.Create(
                         "hammer",
                         "a standard issue craft HAMMER with a flat head",
@@ -217,7 +217,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
         public bool Applies(Game game) =>
             game.GetPlayer().hasItemByName("ore") &&
             game.GetPlayer().hasItemByName("hilt") &&
-            game.GetPlayer().getCurrentRoom().GetId() == 4 &&
+            game.GetPlayer().GetCurrentRoom().GetId() == 4 &&
             game.GetProgress().ForgePrepared;
 
         public bool Execute(Game game)
@@ -225,7 +225,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
             game.GetPlayer().removeItemByName("ore");
             game.GetPlayer().removeItemByName("hilt");
 
-            game.GetPlayer().getCurrentRoom().addItem(game.GetGivenItems()[1]);
+            game.GetPlayer().GetCurrentRoom().addItem(game.GetGivenItems()[1]);
             Console.WriteLine("Forged the hilt into a new sword!");
             return false;
         }
@@ -238,7 +238,7 @@ namespace ConsoleApp_121_FinalProjectShell.Items
     public class SwordAltarRule : IUseRule
     {
         public bool Applies(Game game) =>
-            game.GetPlayer().getCurrentRoom().GetId() == 8;
+            game.GetPlayer().GetCurrentRoom().GetId() == 8;
 
         public bool Execute(Game game)
         {

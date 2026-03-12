@@ -23,7 +23,7 @@ public interface IGameInventory
     /// </summary>
     /// <param name="name">The name of the item to retrieve.</param>
     /// <returns>The object instance of the item needed, or null if it doesn't exist.</returns>
-    Item getItemByName(string name);
+    Item? getItemByName(string name);
     
     /// <summary>
     /// Identifies a named Item in the inventory and removes it.
