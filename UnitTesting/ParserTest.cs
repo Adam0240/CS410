@@ -28,7 +28,7 @@ public class ParserTests
                 Console.SetOut(output);
 
                 // Act
-                Command cmd = parser.getCommand();
+                Command cmd = parser.GetCommand();
 
                 // Assert
                 Assert.Equal("> ", output.ToString());                  // prompt printed
@@ -63,7 +63,7 @@ public class ParserTests
                 Console.SetOut(output);
 
                 // Act
-                Command cmd = parser.getCommand();
+                Command cmd = parser.GetCommand();
 
                 // Assert
                 Assert.Equal("> ", output.ToString());
@@ -98,7 +98,7 @@ public class ParserTests
                 Console.SetOut(output);
 
                 // Act
-                Command cmd = parser.getCommand();
+                Command cmd = parser.GetCommand();
 
                 // Assert
                 Assert.Equal("> ", output.ToString());
@@ -133,7 +133,7 @@ public class ParserTests
                 Console.SetOut(output);
 
                 // Act
-                Command cmd = parser.getCommand();
+                Command cmd = parser.GetCommand();
 
                 // Assert
                 Assert.Equal("> ", output.ToString());
@@ -151,7 +151,7 @@ public class ParserTests
     }
 
     [Fact]
-    public void GetCommand_WhenReadLineReturnsNull_ThrowsNullReferenceException_CurrentBehavior()
+    public void GetCommand_WhenReadLineReturnsNull_ReturnsUnknownCommand()
     {
         lock (ConsoleLock)
         {
@@ -160,19 +160,19 @@ public class ParserTests
 
             try
             {
-                // Arrange
                 var parser = new Parser();
 
-                // StringReader with empty content causes ReadLine() to return null immediately
                 var input = new StringReader(string.Empty);
                 var output = new StringWriter();
 
                 Console.SetIn(input);
                 Console.SetOut(output);
 
-                // Act + Assert
-                // Current behavior: inputLine is null, then inputLine.Split(' ') throws.
-                Assert.Throws<NullReferenceException>(() => parser.getCommand());
+                Command cmd = parser.GetCommand();
+
+                Assert.Equal("> ", output.ToString());
+                Assert.Equal(CommandWord.UNKNOWN, cmd.GetCommandWord());
+                Assert.Null(cmd.GetSecondWord());
             }
             finally
             {
@@ -197,7 +197,7 @@ public class ParserTests
                 Console.SetOut(output);
 
                 // Act
-                parser.showCommands();
+                parser.ShowCommands();
 
                 // Assert
                 var text = output.ToString();

@@ -70,7 +70,7 @@ public class Player : Character, IGameInventory
     /// <returns>The instance of Item with a matching name, or null if there is none.</returns>
     private Item? findItem(string name)
     {
-        foreach (Item? item in _inventory)
+        foreach (Item item in _inventory)
         {
             if (item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
                 return item;
@@ -122,7 +122,7 @@ public class Player : Character, IGameInventory
         }
     }
     
-    public void addItem(Item? item)
+    public void addItem(Item item)
     {
         _inventory.Add(item);
         updateCarryWeight();
@@ -133,5 +133,9 @@ public class Player : Character, IGameInventory
     {
         return getCarryWeight() >= getCurrentWeight() + item.GetWeight();
     }
-    
+
+    internal Room GetCurrentRoom()
+    {
+        return getCurrentRoom();
+    }
 }

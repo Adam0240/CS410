@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ConsoleApp_121_FinalProjectShell.Items;
 
+namespace ConsoleApp_121_FinalProjectShell;
+
 /**
 * This class is part of the "FUGwACL Adventure" application.
 * "FUGwACL Adventure" is a slightly less simple, text based adventure game.
@@ -19,16 +21,10 @@ using ConsoleApp_121_FinalProjectShell.Items;
 */
 public class Room(string description, int roomId) : IGameInventory
 {
-    private readonly Dictionary<string, Room> _exits = new();
-    private readonly List<Item?> _roomItems = [];
+    private readonly Dictionary<string, Room> _exits = [];
+    private readonly List<Item> _roomItems = [];
 
-    //fields used to track game progress
-    private static bool _swampCleared;
-    private static bool _forgePrepared;
-    private static bool _swordPlaced;
-    private static bool _gateOpen;
-    private static bool _toldProtagGate;
-    private static bool _toldProtagSword;
+
 
     //object constructor
 
@@ -37,56 +33,17 @@ public class Room(string description, int roomId) : IGameInventory
  * String is the exit name typed as part of a GO command
  * Room is where that exit leads
  */
-    public void setExit(string direction, Room room) 
+    public void SetExit(string direction, Room room) 
     {
         _exits[direction] = room;
     } 
     //accessor for the room's exits
-    public Dictionary<string, Room> getExits()
+    public Dictionary<string, Room> GetExits()
     {
         return _exits;
     }
 
-    /**
- * mutator and accessor for the game's clear conditions.
- *
- * accessor returns as a boolean array to reduce number of methods
- * an integer value is used to refer to each flag to stay concise
- */
-    public static void setClearCon(int id, bool state)
-    {
-        switch (id)
-        {
-            case 0:
-                _swampCleared = state;
-                break;
-            case 1:
-                _forgePrepared = state;
-                break;
-            case 2:
-                _swordPlaced = state;
-                break;
-            case 3:
-                _gateOpen = state;
-                break;
-            case 4:
-                _toldProtagGate = state;
-                break;
-            case 5:
-                _toldProtagSword = state;
-                break;
-        }
-    }
-
-    public static bool[] getClearCons() =>
-    [
-        _swampCleared,
-        _forgePrepared,
-        _swordPlaced,
-        _gateOpen,
-        _toldProtagGate,
-        _toldProtagSword
-    ];
+ 
 
     //returns ID, used for several checks in Game
     public int GetId()
@@ -105,70 +62,47 @@ public class Room(string description, int roomId) : IGameInventory
  * @return The description of the room.
  * returns unique descriptions depending on the room and what flags are true
  */
-    public string getDescription()
+    public string GetDescription()
     {
-        if (roomId == 4 && _forgePrepared)
-        {
-            return "Lava flows through the channels dug into the rock around a vacant smith's shop. \nThe forge and its tools stand complete.";
-        }
-
-        if (roomId == 6 && _gateOpen)
-        {
-            return "The castle gate stands tall and imposing as before. Now however, \na large hole has been hacked through to the other side.";
-        }
-
-        if (roomId == 1 && _swampCleared)
-        {
-            return "Your boots catch in the stiff and stinking muck of the swamp. \nThe large log lies in pieces now, revealing a hidden path.";
-        }
-
-        if (roomId == 8 && _swordPlaced)
-        {
-            return "Sunlight filters through the treetops into the solitary grove. \nA derelict altar stands at its center, now bearing a shining sword.";
-        }
-        
         return description;
     }
 
     //@returns the list of exits
     //skips the grove if the path has not been cleared
-    public string getExitString()
+    public string GetExitString()
     {
         var exitString = new System.Text.StringBuilder("Exits:");
         foreach (string exit in _exits.Keys)
         {
-            if (exit != "grove" || _swampCleared)
-            {
-                exitString.Append(" ").Append(exit);
-            }
+            exitString.Append(' ').Append(exit);
         }
         return exitString.ToString();
     }
 
     //@returns a string compiled from several others
-    public string getLongDesc()
+    public string GetLongDesc()
     {
-        var builtDescription = new System.Text.StringBuilder(getDescription());
-        builtDescription.Append("\n");
+        var builtDescription = new System.Text.StringBuilder(GetDescription());
+        builtDescription.Append('\n');
 
         if (_roomItems.Count > 0)
         {
             builtDescription.Append(itemsText()).Append(". \n");
         }
 
-        builtDescription.Append(getExitString());
+        builtDescription.Append(GetExitString());
         return builtDescription.ToString();
     }
 
     //@returns the String from the key to a randomly chosen exit
-    public string getRandomExit()
+    public string GetRandomExit()
     {
         var exitsArray = _exits.Keys.ToArray();
         return exitsArray[Game.random.Next(exitsArray.Length)];
     }
 
     //For testing, returns the number of items in roomItems
-    internal int getItemsCount()
+    internal int GetItemsCount()
     {
         return _roomItems.Count;
     }
@@ -193,7 +127,7 @@ public class Room(string description, int roomId) : IGameInventory
         return itemText.ToString();
     }
     
-    public bool hasItem(Item? item) => _roomItems.Contains(item);
+    public bool HasItem(Item item) => _roomItems.Contains(item);
 
     public Item? getItemByName(string name)
     {
@@ -215,12 +149,12 @@ public class Room(string description, int roomId) : IGameInventory
         return _roomItems.Any(item => item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase));
     }
     
-    public void addItem(Item? item)
+    public void addItem(Item item)
     {
         _roomItems.Add(item);
     }
 
-    public bool isValidItem(Item? item)
+    public bool isValidItem(Item item)
     {
         return true;
     }

@@ -4,183 +4,185 @@ using ConsoleApp_121_FinalProjectShell.People;
 using ConsoleApp_121_FinalProjectShell.Items;
 using Xunit;
 
-
-public class CharacterTests
+namespace UnitTesting
 {
-     //Helper Methods
-    private Player CreatePlayer()
+    public class CharacterTests
     {
-        return new Player();
-    }
-    private Protagonist CreateProtagonist()
-    {
-        return new Protagonist();
-    }
+        //Helper Methods
+        private static Player CreatePlayer()
+        {
+            return new Player();
+        }
+        private static Protagonist CreateProtagonist()
+        {
+            return new Protagonist();
+        }
 
-    private Room CreateRoom(string name = "Room", int id = 0)
-    {
-        return new Room(name, id);
-    }
+        private static Room CreateRoom(string name = "Room", int id = 0)
+        {
+            return new Room(name, id);
+        }
 
-    private Room CreateRoomWithExit(string direction, Room destination)
-    {
-        var room = CreateRoom("Start", 0);
-        room.setExit(direction, destination);
-        return room;
-    }
+        private static Room CreateRoomWithExit(string direction, Room destination)
+        {
+            var room = CreateRoom("Start", 0);
+            room.SetExit(direction, destination);
+            return room;
+        }
 
-    private Item? CreateItem(string name, int weight, int id = 0)
-    {
-        // Item is abstract now, so we create a concrete item through the factory.
-        // ID doesn't matter for Player inventory/weight tests, but must map to a valid item type.
-        return ItemFactory.Create(name, "test item", weight, id);
-    }
+        private static Item CreateItem(string name, int weight, int id = 0)
+        {
+            // Item is abstract now, so we create a concrete item through the factory.
+            // ID doesn't matter for Player inventory/weight tests, but must map to a valid item type.
+            return ItemFactory.Create(name, "test item", weight, id);
+        }
 
-    private Command CreateGoCommand(string direction)
-    {
-        return new Command(CommandWord.GO, direction);
-    }
+        private static Command CreateGoCommand(string direction)
+        {
+            return new Command(CommandWord.GO, direction);
+        }
 
-  
 
-    [Fact]
-    public void Player_StartsWithEmptyInventory()
-    {
-        // Arrange
-        var player = CreatePlayer();
 
-        // Act
-        string itemsText = player.itemsText();
+        [Fact]
+        public void Player_StartsWithEmptyInventory()
+        {
+            // Arrange
+            var player = CreatePlayer();
 
-        // Assert
-        Assert.Contains("nothing", itemsText);
-        Assert.Equal(0, player.getCurrentWeight());
-    }
+            // Act
+            string itemsText = player.itemsText();
 
-    [Fact]
-    public void AddItem_IncreasesCurrentWeight()
-    {
-        // Arrange
-        var player = CreatePlayer();
-        var item = CreateItem("Key", 10);
+            // Assert
+            Assert.Contains("nothing", itemsText);
+            Assert.Equal(0, player.getCurrentWeight());
+        }
 
-        // Act
-        player.addItem(item);
+        [Fact]
+        public void AddItem_IncreasesCurrentWeight()
+        {
+            // Arrange
+            var player = CreatePlayer();
+            var item = CreateItem("Key", 10);
 
-        // Assert
-        Assert.Equal(10, player.getCurrentWeight());
-        Assert.True(player.hasItemByName("Key"));
-    }
+            // Act
+            player.addItem(item);
 
-    [Fact]
-    public void RemoveItem_DecreasesCurrentWeight()
-    {
-        // Arrange
-        var player = CreatePlayer();
-        var item = CreateItem("Coin", 5);
-        player.addItem(item);
+            // Assert
+            Assert.Equal(10, player.getCurrentWeight());
+            Assert.True(player.hasItemByName("Key"));
+        }
 
-        // Act
-        player.removeItemByName("Coin");
+        [Fact]
+        public void RemoveItem_DecreasesCurrentWeight()
+        {
+            // Arrange
+            var player = CreatePlayer();
+            var item = CreateItem("Coin", 5);
+            player.addItem(item);
 
-        // Assert
-        Assert.Equal(0, player.getCurrentWeight());
-        Assert.False(player.hasItemByName("Coin"));
-    }
+            // Act
+            player.removeItemByName("Coin");
 
-    [Fact]
-    public void WeightCheck_ReturnsFalse_WhenOverLimit()
-    {
-        // Arrange
-        var player = CreatePlayer();
-        var item = CreateItem("Key", 10);
-        player.setCarryWeight(5);
+            // Assert
+            Assert.Equal(0, player.getCurrentWeight());
+            Assert.False(player.hasItemByName("Coin"));
+        }
 
-        // Act
-        bool canCarry = player.isValidItem(item);
+        [Fact]
+        public void WeightCheck_ReturnsFalse_WhenOverLimit()
+        {
+            // Arrange
+            var player = CreatePlayer();
+            var item = CreateItem("Key", 10);
+            player.setCarryWeight(5);
 
-        // Assert
-        Assert.False(canCarry);
-    }
+            // Act
+            bool canCarry = player.isValidItem(item);
 
-    [Fact]
-    public void GoRoom_ReturnsZero_WhenNoSecondWord()
-    {
-        // Arrange
-        var player = CreatePlayer();
-        var command = new Command(CommandWord.GO, null);
+            // Assert
+            Assert.False(canCarry);
+        }
 
-        // Act
-        int result = player.goRoom(command);
+        [Fact]
+        public void GoRoom_ReturnsZero_WhenNoSecondWord()
+        {
+            // Arrange
+            var player = CreatePlayer();
+            var command = new Command(CommandWord.GO, null);
 
-        // Assert
-        Assert.Equal(0, result);
-    }
+            // Act
+            int result = player.goRoom(command);
 
-    [Fact]
-    public void GoRoom_ReturnsMinusOne_WhenExitDoesNotExist()
-    {
-        // Arrange
-        var player = CreatePlayer();
-        var room = CreateRoom();
-        player.setCurrentRoom(room);
-        var command = CreateGoCommand("north");
+            // Assert
+            Assert.Equal(0, result);
+        }
 
-        // Act
-        int result = player.goRoom(command);
+        [Fact]
+        public void GoRoom_ReturnsMinusOne_WhenExitDoesNotExist()
+        {
+            // Arrange
+            var player = CreatePlayer();
+            var room = CreateRoom();
+            player.setCurrentRoom(room);
+            var command = CreateGoCommand("north");
 
-        // Assert
-        Assert.Equal(-1, result);
-    }
+            // Act
+            int result = player.goRoom(command);
 
-    [Fact]
-    public void GoRoom_MovesPlayer_WhenExitExists()
-    {
-        // Arrange
-        var destination = CreateRoom("End", 1);
-        var start = CreateRoomWithExit("north", destination);
-        var player = CreatePlayer();
-        player.setCurrentRoom(start);
-        var command = CreateGoCommand("north");
+            // Assert
+            Assert.Equal(-1, result);
+        }
 
-        // Act
-        int result = player.goRoom(command);
+        [Fact]
+        public void GoRoom_MovesPlayer_WhenExitExists()
+        {
+            // Arrange
+            var destination = CreateRoom("End", 1);
+            var start = CreateRoomWithExit("north", destination);
+            var player = CreatePlayer();
+            player.setCurrentRoom(start);
+            var command = CreateGoCommand("north");
 
-        // Assert
-        Assert.Equal(1, result);
-        Assert.Equal(destination, player.getCurrentRoom());
-    }
+            // Act
+            int result = player.goRoom(command);
 
-    [Fact]
-    public void Back_MovesPlayerToPreviousRoom()
-    {
-        // Arrange
-        var room1 = CreateRoom("Room1", 1);
-        var room2 = CreateRoom("Room2", 2);
-        var player = CreatePlayer();
-        player.setCurrentRoom(room1);
+            // Assert
+            Assert.Equal(1, result);
+            Assert.Equal(destination, player.GetCurrentRoom());
+        }
 
-        player.getLastRooms().Push(room1);
-        player.setCurrentRoom(room2);
+        [Fact]
+        public void Back_MovesPlayerToPreviousRoom()
+        {
+            // Arrange
+            var room1 = CreateRoom("Room1", 1);
+            var room2 = CreateRoom("Room2", 2);
+            var player = CreatePlayer();
+            player.setCurrentRoom(room1);
 
-        // Act
-        player.back();
+            player.getLastRooms().Push(room1);
+            player.setCurrentRoom(room2);
 
-        // Assert
-        Assert.Equal(room1, player.getCurrentRoom());
-    }
+            // Act
+            player.back();
 
-    [Fact]
-    public void ProtagSteps_ReturnsFalse_WhenStepsNotReached()
-    {
-        // Arrange
-        var protag = CreateProtagonist();
-        var command = CreateGoCommand("north");
+            // Assert
+            Assert.Equal(room1, player.GetCurrentRoom());
+        }
 
-        // Act
-        bool moved = protag.protagSteps(command);
+        [Fact]
+        public void ProtagSteps_ReturnsFalse_WhenStepsNotReached()
+        {
+            // Arrange
+            var protag = CreateProtagonist();
+            var command = CreateGoCommand("north");
 
-        // Assert
-        Assert.False(moved);
+            // Act
+            bool moved = protag.protagSteps(command);
+
+            // Assert
+            Assert.False(moved);
+        }
     }
 }

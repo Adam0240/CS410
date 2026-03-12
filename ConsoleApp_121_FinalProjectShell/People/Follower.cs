@@ -20,7 +20,7 @@ public class Follower : Character, IGameInventory
     private int _carryWeight;
     private int _currentWeight;
 
-    private List<string> _idleText = new List<string>();
+    private readonly List<string> _idleText = [];
 
     // Follow-state control.
     // true  = follower auto-moves with player
@@ -31,48 +31,56 @@ public class Follower : Character, IGameInventory
     private readonly string _name;
 
     //required for event listener implementation
-    private readonly EventHandler<Command> _playerMovement;
+    //private readonly EventHandler<Command> _playerMovement;
     
     // Default constructor.
     // Starts with no room, in following mode, and a modest carry limit.
-    public Follower(Game game = null, string name = "companion", int carryWeight = 80)
+    public Follower(Game? game = null, string name = "companion", int carryWeight = 80)
     {
-        _inventory = new ArrayList();
+        _inventory = [];
         _carryWeight = carryWeight;
         _currentWeight = 0;
         _isFollowing = false;
         _name = name;
-        game.PlayerMovement += PlayerMoved;
+        if (game != null)
+        {
+            game.PlayerMovement += PlayerMoved;
+        }
     }
 
     // Overloaded constructor with a starting room.
-    public Follower(Room startRoom, Game game = null, string name = "Old Mule", int carryWeight = 80) : base(startRoom)
+    public Follower(Room startRoom, Game? game = null, string name = "Old Mule", int carryWeight = 80) : base(startRoom)
     {
-        _inventory = new ArrayList();
+        _inventory = [];
         _carryWeight = carryWeight;
         _currentWeight = 0;
         _isFollowing = false;
         _name = name;
-        
+
+        if (game != null)
+        {
+            game.PlayerMovement += PlayerMoved;
+        }
+
     }
 
     // ---------------------------
     // Follow / stay behavior
     // ---------------------------
 
-    public bool isFollowing() { return _isFollowing; }
+    public bool IsFollowing() { return _isFollowing; }
 
-    public void follow()
+    public void Follow()
     {
         _isFollowing = true;
     }
 
-    public void stay()
+    public void Stay()
     {
         _isFollowing = false;
     }
 
-    public string getName() { return _name; }
+    public string GetName() { return _name; }
     
     void PlayerMoved(object? sender, Command command)
     {
@@ -87,11 +95,11 @@ public class Follower : Character, IGameInventory
     // Inventory helpers
     // ---------------------------
 
-    internal int getCurrentWeight() { return _currentWeight; }
-    internal int getCarryWeight() { return _carryWeight; }
-    internal void setCarryWeight(int number) { _carryWeight = number; }
+    internal int GetCurrentWeight() { return _currentWeight; }
+    internal int GetCarryWeight() { return _carryWeight; }
+    internal void SetCarryWeight(int number) { _carryWeight = number; }
 
-    private void updateCarryWeight()
+    private void UpdateCarryWeight()
     {
         int tempWeight = 0;
         foreach (Item item in _inventory)
@@ -101,9 +109,9 @@ public class Follower : Character, IGameInventory
         _currentWeight = tempWeight;
     }
 
-    private Item? findItem(string name)
+    private Item? FindItem(string name)
     {
-        foreach (Item? item in _inventory)
+        foreach (Item item in _inventory)
         {
             if (item.GetName().Equals(name, StringComparison.OrdinalIgnoreCase))
                 return item;
@@ -138,34 +146,34 @@ public class Follower : Character, IGameInventory
 
     public bool hasItemByName(string name)
     {
-        return findItem(name) != null;
+        return FindItem(name) != null;
     }
 
     public Item? getItemByName(string name)
     {
-        return findItem(name);
+        return FindItem(name);
     }
 
     public void removeItemByName(string name)
     {
-        Item? item = findItem(name);
+        Item? item = FindItem(name);
         if (item != null)
         {
             _inventory.Remove(item);
-            updateCarryWeight();
+            UpdateCarryWeight();
         }
     }
 
-    public void addItem(Item? item)
+    public void addItem(Item item)
     {
         _inventory.Add(item);
-        updateCarryWeight();
+        UpdateCarryWeight();
     }
 
-    public bool isValidItem(Item? item)
+    public bool isValidItem(Item item)
     {
         if (item == null) return false;
-        return getCarryWeight() >= getCurrentWeight() + item.GetWeight();
+        return GetCarryWeight() >= GetCurrentWeight() + item.GetWeight();
     }
 
     // ---------------------------
@@ -175,7 +183,7 @@ public class Follower : Character, IGameInventory
     // Moves an item from the player inventory to follower inventory.
     // Caller (Game) should check that both are in the same room first.
     // Returns true on success.
-    public bool receiveFromPlayer(Player player, string itemName)
+    public bool ReceiveFromPlayer(Player player, string itemName)
     {
         Item? item = player.getItemByName(itemName);
         if (item == null) return false;
@@ -189,7 +197,7 @@ public class Follower : Character, IGameInventory
     // Moves an item from follower inventory to player inventory.
     // Caller (Game) should check room proximity first.
     // Returns true on success.
-    public bool giveToPlayer(Player player, string itemName)
+    public bool GiveToPlayer(Player player, string itemName)
     {
         Item? item = getItemByName(itemName);
         if (item == null) return false;
@@ -211,9 +219,14 @@ public class Follower : Character, IGameInventory
         return _idleText;
     }
 
-    public string getRandomIdleText()
+    public string GetRandomIdleText()
     {
-        return _idleText[Game.random.Next(_idleText.Count - 1)];
+        if (_idleText.Count == 0)
+        {
+            return $"{_name} waits quietly.";
+        }
+
+        return _idleText[Game.random.Next(_idleText.Count)];
     }
 }
 
