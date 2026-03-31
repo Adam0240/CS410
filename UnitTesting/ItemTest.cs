@@ -1,6 +1,7 @@
 ﻿using ConsoleApp_121_FinalProjectShell;
 using ConsoleApp_121_FinalProjectShell.Items;
 using Xunit;
+using Bogus;
 
 namespace UnitTesting
 {
@@ -35,5 +36,34 @@ namespace UnitTesting
 
         [Fact]
         public void GetID_ReturnsCorrectID() => Assert.Equal(5, _testItem.GetID());
+
+        [Fact]
+        public void Constructor_WithBogusData_CreatesValidItem()
+        {
+            // Make results repeatable 
+            Randomizer.Seed = new Random(123);
+
+            // Create fake data 
+            var faker = new Faker();
+
+            for (int i = 0; i < 5; i++) // run multiple times
+            {
+                string name = faker.Commerce.ProductName();
+                string desc = faker.Lorem.Sentence();
+                int weight = faker.Random.Int(1, 100);
+                int id = faker.Random.Int(0, 5); 
+
+                Item item = ItemFactory.Create(name, desc, weight, id);
+
+                // Assertions (this is what tests)
+                Assert.NotNull(item);
+                Assert.Equal(name, item.GetName());
+                Assert.Equal(desc, item.GetDesc());
+                Assert.Equal(weight, item.GetWeight());
+                Assert.Equal(id, item.GetID());
+            }
+        }
     }
+
+
 }
