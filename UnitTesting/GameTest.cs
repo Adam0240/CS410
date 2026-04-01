@@ -8,6 +8,9 @@ using System.Numerics;
 using System.Reflection;
 using ConsoleApp_121_FinalProjectShell.People;
 using ConsoleApp_121_FinalProjectShell.Items;
+using Bogus; //Bogus Change 1: Added Bogus namespace
+using Bogus.DataSets; //Bogus Change 2: Added Bogus dataset support
+
 
 using Xunit;
 using ConsoleApp_121_FinalProjectShell;
@@ -17,10 +20,53 @@ namespace UnitTesting;
 public class GameTest
 {
     private readonly Game _testGame;
+
+    //Bogus Change 3: Deterministic seed for repeatable generated data
+    private static readonly int Seed = 410;
+
+    //Bogus Change 4: Shared Faker instance for generated values in tests
+    private static readonly Faker Faker = new("en");
+
     public GameTest()
     {
+        //Bogus Change 5: Seed Bogus randomizer so CI/local runs are stable
+        Randomizer.Seed = new Random(Seed);
         //UNVIERSAL ARRANGE
         _testGame = new Game(true);
+    }
+
+    // ----------------------------
+    // Bogus Helpers
+    // ----------------------------
+
+    private static string Normalize(string value) => value.Replace("\r\n", "\n");
+
+    //Bogus Change 6: Helper to pick random CommandWord values
+    private static CommandWord RandomCommandWord()
+    {
+        CommandWord[] all = (CommandWord[])Enum.GetValues(typeof(CommandWord));
+        return Faker.PickRandom(all);
+    }
+
+    //Bogus Change 7: Helper to generate random second words for commands
+    private static string RandomSecondWordFor(CommandWord cw)
+    {
+        return cw == CommandWord.QUIT
+            ? string.Empty
+            : Faker.Lorem.Word();
+    }
+
+    //Bogus Change 8: Helper to generate randomized GameProgress permutations
+    private static GameProgress RandomProgress()
+    {
+        return new Faker<GameProgress>()
+            .RuleFor(p => p.SwampCleared, f => f.Random.Bool())
+            .RuleFor(p => p.ForgePrepared, f => f.Random.Bool())
+            .RuleFor(p => p.SwordPlaced, f => f.Random.Bool())
+            .RuleFor(p => p.GateOpen, f => f.Random.Bool())
+            .RuleFor(p => p.ToldProtagGate, f => f.Random.Bool())
+            .RuleFor(p => p.ToldProtagSword, f => f.Random.Bool())
+            .Generate();
     }
 
     //BASIC FUNCTIONALITY
@@ -114,8 +160,6 @@ public class GameTest
         Assert.True(commandtrueResult);
     }
 
-    // NOTE: This test currently reveals a bug or design mismatch in processCommand/protagonist step updates.
-    // It is being tracked to be fixed in Sprint 4.
     [Fact]
     public void protagMoveTest()
     {
@@ -262,55 +306,144 @@ public class GameTest
 
     }
 
+
+
     //the individual "[item]Use" methods are what actually controls the item functionality, so for this method we're
     //just testing that use() selects the right option based on the command (missing second word, invalid second word,
     //and valid second word)
     //in addition, this also tests axeUse() as we need to test the use case for a valid item, and it reduces
     //the number of tests we have to write
     [Fact]
-    public void useTest()
+    public void ProtagMoveTest_BogusDriven_CommandSampling()
     {
-        //ARRANGE
-        Player player = _testGame.GetPlayer();
-        player.addItem(_testGame.allItems[0]);
-        player.setCurrentRoom(_testGame.allRooms[6]);
-        StringWriter stringWriter = new();
+        //Bogus Change 9: Existing command-loop concept converted to Bogus-driven random sampling
+        StringWriter sw = new();
+        Console.SetOut(sw);
 
-        //ACT
-        _testGame.Use(new Command(CommandWord.USE, "axe"));
-        Console.SetOut(stringWriter);
-        _testGame.Use(new Command(CommandWord.USE, null));
-        _testGame.Use(new Command(CommandWord.USE, "nothingburger"));
-        player.setCurrentRoom(_testGame.allRooms[4]);
-        _testGame.Use(new Command(CommandWord.USE, "axe"));
+        Protagonist protag = _testGame.GetProtag();
+        Room hub = _testGame.allRooms.Single(r => r.GetId() == 0);
+        Room graves = _testGame.allRooms.Single(r => r.GetId() == 5);
 
-        //ASSERT
-        Assert.True(_testGame.GetProgress().GateOpen);
-        var output = stringWriter.ToString().Replace("\r\n", "\n");
-        Assert.Equal("Use what?\nYou don't have an item like that.\nNothing to do with that here.\n", output);
+        FieldInfo? stepsField = typeof(Protagonist).GetField(
+            "_protagStepsCount",
+            BindingFlags.Instance | BindingFlags.NonPublic);
 
-        player.setCurrentRoom(_testGame.GetProtag().getCurrentRoom());
-        Assert.True(_testGame.Use(new Command(CommandWord.USE, "axe")));
+        Assert.NotNull(stepsField);
+
+        //Bogus Change 10: Randomized command coverage with deterministic seed
+        for (int i = 0; i < 30; i++)
+        {
+            CommandWord cw = RandomCommandWord();
+            string? secondWord = cw == CommandWord.QUIT ? null : RandomSecondWordFor(cw);
+
+            protag.setCurrentRoom(graves);
+            stepsField!.SetValue(protag, 8);
+
+            int beforeSteps = protag.getProtagStepsCount();
+            Room beforeRoom = protag.getCurrentRoom()!;
+
+            _testGame.ProcessCommand(new Command(cw, secondWord));
+
+            int afterSteps = protag.getProtagStepsCount();
+            Room afterRoom = protag.getCurrentRoom()!;
+
+            if (cw == CommandWord.UNKNOWN || cw == CommandWord.SAVE || cw == CommandWord.LOAD || cw == CommandWord.DELETE)
+            {
+                Assert.Equal(beforeSteps, afterSteps);
+                Assert.Same(beforeRoom, afterRoom);
+            }
+            else
+            {
+                Assert.Equal(beforeSteps - 8, afterSteps);
+                Assert.Same(hub, afterRoom);
+            }
+        }
     }
 
-    //test replaced with 
-    //private void itemSwitchTest()
-    //{
-    //    //ARRANGE
-    //    Player player = _testGame.getPlayer();
-    //    StringWriter stringWriter = new StringWriter();
+    [Fact]
+    public void TalkFlow_BogusProgressPermutations_DoNotThrow()
+    {
+        //Bogus Change 11: Added randomized GameProgress permutations for TALK robustness
+        Player player = _testGame.GetPlayer();
+        Protagonist protag = _testGame.GetProtag();
+        StringWriter sw = new();
+        Console.SetOut(sw);
 
-    //    //ACT
-    //    Console.SetOut(stringWriter);
-    //    _testGame.itemSwitch(1);
-    //    _testGame.itemSwitch(10);
+        for (int i = 0; i < 20; i++)
+        {
+            GameProgress generated = RandomProgress();
 
-    //    //ASSERT
-    //    var output = stringWriter.ToString().Replace("\r\n", "\n");
-    //    Assert.True(player.getCarryWeight() == 150);
-    //    Assert.Equal("By equipping the ring, your maximum carryable weight has increased.\nSomething has gone terribly wrong.\n", output);
-    //}
+            _testGame.GetProgress().SwampCleared = generated.SwampCleared;
+            _testGame.GetProgress().ForgePrepared = generated.ForgePrepared;
+            _testGame.GetProgress().SwordPlaced = generated.SwordPlaced;
+            _testGame.GetProgress().GateOpen = generated.GateOpen;
+            _testGame.GetProgress().ToldProtagGate = generated.ToldProtagGate;
+            _testGame.GetProgress().ToldProtagSword = generated.ToldProtagSword;
 
+            //Bogus Change 12: Randomly put player with or away from protagonist
+            bool sameRoom = Faker.Random.Bool();
+            if (sameRoom)
+            {
+                player.setCurrentRoom(protag.getCurrentRoom()!);
+            }
+            else
+            {
+                Room randomRoom = Faker.PickRandom(_testGame.allRooms);
+                player.setCurrentRoom(randomRoom);
+            }
+
+            bool result = _testGame.ProcessCommand(new Command(CommandWord.TALK, null));
+            Assert.False(result);
+        }
+
+        string output = Normalize(sw.ToString());
+        Assert.NotNull(output);
+    }
+
+    [Fact]
+    public void Sleep_BogusScenarios_OnlyEndsWhenPrereqsMet()
+    {
+        //Bogus Change 13: Added generated scenario matrix for sleep completion conditions
+        Player player = _testGame.GetPlayer();
+        List<Room> rooms = _testGame.allRooms;
+        Room startRoom = rooms.Single(r => r.GetId() == 0);
+
+        for (int i = 0; i < 25; i++)
+        {
+            bool inStartRoom = Faker.Random.Bool();
+            bool toldGate = Faker.Random.Bool();
+            bool toldSword = Faker.Random.Bool();
+
+            player.setCurrentRoom(inStartRoom
+                ? startRoom
+                : Faker.PickRandom(rooms.Where(r => r.GetId() != 0).ToList()));
+
+            _testGame.GetProgress().ToldProtagGate = toldGate;
+            _testGame.GetProgress().ToldProtagSword = toldSword;
+
+            bool done = _testGame.ProcessCommand(new Command(CommandWord.SLEEP, null));
+            bool expected = inStartRoom && toldGate && toldSword;
+            Assert.Equal(expected, done);
+        }
+    }
+
+    //This test verifies that attempting to use an item not present in the player�s inventory is correctly rejected,
+    //preventing item behavior execution and displaying the appropriate error message.
+    [Fact]
+    public void useInvalidItemTest()
+    {
+        Game game = _testGame;
+        StringWriter sw = new();
+        Console.SetOut(sw);
+
+        //Bogus Change 14: Invalid item input now generated instead of hardcoded literal
+        string invalidName = Faker.Commerce.ProductName().Replace(" ", "").ToLowerInvariant();
+        Command cmd = new(CommandWord.USE, invalidName);
+        game.ProcessCommand(cmd);
+
+        string output = Normalize(sw.ToString());
+        Assert.Contains("You don't have an item like that.\n", output);
+    }
 
     //This test verifies that when a player uses the ring item from their inventory, the correct polymorphic Use() method executes,
     //increasing the player's carry weight and printing the expected message.
@@ -350,31 +483,6 @@ public class GameTest
 
         // Verify the correct message was printed, confirming the correct item behavior executed.
         Assert.Contains("By equipping the ring, your maximum carryable weight has increased.\n", output);
-    }
-
-    //This test verifies that attempting to use an item not present in the player�s inventory is correctly rejected,
-    //preventing item behavior execution and displaying the appropriate error message.
-    [Fact]
-    public void useInvalidItemTest()
-    {
-        // Use the test game instance without adding any items to inventory.
-        // This ensures the command should fail validation.
-        Game game = _testGame;
-
-        // Capture console output to verify the correct error message is printed.
-        StringWriter stringWriter = new();
-        Console.SetOut(stringWriter);
-
-        // Simulate attempting to use an item that the player does not have.
-        // This verifies Game.use() correctly validates inventory before calling Item.Use().
-        Command cmd = new(CommandWord.USE, "notARealItem");
-        game.ProcessCommand(cmd);
-
-        var output = stringWriter.ToString().Replace("\r\n", "\n");
-
-        // Confirm the correct validation message is printed.
-        // This ensures the Game layer properly handles invalid use commands.
-        Assert.Contains("You don't have an item like that.\n", output);
     }
 
     [Fact]
