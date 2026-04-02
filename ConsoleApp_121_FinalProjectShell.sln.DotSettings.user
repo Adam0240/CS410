@@ -11,24 +11,23 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AThrowHelper_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2024_002E3_003Fresharper_002Dhost_003FSourcesCache_003F6780d13016c376c4491c5618b257d84da7eacf747ed2719783e775546b79b_003FThrowHelper_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/UserRules/=8284009d_002De743_002D4d89_002D9402_002Da5bf9a89b657/@EntryIndexedValue">&lt;Policy&gt;&lt;Descriptor Staticness="Any" AccessRightKinds="Any" Description="Methods"&gt;&lt;ElementKinds&gt;&lt;Kind Name="METHOD" /&gt;&lt;/ElementKinds&gt;&lt;/Descriptor&gt;&lt;Policy Inspect="True" WarnAboutPrefixesAndSuffixes="False" Prefix="" Suffix="" Style="AaBb"&gt;&lt;ExtraRule Prefix="" Suffix="" Style="aaBb" /&gt;&lt;/Policy&gt;&lt;/Policy&gt;</s:String>
 	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">/Users/blugoo/Library/Caches/JetBrains/Rider2024.3/resharper-host/temp/Rider/vAny/CoverageData/_ConsoleApp_121_FinalProjectShell.717076398/Snapshot/snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=31b5a9f8_002D93dd_002D42d5_002Db3fc_002Dfbec574eb5da/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GoRoom_ReturnsZero_WhenNoSecondWord" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::D658646A-4F68-4B5F-92FA-816E584AA4E0::net8.0::UnitTesting.CharacterTests&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7756eb33_002D4566_002D4848_002D84a0_002D7430aa73d988/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="FollowerTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Or&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:CharacterTest.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:CommandTest.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:CommandWordsTest.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:FollowerTests.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:GameTest.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:ItemTest.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:ParserTest.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:RoomTest.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:RoomTextServiceTests.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:SaveGameTests.cs&lt;/ProjectFile&gt;
+    &lt;ProjectFile&gt;D658646A-4F68-4B5F-92FA-816E584AA4E0/f:TestAssemblyConfig.cs&lt;/ProjectFile&gt;
+  &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4b375b65_002Dc593_002D424f_002D885f_002D41f9bf147764/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RoomTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::D658646A-4F68-4B5F-92FA-816E584AA4E0::net8.0::UnitTesting.CharacterTests.Player_StartsWithEmptyInventory&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::D658646A-4F68-4B5F-92FA-816E584AA4E0::net8.0::UnitTesting.CharacterTests.WeightCheck_ReturnsTrue_WhenUnderLimit&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::D658646A-4F68-4B5F-92FA-816E584AA4E0::net8.0::UnitTesting.CharacterTests.WeightCheck_ReturnsFalse_WhenOverLimit&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::D658646A-4F68-4B5F-92FA-816E584AA4E0::net8.0::UnitTesting.CharacterTests.GoRoom_ReturnsZero_WhenNoSecondWord&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a178c182_002D7359_002D4db8_002Dbce9_002Dcbb2b48599b4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Player_StartsWithEmptyInventory" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::D658646A-4F68-4B5F-92FA-816E584AA4E0::net8.0::UnitTesting.CharacterTests.Player_StartsWithEmptyInventory&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::D658646A-4F68-4B5F-92FA-816E584AA4E0::net8.0::UnitTesting.CharacterTests.AddItem_IncreasesCurrentWeight&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
+	
+	
+	
 	
 	</wpf:ResourceDictionary>

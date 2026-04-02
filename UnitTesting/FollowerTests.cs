@@ -4,6 +4,7 @@ using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.Core;
 using ConsoleApp_121_FinalProjectShell.Items;
 using ConsoleApp_121_FinalProjectShell.People;
+using FluentAssertions;
 using Xunit;
 
 namespace UnitTesting;
@@ -22,9 +23,9 @@ public class FollowerTests
     {
         var follower = new Follower();
 
-        Assert.False(follower.IsFollowing());
-        Assert.Contains("nothing", follower.itemsText(), System.StringComparison.OrdinalIgnoreCase);
-        Assert.Equal("companion", follower.GetName());
+        follower.IsFollowing().Should().BeFalse();
+        follower.itemsText().ToLower().Should().Contain("nothing");
+        follower.GetName().Should().Be("companion");
     }
 
     [Fact]
@@ -34,7 +35,7 @@ public class FollowerTests
 
         follower.Follow();
 
-        Assert.True(follower.IsFollowing());
+        follower.IsFollowing().Should().BeTrue();
     }
 
     [Fact]
@@ -45,7 +46,7 @@ public class FollowerTests
         follower.Follow();
         follower.Stay();
 
-        Assert.False(follower.IsFollowing());
+        follower.IsFollowing().Should().BeFalse();
     }
 
     [Fact]
@@ -61,10 +62,10 @@ public class FollowerTests
 
         follower.addItem(ring);
 
-        Assert.True(follower.hasItemByName("ring"));
-        Assert.NotNull(follower.getItemByName("ring"));
-        Assert.Equal(2, follower.GetCurrentWeight());
-        Assert.Contains("ring", follower.itemsText(), System.StringComparison.OrdinalIgnoreCase);
+        follower.hasItemByName("ring").Should().BeTrue();
+        follower.getItemByName("ring").Should().NotBeNull();
+        follower.GetCurrentWeight().Should().Be(2);
+        follower.itemsText().Should().Contain("ring");
     }
 
     [Fact]
@@ -81,9 +82,9 @@ public class FollowerTests
         follower.addItem(ring);
         follower.removeItemByName("ring");
 
-        Assert.False(follower.hasItemByName("ring"));
-        Assert.Null(follower.getItemByName("ring"));
-        Assert.Equal(0, follower.GetCurrentWeight());
+        follower.hasItemByName("ring").Should().BeFalse();
+        follower.itemsText().Should().NotContain("ring");
+        follower.GetCurrentWeight().Should().Be(0);
     }
 
     [Fact]
@@ -99,7 +100,7 @@ public class FollowerTests
 
         bool result = follower.isValidItem(axe);
 
-        Assert.False(result);
+        result.Should().BeFalse();
     }
 
     [Fact]
@@ -116,12 +117,11 @@ public class FollowerTests
         );
 
         player.addItem(ring);
-
         bool result = follower.ReceiveFromPlayer(player, "ring");
 
-        Assert.True(result);
-        Assert.False(player.hasItemByName("ring"));
-        Assert.True(follower.hasItemByName("ring"));
+        result.Should().BeTrue();
+        player.hasItemByName("ring").Should().BeFalse();
+        follower.hasItemByName("ring").Should().BeTrue();
     }
 
     [Fact]
@@ -138,12 +138,11 @@ public class FollowerTests
         );
 
         follower.addItem(ring);
-
         bool result = follower.GiveToPlayer(player, "ring");
 
-        Assert.True(result);
-        Assert.True(player.hasItemByName("ring"));
-        Assert.False(follower.hasItemByName("ring"));
+        result.Should().BeTrue();
+        player.hasItemByName("ring").Should().BeTrue();
+        follower.hasItemByName("ring").Should().BeFalse();
     }
 
     [Fact]
@@ -153,7 +152,7 @@ public class FollowerTests
 
         string result = follower.GetRandomIdleText();
 
-        Assert.Contains("Old Mule", result);
+        result.Should().Contain("Old Mule");
     }
 
     [Fact]
@@ -166,8 +165,8 @@ public class FollowerTests
         var allText = follower.GetAllIdleText();
         string randomText = follower.GetRandomIdleText();
 
-        Assert.Equal(2, allText.Count);
-        Assert.Contains(randomText, allText);
+        allText.Count.Should().Be(2);
+        allText.Should().Contain(randomText);
     }
 
     [Fact]
@@ -181,7 +180,7 @@ public class FollowerTests
 
         _game.GoTo(new Command(CommandWord.GO, "north"));
 
-        Assert.Equal(player.getCurrentRoom(), follower.getCurrentRoom());
+        follower.getCurrentRoom().Should().Be(player.getCurrentRoom());
     }
 
     [Fact]
@@ -196,7 +195,7 @@ public class FollowerTests
 
         _game.GoTo(new Command(CommandWord.GO, "north"));
 
-        Assert.NotEqual(player.getCurrentRoom(), follower.getCurrentRoom());
-        Assert.Equal(originalRoom, follower.getCurrentRoom());
+        follower.getCurrentRoom().Should().NotBe(player.getCurrentRoom());
+        follower.getCurrentRoom().Should().Be(originalRoom);
     }
 }
