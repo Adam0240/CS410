@@ -1,13 +1,16 @@
-﻿using ConsoleApp_121_FinalProjectShell;
+﻿using Bogus;
+using ConsoleApp_121_FinalProjectShell;
 using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.People;
 using ConsoleApp_121_FinalProjectShell.Items;
+using FluentAssertions;
 using Xunit;
 
 namespace UnitTesting
 {
     public class CharacterTests
     {
+        
         //Helper Methods
         private static Player CreatePlayer()
         {
@@ -31,7 +34,7 @@ namespace UnitTesting
         }
 
         private static Item CreateItem(string name, int weight, int id = 0)
-        {
+        {    
             // Item is abstract now, so we create a concrete item through the factory.
             // ID doesn't matter for Player inventory/weight tests, but must map to a valid item type.
             return ItemFactory.Create(name, "test item", weight, id);
@@ -52,10 +55,11 @@ namespace UnitTesting
 
             // Act
             string itemsText = player.itemsText();
+            int currentWeight = player.getCurrentWeight();
 
             // Assert
-            Assert.Contains("nothing", itemsText);
-            Assert.Equal(0, player.getCurrentWeight());
+            itemsText.Should().Contain("nothing");
+            currentWeight.Should().Be(0);
         }
 
         [Fact]
@@ -69,8 +73,8 @@ namespace UnitTesting
             player.addItem(item);
 
             // Assert
-            Assert.Equal(10, player.getCurrentWeight());
-            Assert.True(player.hasItemByName("Key"));
+            player.getCurrentWeight().Should().Be(10);
+            player.itemsText().Should().Contain("Key");
         }
 
         [Fact]
@@ -85,8 +89,9 @@ namespace UnitTesting
             player.removeItemByName("Coin");
 
             // Assert
-            Assert.Equal(0, player.getCurrentWeight());
-            Assert.False(player.hasItemByName("Coin"));
+            player.getCurrentWeight().Should().Be(0);
+            player.itemsText().Should().NotContain("Coin");
+            player.itemsText().Should().Contain("nothing");
         }
 
         [Fact]
@@ -94,14 +99,28 @@ namespace UnitTesting
         {
             // Arrange
             var player = CreatePlayer();
-            var item = CreateItem("Key", 10);
             player.setCarryWeight(5);
+            var item = CreateItem("Key", 10);
 
             // Act
             bool canCarry = player.isValidItem(item);
 
             // Assert
-            Assert.False(canCarry);
+            canCarry.Should().BeFalse();
+        }
+        
+        [Fact]
+        public void WeightCheck_ReturnsTrue_WhenUnderLimit()
+        {
+            // Arrange
+            var player = CreatePlayer();
+            var item = CreateItem("Key", 10);
+
+            // Act
+            bool canCarry = player.isValidItem(item);
+
+            // Assert
+            canCarry.Should().BeTrue();
         }
 
         [Fact]
@@ -115,7 +134,7 @@ namespace UnitTesting
             int result = player.goRoom(command);
 
             // Assert
-            Assert.Equal(0, result);
+            result.Should().Be(0);
         }
 
         [Fact]
@@ -148,8 +167,8 @@ namespace UnitTesting
             int result = player.goRoom(command);
 
             // Assert
-            Assert.Equal(1, result);
-            Assert.Equal(destination, player.GetCurrentRoom());
+            result.Should().Be(1);
+            player.GetCurrentRoom().Should().Be(destination);
         }
 
         [Fact]
@@ -168,7 +187,7 @@ namespace UnitTesting
             player.back();
 
             // Assert
-            Assert.Equal(room1, player.GetCurrentRoom());
+            player.getCurrentRoom().Should().Be(room1);
         }
 
         [Fact]
@@ -182,7 +201,7 @@ namespace UnitTesting
             bool moved = protag.protagSteps(command);
 
             // Assert
-            Assert.False(moved);
+            moved.Should().BeFalse();
         }
     }
 }
