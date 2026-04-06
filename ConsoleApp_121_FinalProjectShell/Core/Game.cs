@@ -5,6 +5,7 @@ using ConsoleApp_121_FinalProjectShell.Commands;
 using ConsoleApp_121_FinalProjectShell.Core.Persistence;
 using ConsoleApp_121_FinalProjectShell.Items;
 using ConsoleApp_121_FinalProjectShell.People;
+using System.Threading;
 
 
 // ADDED FOR TESTING:
@@ -214,6 +215,7 @@ public partial class Game
      */
     public void Play()
     {
+        ShowSplashScreen();
         PrintWelcome();
 
         bool finished = false;
@@ -225,6 +227,93 @@ public partial class Game
 
         Console.WriteLine("Play again, if you'd like.");
     }
+
+    private void TypeCentered(string text, int delay = 25)
+    {
+        int windowWidth = Console.WindowWidth;
+        int padding = (windowWidth - text.Length) / 2;
+
+        if (padding < 0) padding = 0;
+
+        Console.Write(new string(' ', padding));
+
+        foreach (char c in text)
+        {
+            Console.Write(c);
+            Thread.Sleep(delay);
+        }
+        Console.WriteLine();
+    }
+
+    private void ShowSplashScreen()
+    {
+        Console.Clear();
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+
+        ShowCastleArt();
+
+        TypeCentered("=====================================", 5);
+        Thread.Sleep(500);
+        TypeCentered("       ACT: A Clueless Traveler", 50);
+        Thread.Sleep(500);
+        TypeCentered("=====================================", 5);
+        Thread.Sleep(500);
+
+        Console.ResetColor();
+
+        Console.WriteLine();
+
+        TypeCentered("A cursed land. A clueless hero.", 40);
+        Thread.Sleep(500);
+        TypeCentered("Your choices decide his fate.", 40);
+        Thread.Sleep(500);
+        Console.WriteLine();
+        TypeCentered("Press any key to begin...", 25);
+
+        Console.ReadKey(true);
+        Console.Clear();
+    }
+
+    private void WriteCentered(string text)
+    {
+        int windowWidth = Console.WindowWidth;
+        int textLength = text.Length;
+
+        int padding = (windowWidth - textLength) / 2;
+
+        if (padding < 0) padding = 0;
+
+        Console.WriteLine(new string(' ', padding) + text);
+    }
+
+    private void ShowCastleArt()
+    {
+        string[] art =
+        {
+        "   |>>>",
+        "|",
+        "_  _|_  _",
+        "|;|_|;|_|;|",
+        "\\\\.    .  /",
+        "\\\\:  .  /",
+        "||:   |",
+        "||:.  |",
+        "||:  .|",
+        "||:   |",
+        "||: , |",
+        "||:   |",
+        "||: . |",
+        "__||_   |__",
+        "(_____) (____)"
+    };
+
+        foreach (var line in art)
+        {
+            WriteCentered(line);
+        }
+    }
+
 
     /**
      * Print out the opening message for the player.
