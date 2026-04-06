@@ -91,7 +91,9 @@ public partial class Game
 
         // Instantiate core game objects.
         parser = new Parser();
-        player = new Player();
+        // Multiplayer Change 1:
+        // The original player is now explicitly registered as Player 1 for shared-world multiplayer state.
+        player = new Player(1, "Player 1");
         protag = new Protagonist();
         oldHorseFollower = new Follower(this);
         progress = new GameProgress();
@@ -109,6 +111,9 @@ public partial class Game
 
         allRooms = [];
         allItems = [];
+        // Multiplayer Change 2:
+        // Initialize the multiplayer player registry alongside the existing single-player setup.
+        InitializePlayerRegistry();
 
         CreateRooms();
     }
@@ -210,7 +215,6 @@ public partial class Game
      */
     public void Play()
     {
-        ShowSplashScreen();
         PrintWelcome();
 
         bool finished = false;
@@ -240,7 +244,9 @@ public partial class Game
         Console.WriteLine();
     }
 
-    private void ShowSplashScreen()
+    // Multiplayer Change 20:
+    // The splash screen is now callable from Program so it can display before the mode-selection menu.
+    public void ShowSplashScreen()
     {
         Console.Clear();
 
@@ -320,7 +326,9 @@ public partial class Game
         Console.WriteLine("Help the dumb protagonist have the slimmest chance to survive.");
         Console.WriteLine("Type 'help' if you need help.");
         Console.WriteLine();
-        Room? room = player.GetCurrentRoom();
+        // Multiplayer Change 3:
+        // Resolve the welcome room through the local multiplayer player accessor instead of assuming one player.
+        Room? room = GetPlayer(localPlayerId).GetCurrentRoom();
 if (room != null)
 {
     PrintLocationInfo(room);
@@ -378,19 +386,9 @@ if (room != null)
 
     internal void PrintLocationInfo(Room currentRoom)
     {
-        string roomText = RoomTextService.GetLongDescription(currentRoom, progress);
-
-        if (oldHorseFollower.getCurrentRoom() == currentRoom)
-        {
-            roomText += "\n" + oldHorseFollower.GetRandomIdleText();
-        }
-
-        if (protag.getCurrentRoom() == currentRoom)
-        {
-            roomText += "\nThe protagonist is here, bumbling about the area.";
-        }
-
-        Console.WriteLine(roomText);
+        // Multiplayer Change 4:
+        // Room text now flows through the multiplayer-aware formatter so it can mention nearby players.
+        Console.WriteLine(GetLocationInfoText(activePlayerId, currentRoom));
     }
 
     internal static bool Quit(Command command)
@@ -417,18 +415,21 @@ if (room != null)
         }
 
         string itemName = command.GetSecondWord()!;
-        Item? tempItem = player.GetCurrentRoom()!.getItemByName(itemName);
+        // Multiplayer Change 5:
+        // Item pickup now applies to whichever player issued the command on the host.
+        Player activePlayer = GetPlayer();
+        Item? tempItem = activePlayer.GetCurrentRoom()!.getItemByName(itemName);
 
         if (tempItem != null)
         {
-            if (player.isValidItem(tempItem))
+            if (activePlayer.isValidItem(tempItem))
             {
-                player.addItem(tempItem);
-                player.GetCurrentRoom()!.removeItemByName(itemName);
+                activePlayer.addItem(tempItem);
+                activePlayer.GetCurrentRoom()!.removeItemByName(itemName);
                 Console.WriteLine("Picked up the " + tempItem.GetName() + "!");
 
                 // Legacy puzzle flag behavior kept as-is (forge tool set completeness).
-                if (tempItem.GetName() == "hammer" && player.GetCurrentRoom()!.GetId() == 4)
+                if (tempItem.GetName() == "hammer" && activePlayer.GetCurrentRoom()!.GetId() == 4)
                 {
                     progress.ForgePrepared = false;
                     Console.WriteLine("The forge's tool set is once again incomplete.");
@@ -447,7 +448,9 @@ if (room != null)
 
     private bool IsFollowerPresent()
     {
-        return oldHorseFollower.getCurrentRoom() == player.GetCurrentRoom();
+        // Multiplayer Change 6:
+        // Follower proximity checks now use the currently active player context.
+        return oldHorseFollower.getCurrentRoom() == GetPlayer().GetCurrentRoom();
     }
 
     internal void Drop(Command command)
@@ -459,12 +462,15 @@ if (room != null)
         }
 
         string itemName = command.GetSecondWord()!;
-        Item? tempItem = player.getItemByName(itemName);
+        // Multiplayer Change 7:
+        // Item drops are resolved against the active multiplayer player instead of always Player 1.
+        Player activePlayer = GetPlayer();
+        Item? tempItem = activePlayer.getItemByName(itemName);
 
         if (tempItem != null)
         {
-            player.GetCurrentRoom()!.addItem(tempItem);
-            player.removeItemByName(itemName);
+            activePlayer.GetCurrentRoom()!.addItem(tempItem);
+            activePlayer.removeItemByName(itemName);
             Console.WriteLine("Dropped the " + tempItem.GetName() + "!");
         }
         else
@@ -532,13 +538,17 @@ if (room != null)
             return true;
         }
 
-        if (oldHorseFollower.ReceiveFromPlayer(player, word))
+        // Multiplayer Change 8:
+        // Trade inventory transfers now run against whichever player is executing the command.
+        Player activePlayer = GetPlayer();
+
+        if (oldHorseFollower.ReceiveFromPlayer(activePlayer, word))
         {
             Console.WriteLine("Gave the " + word + " to your mule.");
             return false;
         }
 
-        if (oldHorseFollower.GiveToPlayer(player, word))
+        if (oldHorseFollower.GiveToPlayer(activePlayer, word))
         {
             Console.WriteLine("Took the " + word + " from your mule.");
             return false; 
@@ -557,7 +567,9 @@ if (room != null)
 
     internal void ItemsPrint()
     {
-        Console.WriteLine(player.itemsText());
+        // Multiplayer Change 9:
+        // Inventory output now reports the active player's inventory in multiplayer sessions.
+        Console.WriteLine(GetPlayer().itemsText());
         Console.WriteLine("-------------------------------------------------");
         Console.WriteLine(oldHorseFollower.itemsText());
     }
@@ -568,7 +580,9 @@ if (room != null)
 
     internal void GoTo(Command command)
     {
-        switch (player.goRoom(command))
+        // Multiplayer Change 10:
+        // Movement is applied to the active player so both players can move independently on the host.
+        switch (GetPlayer().goRoom(command))
         {
             case 0:
                 Console.WriteLine("Go where?");
@@ -591,7 +605,9 @@ if (room != null)
 
     internal void BackTo()
     {
-        if (player.back() == 0)
+        // Multiplayer Change 11:
+        // Backtracking now uses the active player's own room history.
+        if (GetPlayer().back() == 0)
         {
             Console.WriteLine("You haven't gone anywhere!");
         }
@@ -614,7 +630,9 @@ if (room != null)
         // REFACTOR (polymorphism):
         // Instead of Game checking item IDs and branching, the item decides its own behavior
         // via Item.Use(Game) implemented by each concrete subclass (AxeItem, RingItem, etc.).
-        Item? heldItem = player.getItemByName(item);
+        // Multiplayer Change 12:
+        // Item use now resolves against the active player's inventory during authoritative command execution.
+        Item? heldItem = GetPlayer().getItemByName(item);
         if (heldItem != null)
         {
             return heldItem.Use(this);
@@ -652,7 +670,9 @@ if (room != null)
 
     internal void Talk()
     {
-        if (player.GetCurrentRoom() == protag.getCurrentRoom())
+        // Multiplayer Change 13:
+        // Talk checks now compare the protagonist against the active player.
+        if (GetPlayer().GetCurrentRoom() == protag.getCurrentRoom())
         {
             if (progress.SwordPlaced && !progress.ToldProtagSword)
             {
@@ -679,7 +699,9 @@ if (room != null)
     {
         bool quitSleep = false;
 
-        if (player.GetCurrentRoom()!.GetId() == 0)
+        // Multiplayer Change 14:
+        // Sleep/end-condition checks now evaluate the active player's location.
+        if (GetPlayer().GetCurrentRoom()!.GetId() == 0)
         {
             if (progress.ToldProtagGate && progress.ToldProtagSword)
             {
@@ -702,6 +724,13 @@ if (room != null)
     //Save State Edit 18
     internal void SaveGame(Command command)
     {
+        // Multiplayer Change 15:
+        // Saving is disabled while multiplayer is active to avoid host/client state divergence.
+        if (IsSaveLoadBlocked())
+        {
+            return;
+        }
+
         if (command.HasSecondWord())
         {
             Console.WriteLine("Save doesn't take any extra words.");
@@ -731,6 +760,13 @@ if (room != null)
     //Save State Edit 19
     internal void LoadGame(Command command)
     {
+        // Multiplayer Change 16:
+        // Loading is disabled while multiplayer is active to avoid host/client state divergence.
+        if (IsSaveLoadBlocked())
+        {
+            return;
+        }
+
         if (command.HasSecondWord())
         {
             Console.WriteLine("Load doesn't take any extra words.");
@@ -762,7 +798,9 @@ if (room != null)
 
             GameStateMapper.Apply(this, state);
             Console.WriteLine("Game loaded.");
-            PrintLocationInfo(player.GetCurrentRoom());
+            // Multiplayer Change 17:
+            // After load, refresh the local player's room text through the multiplayer-aware accessor.
+            PrintLocationInfo(GetPlayer(localPlayerId).GetCurrentRoom());
         }
         catch (Exception)
         {
@@ -773,6 +811,13 @@ if (room != null)
     //Save State Edit 32
     internal void DeleteSave(Command command)
     {
+        // Multiplayer Change 18:
+        // Save deletion is also disabled in multiplayer to keep persistence behavior consistent.
+        if (IsSaveLoadBlocked())
+        {
+            return;
+        }
+
         if (command.HasSecondWord())
         {
             Console.WriteLine("Delete doesn't take any extra words.");
@@ -817,7 +862,23 @@ if (room != null)
     }
 
     // Internal getters used by rules and item behaviors (kept internal for tests + cross-namespace access).
-    internal Player GetPlayer() { return player; }
+    // Multiplayer Change 19:
+    // Added player-aware getters so shared-world commands can target Player 1 or Player 2 explicitly.
+    internal Player GetPlayer() { return GetPlayer(activePlayerId); }
+    internal Player GetPlayer(int playerId)
+    {
+        if (players.TryGetValue(playerId, out Player? existingPlayer))
+        {
+            return existingPlayer;
+        }
+
+        if (playerId == 1)
+        {
+            return player;
+        }
+
+        throw new KeyNotFoundException($"Player {playerId} is not registered.");
+    }
     internal Protagonist GetProtag() { return protag; }
     internal Follower GetFollower() { return oldHorseFollower; }
 

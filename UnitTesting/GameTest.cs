@@ -138,10 +138,12 @@ public class GameTest
 
         var output = stringWriter.ToString().Replace("\r\n", "\n");
 
-        string expectedRoom1 = RoomTextService.GetLongDescription(room1, _testGame.GetProgress());
-        string expectedRoom2 = RoomTextService.GetLongDescription(room2, _testGame.GetProgress());
+        // Multiplayer Change 1:
+        // Validate against the multiplayer-aware room formatter so presence text placement matches runtime behavior.
+        string expectedRoom1 = _testGame.GetLocationInfoText(1, room1);
+        string expectedRoom2 = _testGame.GetLocationInfoText(1, room2);
 
-        Assert.Equal($"{expectedRoom1}\n{expectedRoom2}\nThe protagonist is here, bumbling about the area.\n", output);
+        Assert.Equal($"{expectedRoom1}\n{expectedRoom2}\n", output);
     }
 
     [Fact]

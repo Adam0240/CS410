@@ -15,6 +15,10 @@ namespace ConsoleApp_121_FinalProjectShell.People;
 ///</summary>
 public class Player : Character, IGameInventory
 {
+    // Multiplayer Change 1:
+    // Added a stable player ID and display name so the shared world can distinguish Player 1 and Player 2.
+    public int PlayerId { get; }
+    public string DisplayName { get; }
     
     //inventory-based parameters
     private readonly ArrayList _inventory;
@@ -26,8 +30,12 @@ public class Player : Character, IGameInventory
     /// Creates a new instance of Player and initializes default values.
     /// Barring testing there should only be one of these in a given game.
     /// </summary>
-    public Player()
+    // Multiplayer Change 2:
+    // The default constructor now initializes the multiplayer identity metadata.
+    public Player(int playerId = 1, string? displayName = null)
     {
+        PlayerId = playerId;
+        DisplayName = displayName ?? $"Player {playerId}";
         _inventory = new ArrayList();
         _carryWeight = 100;
         _currentWeight = 0;
@@ -37,8 +45,12 @@ public class Player : Character, IGameInventory
     /// Overloaded constructor for also initializing a starting room.
     /// </summary>
     /// <param name="startroom">The room to place the instance of Player in.</param>
-    public Player(Room startroom) : base(startroom)
+    // Multiplayer Change 3:
+    // The room-based constructor also accepts multiplayer identity metadata for the joining player.
+    public Player(Room startroom, int playerId = 1, string? displayName = null) : base(startroom)
     {
+        PlayerId = playerId;
+        DisplayName = displayName ?? $"Player {playerId}";
         _inventory = new ArrayList();
         _carryWeight = 100;
         _currentWeight = 0;

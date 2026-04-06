@@ -184,5 +184,30 @@ namespace UnitTesting
                 }
             }
         }
+
+        // Multiplayer Change 1:
+        // Added coverage for the overload that injects other-player presence text into room descriptions.
+        [Fact]
+        public void GetLongDescription_IncludesPresenceLine_WhenProvided()
+        {
+            var room = new Room("Hub", 0);
+            string description = RoomTextService.GetLongDescription(
+                room,
+                new GameProgress(),
+                ["Player 2 is here as well."]);
+
+            Assert.Contains("Player 2 is here as well.", description);
+        }
+
+        // Multiplayer Change 2:
+        // Verify that no presence text appears when multiplayer does not provide any presence lines.
+        [Fact]
+        public void GetLongDescription_DoesNotIncludePresenceLine_WhenNoneProvided()
+        {
+            var room = new Room("Hub", 0);
+            string description = RoomTextService.GetLongDescription(room, new GameProgress(), []);
+
+            Assert.DoesNotContain("Player 2 is here as well.", description);
+        }
     }
 }
