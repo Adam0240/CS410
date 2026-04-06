@@ -10,9 +10,8 @@
     <list default="true" id="238f02c3-c02e-46fa-9d12-9c8efe80e1f5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Follower.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Follower.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Player.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnitTesting/CommandWordsTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UnitTesting/CommandWordsTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UnitTesting/FollowerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UnitTesting/FollowerTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,24 +49,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.ConsoleApp_121_FinalProjectShell.executor": "Run",
-    "4b375b65-c593-424f-885f-41f9bf147764.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "d7ba7add-3481-401f-b2b5-dd04b472b86c.executor": "Debug",
-    "ebfabe5d-7938-4e76-bbcb-a30855117461.executor": "Debug",
-    "git-widget-placeholder": "Follower-Trading-and-Follow-Logic",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.ConsoleApp_121_FinalProjectShell.executor&quot;: &quot;Run&quot;,
+    &quot;4b375b65-c593-424f-885f-41f9bf147764.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;a178c182-7359-4db8-bce9-cbb2b48599b4.executor&quot;: &quot;Debug&quot;,
+    &quot;d7ba7add-3481-401f-b2b5-dd04b472b86c.executor&quot;: &quot;Debug&quot;,
+    &quot;ebfabe5d-7938-4e76-bbcb-a30855117461.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;CByrne-Moq/Bogus&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CodeLensConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Project.ConsoleApp_121_FinalProjectShell">
     <configuration name="ConsoleApp_121_FinalProjectShell" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -125,6 +125,15 @@
       <workItem from="1773062499806" duration="1864000" />
       <workItem from="1773150508426" duration="13980000" />
       <workItem from="1773234687725" duration="4883000" />
+      <workItem from="1774318313650" duration="1356000" />
+      <workItem from="1774357901882" duration="1464000" />
+      <workItem from="1774875802455" duration="71000" />
+      <workItem from="1774878259468" duration="1038000" />
+      <workItem from="1774962345192" duration="10000" />
+      <workItem from="1774963314445" duration="4824000" />
+      <workItem from="1775048703356" duration="393000" />
+      <workItem from="1775049304425" duration="3969000" />
+      <workItem from="1775134449560" duration="8094000" />
     </task>
     <servers />
   </component>
@@ -149,6 +158,7 @@
   <component name="XDebuggerManager">
     <pin-to-top-manager>
       <pinned-members>
+        <PinnedItemInfo parentTag="Frame#UnitTesting.CharacterTests.Player_StartsWithEmptyInventory" memberName="player" />
         <PinnedItemInfo parentTag="Type#ConsoleApp_121_FinalProjectShell.Core.Game" memberName="_oldHorseFollower" />
         <PinnedItemInfo parentTag="Type#ConsoleApp_121_FinalProjectShell.Core.Game" memberName="_player" />
       </pinned-members>

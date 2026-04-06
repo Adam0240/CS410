@@ -1,41 +1,69 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
+using Bogus;
 using ConsoleApp_121_FinalProjectShell;
 using ConsoleApp_121_FinalProjectShell.Commands;
+using FluentAssertions;
 using Xunit;
 
 namespace UnitTesting
 {
     public class CommandWordsTests
     {
+        //bogus parameters and commands
+        private static readonly int Seed = 685;
+        private static readonly Faker Faker = new("en");
+        public CommandWordsTests()
+        {
+            Randomizer.Seed = new Random(Seed);
+        }
+        private string RandomWord()
+        {
+            return Faker.Lorem.Sentence(); //generates nonsense strings
+        }
+        
         [Fact]
         public void IsCommand_WithValidCommands_ReturnsTrue()
         {
             var cw = new CommandWords();
 
-            Assert.True(cw.IsCommand("go"));
-            Assert.True(cw.IsCommand("walk"));
-            Assert.True(cw.IsCommand("move"));
-            Assert.True(cw.IsCommand("help"));
-            Assert.True(cw.IsCommand("quit"));
-            Assert.True(cw.IsCommand("back"));
-            Assert.True(cw.IsCommand("look"));
-            Assert.True(cw.IsCommand("take"));
-            Assert.True(cw.IsCommand("drop"));
-            Assert.True(cw.IsCommand("items"));
-            Assert.True(cw.IsCommand("use"));
-            Assert.True(cw.IsCommand("talk"));
-            Assert.True(cw.IsCommand("sleep"));
+            cw.IsCommand("go").Should().BeTrue();
+            cw.IsCommand("walk").Should().BeTrue();
+            cw.IsCommand("move").Should().BeTrue();
+            cw.IsCommand("help").Should().BeTrue();
+            cw.IsCommand("quit").Should().BeTrue();
+            cw.IsCommand("back").Should().BeTrue();
+            cw.IsCommand("look").Should().BeTrue();
+            cw.IsCommand("take").Should().BeTrue();
+            cw.IsCommand("drop").Should().BeTrue();
+            cw.IsCommand("items").Should().BeTrue();
+            cw.IsCommand("use").Should().BeTrue();
+            cw.IsCommand("talk").Should().BeTrue();
+            cw.IsCommand("sleep").Should().BeTrue();
+            cw.IsCommand("trade").Should().BeTrue();
+            cw.IsCommand("follow").Should().BeTrue();
+            cw.IsCommand("stay").Should().BeTrue();
         }
 
         [Fact]
         public void IsCommand_WithInvalidCommand_ReturnsFalse()
         {
             var cw = new CommandWords();
-
-            Assert.False(cw.IsCommand("EndGame"));
-            Assert.False(cw.IsCommand("xyz"));
-            Assert.False(cw.IsCommand(""));
+            
+            //check blank string first, then ten random strings just to make sure
+            cw.IsCommand("").Should().BeFalse();
+            
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
+            cw.IsCommand(RandomWord()).Should().BeFalse();
         }
 
         [Fact]
@@ -43,7 +71,7 @@ namespace UnitTesting
         {
             var cw = new CommandWords();
 
-            Assert.False(cw.IsCommand(string.Empty));
+            cw.IsCommand(string.Empty).Should().BeFalse();
         }
 
         [Fact]
@@ -51,29 +79,40 @@ namespace UnitTesting
         {
             var cw = new CommandWords();
 
-            Assert.Equal(CommandWord.GO, cw.GetCommandWord("go"));
-            Assert.Equal(CommandWord.GO, cw.GetCommandWord("walk"));
-            Assert.Equal(CommandWord.GO, cw.GetCommandWord("move"));
-            Assert.Equal(CommandWord.HELP, cw.GetCommandWord("help"));
-            Assert.Equal(CommandWord.QUIT, cw.GetCommandWord("quit"));
-            Assert.Equal(CommandWord.BACK, cw.GetCommandWord("back"));
-            Assert.Equal(CommandWord.LOOK, cw.GetCommandWord("look"));
-            Assert.Equal(CommandWord.TAKE, cw.GetCommandWord("take"));
-            Assert.Equal(CommandWord.DROP, cw.GetCommandWord("drop"));
-            Assert.Equal(CommandWord.ITEMS, cw.GetCommandWord("items"));
-            Assert.Equal(CommandWord.USE, cw.GetCommandWord("use"));
-            Assert.Equal(CommandWord.TALK, cw.GetCommandWord("talk"));
-            Assert.Equal(CommandWord.SLEEP, cw.GetCommandWord("sleep"));
+            cw.GetCommandWord("go").Should().Be(CommandWord.GO);
+            cw.GetCommandWord("walk").Should().Be(CommandWord.GO);
+            cw.GetCommandWord("move").Should().Be(CommandWord.GO);
+            cw.GetCommandWord("help").Should().Be(CommandWord.HELP);
+            cw.GetCommandWord("quit").Should().Be(CommandWord.QUIT);
+            cw.GetCommandWord("back").Should().Be(CommandWord.BACK);
+            cw.GetCommandWord("look").Should().Be(CommandWord.LOOK);
+            cw.GetCommandWord("take").Should().Be(CommandWord.TAKE);
+            cw.GetCommandWord("drop").Should().Be(CommandWord.DROP);
+            cw.GetCommandWord("items").Should().Be(CommandWord.ITEMS);
+            cw.GetCommandWord("use").Should().Be(CommandWord.USE);
+            cw.GetCommandWord("talk").Should().Be(CommandWord.TALK);
+            cw.GetCommandWord("sleep").Should().Be(CommandWord.SLEEP);
+            cw.GetCommandWord("trade").Should().Be(CommandWord.TRADE);
+            cw.GetCommandWord("follow").Should().Be(CommandWord.FOLLOW);
+            cw.GetCommandWord("stay").Should().Be(CommandWord.STAY);
         }
 
         [Fact]
         public void GetCommandWord_WithUnknownCommand_ReturnsUnknown()
         {
             var cw = new CommandWords();
-
-            Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord("EndGame"));
-            Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord("xyz"));
-            Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord(""));
+            
+            cw.GetCommandWord("").Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
+            cw.GetCommandWord(RandomWord()).Should().Be(CommandWord.UNKNOWN); 
         }
 
         [Fact]
@@ -81,7 +120,7 @@ namespace UnitTesting
         {
             var cw = new CommandWords();
 
-            Assert.Equal(CommandWord.UNKNOWN, cw.GetCommandWord(string.Empty));
+            cw.GetCommandWord(string.Empty).Should().Be(CommandWord.UNKNOWN);
         }
 
         [Fact]
@@ -100,19 +139,22 @@ namespace UnitTesting
                 var output = sw.ToString();
 
                 // Must contain all command keys (order not guaranteed)
-                Assert.Contains("go", output);
-                Assert.Contains("walk", output);
-                Assert.Contains("move", output);
-                Assert.Contains("help", output);
-                Assert.Contains("quit", output);
-                Assert.Contains("back", output);
-                Assert.Contains("look", output);
-                Assert.Contains("take", output);
-                Assert.Contains("drop", output);
-                Assert.Contains("items", output);
-                Assert.Contains("use", output);
-                Assert.Contains("talk", output);
-                Assert.Contains("sleep", output);
+                output.Should().Contain("go");
+                output.Should().Contain("walk");
+                output.Should().Contain("move");
+                output.Should().Contain("help");
+                output.Should().Contain("quit");
+                output.Should().Contain("back");
+                output.Should().Contain("look");
+                output.Should().Contain("take");
+                output.Should().Contain("drop");
+                output.Should().Contain("items");
+                output.Should().Contain("use");
+                output.Should().Contain("talk");
+                output.Should().Contain("sleep");
+                output.Should().Contain("trade");
+                output.Should().Contain("follow");
+                output.Should().Contain("stay");
             }
             finally
             {
