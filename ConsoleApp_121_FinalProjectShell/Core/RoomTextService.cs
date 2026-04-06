@@ -46,12 +46,28 @@ public static class RoomTextService
 
     public static string GetLongDescription(Room room, GameProgress progress)
     {
+        // Multiplayer Change 1:
+        // Keep the original single-player API while delegating to the overload that can append
+        // other-player presence text for multiplayer rooms.
+        return GetLongDescription(room, progress, []);
+    }
+
+    public static string GetLongDescription(Room room, GameProgress progress, IEnumerable<string> presenceLines)
+    {
         var builtDescription = new StringBuilder(GetDescription(room, progress));
         builtDescription.Append("\n");
 
         if (room.GetItemsCount() > 0)
         {
             builtDescription.Append(room.itemsText()).Append(".\n");
+        }
+
+        // Multiplayer Change 2:
+        // Presence lines are injected only when multiplayer passes them in, so single-player room
+        // output remains unchanged.
+        foreach (string presenceLine in presenceLines)
+        {
+            builtDescription.Append(presenceLine).Append("\n");
         }
 
         builtDescription.Append(GetExitString(room, progress));

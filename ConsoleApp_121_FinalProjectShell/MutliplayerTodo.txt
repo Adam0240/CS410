@@ -1,0 +1,368 @@
+# Multiplayer Implementation To-Do: Shared World Sync (2-player online)
+
+Goal:
+Implement a 2-player online multiplayer mode for the current Zork/text-adventure project with these exact rules:
+
+- Player 1 hosts the game.
+- Player 2 joins from another computer.
+- Both players can move independently with no turn-based lock.
+- The game world is shared and synchronized.
+- If one player changes the world, the other player must see that same change.
+- If both players are in the same room, room text must mention the other player.
+
+Critical design rule:
+The host is the single source of truth for the entire game state.
+The client must never maintain an independent world state that can drift from the host.
+
+That means the host controls and synchronizes:
+- player positions
+- room contents
+- picked up items
+- dropped items
+- used/consumed items
+- unlocked/opened/cleared room states
+- any flags that affect gameplay
+- player connection status
+
+---
+
+## Phase 1: Networking foundation
+
+1. Add a lightweight host/client networking layer using TCP for the MVP.
+
+Files to edit/add:
+- `ConsoleApp_121_FinalProjectShell/Program.cs`
+- `ConsoleApp_121_FinalProjectShell/ConsoleApp_121_FinalProjectShell.csproj`
+
+New files to create:
+- `ConsoleApp_121_FinalProjectShell/Networking/NetworkMessage.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/HostServer.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/GameClient.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/MessageCodec.cs`
+
+Requirements:
+- Host starts a server and waits for one client.
+- Client connects to the host by IP/port.
+- Connection success/failure must print clearly to console.
+- Support exactly 2 players for this MVP.
+
+---
+
+## Phase 2: Define the network protocol clearly
+
+2. Create a minimal but explicit network message protocol.
+
+The protocol must support:
+- join request
+- join accepted
+- player connected
+- player disconnected
+- command submission from client to host
+- state update from host to client
+- room update from host to client
+- system/error message
+- full snapshot sync from host to client
+
+Important rule:
+The client sends player intent.
+The host validates, applies, and broadcasts results.
+
+Examples:
+- client sends: `go north`
+- host decides whether movement is valid
+- host updates authoritative state
+- host sends updated room/world state back
+
+Do not let the client directly mutate gameplay state on its own.
+
+Files to edit/add:
+- `ConsoleApp_121_FinalProjectShell/Networking/NetworkMessage.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/MessageCodec.cs`
+- `ConsoleApp_121_FinalProjectShell/Commands/Parser.cs`
+
+---
+
+## Phase 3: Make the full game world host-authoritative
+
+3. Refactor game state so multiplayer uses one shared world state on the host.
+
+Host-authoritative shared state must include:
+- both players
+- each player’s current room
+- each player’s inventory
+- each room’s current contents
+- room completion/cleared flags
+- item ownership/location
+- any puzzle/game flags already used by the game
+- connected/disconnected state
+
+Files to edit/add:
+- `ConsoleApp_121_FinalProjectShell/Core/Game.cs`
+- `ConsoleApp_121_FinalProjectShell/People/Player.cs`
+- `ConsoleApp_121_FinalProjectShell/People/Character.cs`
+
+Optional new file:
+- `ConsoleApp_121_FinalProjectShell/Core/MultiplayerSessionState.cs`
+
+Important implementation rule:
+There must be only one authoritative version of:
+- where each item is
+- whether an item is in a room
+- whether an item is in a player inventory
+- whether an item has been consumed/used/removed
+
+Example required behavior:
+- If Player 1 picks up a key in Room A, Player 2 must no longer see that key in Room A.
+- If Player 1 drops the key in Room B, Player 2 must see that key in Room B.
+- If Player 1 uses an item that removes it from the world, Player 2 must see that same result.
+- If a room state changes, both players must see the changed version.
+
+This is required. Do not implement movement sync only.
+
+---
+
+## Phase 4: Host-authoritative command handling
+
+4. Route all gameplay-changing commands through the host.
+
+Commands that must be host-authoritative include at minimum:
+- `go`
+- `take`
+- `drop`
+- `use`
+- any command that changes room state
+- any command that changes inventory
+- any command that changes puzzle progress
+- any command that affects room descriptions or available exits/items
+
+Required flow:
+1. player enters command
+2. command is sent to host if needed
+3. host validates the command
+4. host applies the command to authoritative game state
+5. host sends back updated results/state
+6. both players receive the correct synced view
+
+Files to edit:
+- `ConsoleApp_121_FinalProjectShell/Core/Game.cs`
+- `ConsoleApp_121_FinalProjectShell/Commands/CommandActions.cs`
+- `ConsoleApp_121_FinalProjectShell/Commands/CommandActionRegistry.cs`
+
+Important:
+Do not leave `take`, `drop`, or `use` as purely local client actions.
+Those must update the shared world through the host.
+
+---
+
+## Phase 5: Synchronize room contents and inventories
+
+5. Explicitly sync room items and player inventories after item-related commands.
+
+Required synced behaviors:
+- taking an item removes it from the room for both players
+- dropping an item adds it to the room for both players
+- using an item updates the shared world for both players
+- inventory must reflect the correct owner of the item
+- no item duplication
+- no desync where both players think they own the same single item
+
+Files to edit:
+- `ConsoleApp_121_FinalProjectShell/Core/Game.cs`
+- `ConsoleApp_121_FinalProjectShell/Room.cs`
+- `ConsoleApp_121_FinalProjectShell/People/Player.cs`
+- any existing item/use-rule files, including:
+  - `ConsoleApp_121_FinalProjectShell/Items/*`
+  - `ConsoleApp_121_FinalProjectShell/Core/UseRules.cs` or equivalent files
+
+Required outcome:
+The map is shared.
+The room contents are shared.
+The world state is shared.
+Only player identity and player inventory ownership differ by player.
+
+---
+
+## Phase 6: Presence text in room descriptions
+
+6. Extend room output to show other-player presence when both are in the same room.
+
+Examples:
+- `Player 2 is here as well.`
+- `Player 1 is also in this room.`
+
+Requirements:
+- presence text appears only when both players are in the same room
+- single-player output remains unchanged
+- if players are in different rooms, no presence line is shown
+
+Files to edit:
+- `ConsoleApp_121_FinalProjectShell/Core/RoomTextService.cs`
+- `ConsoleApp_121_FinalProjectShell/Core/Game.cs`
+- `ConsoleApp_121_FinalProjectShell/Room.cs` only if needed
+
+---
+
+## Phase 7: Input and receive loops for non-turn-based play
+
+7. Split console input from network receive handling.
+
+Requirements:
+- one loop handles local user input
+- one loop handles inbound network messages
+- players do not need to wait for each other’s turns
+- host processes commands in arrival order, one at a time
+- prevent state corruption or race conditions
+
+Files to edit/add:
+- `ConsoleApp_121_FinalProjectShell/Program.cs`
+- `ConsoleApp_121_FinalProjectShell/Core/Game.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/HostServer.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/GameClient.cs`
+
+Important:
+Even though players move independently, actual state mutations on the host should be processed sequentially to avoid conflicts.
+
+---
+
+## Phase 8: Full-state sync on join and recovery
+
+8. When Player 2 joins, send a full authoritative snapshot of the current game state.
+
+The snapshot must include:
+- both players
+- current room locations
+- room contents
+- inventories
+- room flags
+- puzzle state
+- item state
+- any other state needed so Player 2 sees the same world as the host
+
+Requirements:
+- client must be initialized from host snapshot
+- client must not invent its own default world state after connecting
+- all later updates should be incremental or snapshot-based, but must stay host-driven
+
+Files to edit/add:
+- `ConsoleApp_121_FinalProjectShell/Networking/HostServer.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/GameClient.cs`
+- `ConsoleApp_121_FinalProjectShell/Core/Game.cs`
+- `ConsoleApp_121_FinalProjectShell/Core/MultiplayerSessionState.cs` if created
+
+---
+
+## Phase 9: Save/load policy for MVP
+
+9. Prevent multiplayer save/load desync for the MVP.
+
+For MVP:
+- disable save/load while a multiplayer session is active
+- print a clear message explaining save/load is unavailable in multiplayer
+
+Reason:
+Save/load in multiplayer can cause state divergence unless it is fully synchronized.
+
+Files to edit:
+- `ConsoleApp_121_FinalProjectShell/Commands/CommandActions.cs`
+- `ConsoleApp_121_FinalProjectShell/Core/Game.cs`
+- persistence files only if necessary
+
+---
+
+## Phase 10: Tests for shared world synchronization
+
+10. Add tests specifically for synchronized world behavior.
+
+Required tests:
+- when Player 1 and Player 2 are in same room, presence line appears
+- when they are in different rooms, presence line does not appear
+- when Player 1 takes an item, Player 2 no longer sees it in the room
+- when Player 1 drops an item, Player 2 sees it in the room
+- when Player 1 uses an item that changes world state, Player 2 sees the changed state
+- invalid movement still behaves correctly
+- invalid item actions still behave correctly
+- host-authoritative updates do not duplicate items
+- joining client receives correct initial world snapshot
+
+Files to edit/add:
+- `UnitTesting/RoomTextServiceTests.cs`
+- `UnitTesting/GameTest.cs`
+
+Suggested new files:
+- `UnitTesting/MultiplayerPresenceTests.cs`
+- `UnitTesting/MultiplayerItemSyncTests.cs`
+- `UnitTesting/MultiplayerGameFlowTests.cs`
+
+---
+
+## Phase 11: Manual 2-computer verification
+
+11. Add a manual test plan for two-computer verification.
+
+Create:
+- `docs/multiplayer-manual-test-plan.md`
+
+Manual test scenarios must include:
+- host starts game
+- client joins successfully
+- both players move independently
+- both players enter same room and see presence text
+- Player 1 takes item and Player 2 confirms item disappeared
+- Player 1 drops item and Player 2 confirms item appeared
+- Player 1 uses item and Player 2 confirms world changed
+- invalid command behavior remains stable
+- host disconnect behavior is clear
+- client disconnect behavior is clear
+
+---
+
+## Phase 12: Nice-to-have connection UX
+
+12. Improve multiplayer lifecycle messages.
+
+Requirements:
+- print when Player 2 joins
+- print when Player 2 disconnects
+- notify client if host shuts down
+- handle disconnects without crashing the game
+
+Files to edit:
+- `ConsoleApp_121_FinalProjectShell/Program.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/HostServer.cs`
+- `ConsoleApp_121_FinalProjectShell/Networking/GameClient.cs`
+
+---
+
+## Non-negotiable implementation rules
+
+These rules must be followed:
+
+1. The host is the only authoritative source of game state.
+2. The client must not apply permanent gameplay changes locally without host approval.
+3. The shared map must stay synchronized between both players.
+4. Room contents must stay synchronized between both players.
+5. Item pickup, drop, and use must stay synchronized between both players.
+6. Puzzle/world-state changes must stay synchronized between both players.
+7. No duplicated unique items.
+8. No room/item desync between players.
+9. Single-player mode must continue to work unchanged when multiplayer is not active.
+
+---
+
+## Smallest acceptable playable milestone
+
+The first playable milestone is not complete until all of the following work:
+
+- Host/Join menu exists in `Program.cs`
+- Player 2 can connect to Player 1 from another computer
+- both players can use `go`
+- both players can use `take`
+- both players can use `drop`
+- host updates authoritative shared world state
+- item changes sync correctly between players
+- room descriptions update correctly
+- presence line appears when both players are in same room
+- manual test on two machines confirms shared world synchronization
+
+Definition of done for MVP:
+A shared 2-player online text adventure where both players move independently, and any world change made by one player is reflected correctly for the other player.

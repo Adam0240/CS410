@@ -25,12 +25,20 @@ public class Parser
      */
     public Command GetCommand() 
     {
-        String? word1 = null;
-        String? word2 = null;
-
         Console.Write("> ");     // print prompt
 
         string? inputLine = Console.ReadLine();
+
+        // Multiplayer Change 1:
+        // Route console input through the shared parser helper so network-delivered commands
+        // can be parsed by the exact same logic.
+        return ParseCommand(inputLine);
+    }
+
+    public Command ParseCommand(string? inputLine)
+    {
+        string? word1 = null;
+        string? word2 = null;
 
         if (string.IsNullOrWhiteSpace(inputLine))
         {
