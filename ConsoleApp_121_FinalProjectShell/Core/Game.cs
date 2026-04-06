@@ -215,7 +215,6 @@ public partial class Game
      */
     public void Play()
     {
-        ShowSplashScreen();
         PrintWelcome();
 
         bool finished = false;
@@ -245,7 +244,9 @@ public partial class Game
         Console.WriteLine();
     }
 
-    private void ShowSplashScreen()
+    // Multiplayer Change 20:
+    // The splash screen is now callable from Program so it can display before the mode-selection menu.
+    public void ShowSplashScreen()
     {
         Console.Clear();
 

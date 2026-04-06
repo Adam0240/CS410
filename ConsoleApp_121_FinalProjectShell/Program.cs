@@ -8,6 +8,8 @@ using ConsoleApp_121_FinalProjectShell.Networking;
 
 string savePath = Path.Combine(AppContext.BaseDirectory, "data", "savegame.db");
 IGameSaveRepository saveRepository = new SqliteGameSaveRepository(savePath);
+Game splashGame = new(false, saveRepository);
+splashGame.ShowSplashScreen();
 
 Console.WriteLine("Select a mode:");
 Console.WriteLine("1. Single-player");
