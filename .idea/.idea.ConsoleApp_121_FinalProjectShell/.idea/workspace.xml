@@ -9,9 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="238f02c3-c02e-46fa-9d12-9c8efe80e1f5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UnitTesting/CommandWordsTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UnitTesting/CommandWordsTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UnitTesting/FollowerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UnitTesting/FollowerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Commands/CommandActions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Commands/CommandActions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +57,7 @@
     &quot;a178c182-7359-4db8-bce9-cbb2b48599b4.executor&quot;: &quot;Debug&quot;,
     &quot;d7ba7add-3481-401f-b2b5-dd04b472b86c.executor&quot;: &quot;Debug&quot;,
     &quot;ebfabe5d-7938-4e76-bbcb-a30855117461.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;CByrne-Moq/Bogus&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -68,7 +67,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Project.ConsoleApp_121_FinalProjectShell">
+  <component name="RunManager">
     <configuration name="ConsoleApp_121_FinalProjectShell" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -134,6 +133,11 @@
       <workItem from="1775048703356" duration="393000" />
       <workItem from="1775049304425" duration="3969000" />
       <workItem from="1775134449560" duration="8094000" />
+      <workItem from="1775567517041" duration="2417000" />
+      <workItem from="1775570018464" duration="603000" />
+      <workItem from="1775848680653" duration="1210000" />
+      <workItem from="1775865111469" duration="6622000" />
+      <workItem from="1775881785729" duration="1703000" />
     </task>
     <servers />
   </component>

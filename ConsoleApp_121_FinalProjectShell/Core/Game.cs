@@ -322,7 +322,7 @@ public partial class Game
     private void PrintWelcome()
     {
         Console.WriteLine();
-        Console.WriteLine("Welcome to Messed Up NPC with a Creepy Laugh!");
+        Console.WriteLine("Welcome to A Clueless Traveler!");
         Console.WriteLine("Help the dumb protagonist have the slimmest chance to survive.");
         Console.WriteLine("Type 'help' if you need help.");
         Console.WriteLine();
@@ -376,12 +376,84 @@ if (room != null)
     // REFACTOR: These are internal so the command handlers in the Commands folder can call them
     // without making them public API.
 
-    internal void PrintHelp()
+    internal void PrintHelp(Command command)
     {
-        Console.WriteLine("Assist the protagonist in progressing through the beginning areas. \nThey will need to be able to obtain a weapon and have a way into the castle.");
-        Console.WriteLine();
-        Console.WriteLine("Your command words are:");
-        parser.ShowCommands();
+        if (!command.HasSecondWord())
+        {
+            Console.WriteLine("Assist the protagonist in progressing through the beginning areas. \nThey will need to be able to obtain a weapon and have a way into the castle.");
+            Console.WriteLine();
+            Console.WriteLine("Your command words are:");
+            parser.ShowCommands();
+            return;
+        }
+        
+        CommandWords commandWords = new CommandWords();
+        //try and convert our second word into a valid command word
+        CommandWord helpWord = commandWords.GetCommandWord(command.GetSecondWord()!);
+
+        switch (helpWord)
+        {
+            case CommandWord.GO:
+                Console.WriteLine("The 'go' command is used to traverse from room to room in the game world. " +
+                                  "\nSynonyms: walk, move" +
+                                  "\nUsage example: 'go north'");
+                break;
+            case CommandWord.HELP:
+                Console.WriteLine("You're already using it, silly!");
+                break;
+            case CommandWord.QUIT:
+                Console.WriteLine("The 'quit' command is used to quit the game. Progress will not be saved automatically.");
+                break;
+            case CommandWord.BACK:
+                Console.WriteLine("The 'back' command returns you to the last most recently visited room.");
+                break;
+            case CommandWord.LOOK:
+                Console.WriteLine("The 'look' command displays a description of the current room.");
+                break;   
+            case CommandWord.TAKE:
+                Console.WriteLine("The 'take' command is used to pick up items from the surrounding area. " +
+                                  "\nUsage example: 'take rock'");
+                break;
+            case CommandWord.DROP:
+                Console.WriteLine("The 'drop' command is used to leave an item from your inventory on the ground." +
+                                  "\nUsage example: 'drop hammer'");
+                break;
+            case CommandWord.ITEMS:
+                Console.WriteLine("The 'items' command displays a list of items currently in your inventory.");
+                break;
+            case CommandWord.USE:
+                Console.WriteLine("The 'use' command uses an item from your inventory, if applicable." +
+                                  "\nUsage example: 'use axe'");
+                break;
+            case CommandWord.TALK:
+                Console.WriteLine("The 'talk' command is used to attempt to inform the protagonist of something important, if they're nearby.");
+                break;
+            case CommandWord.SLEEP:
+                Console.WriteLine("The 'sleep' command is used to rest. Can only be used once the protagonist has been provided with sufficient help.");
+                break;
+            case CommandWord.FOLLOW:
+                Console.WriteLine("The 'follow' command unties your trusty mule to allow it to follow behind you.");
+                break;
+            case CommandWord.STAY:
+                Console.WriteLine("The 'stay' command tethers your trusty mule to a nearby object to have it stay put.");
+                break;
+            case CommandWord.TRADE:
+                Console.WriteLine("The 'trade' command allows you to exchange items with your trusty mule.");
+                break;
+            case CommandWord.SAVE:
+                Console.WriteLine("The 'save' command saves the game to a file to preserve game progress.");
+                break;
+            case CommandWord.LOAD:
+                Console.WriteLine("The 'load' command is loads the game from the file to resume play.");
+                break;
+            case CommandWord.DELETE:
+                Console.WriteLine("The 'delete' command erases any pre-existing save files.");
+                break;
+            default:
+                Console.WriteLine("Command not recognized.");
+                break;
+        }
+        
     }
 
     internal void PrintLocationInfo(Room currentRoom)

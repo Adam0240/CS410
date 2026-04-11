@@ -12,7 +12,7 @@ public sealed class HelpCommandAction : CommandActionBase
 {
     public override bool Execute(Game game, Command command)
     {
-        game.PrintHelp();
+        game.PrintHelp(command);
         return false;
     }
 }
