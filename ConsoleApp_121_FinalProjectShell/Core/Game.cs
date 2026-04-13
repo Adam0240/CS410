@@ -380,80 +380,84 @@ if (room != null)
     {
         if (!command.HasSecondWord())
         {
-            Console.WriteLine("Assist the protagonist in progressing through the beginning areas. \nThey will need to be able to obtain a weapon and have a way into the castle.");
+            Console.WriteLine("Assist the protagonist in surviving the beginning areas.");
+            Console.WriteLine("Main goals:");
+            Console.WriteLine("- Secure a weapon for the protagonist (sword path).");
+            Console.WriteLine("- Open a path through the castle gate.");
+            Console.WriteLine("Tip: use 'talk' near the protagonist for dynamic step-by-step objective hints.");
             Console.WriteLine();
             Console.WriteLine("Your command words are:");
             parser.ShowCommands();
             return;
         }
-        
+
         CommandWords commandWords = new CommandWords();
-        //try and convert our second word into a valid command word
         CommandWord helpWord = commandWords.GetCommandWord(command.GetSecondWord()!);
 
         switch (helpWord)
         {
             case CommandWord.GO:
-                Console.WriteLine("The 'go' command is used to traverse from room to room in the game world. " +
+                Console.WriteLine("The 'go' command moves you between rooms." +
                                   "\nSynonyms: walk, move" +
-                                  "\nUsage example: 'go north'");
+                                  "\nUsage: 'go north'");
                 break;
             case CommandWord.HELP:
                 Console.WriteLine("You're already using it, silly!");
                 break;
             case CommandWord.QUIT:
-                Console.WriteLine("The 'quit' command is used to quit the game. Progress will not be saved automatically.");
+                Console.WriteLine("The 'quit' command exits the game. Progress is not auto-saved.");
                 break;
             case CommandWord.BACK:
-                Console.WriteLine("The 'back' command returns you to the last most recently visited room.");
+                Console.WriteLine("The 'back' command returns you to the most recently visited room.");
                 break;
             case CommandWord.LOOK:
-                Console.WriteLine("The 'look' command displays a description of the current room.");
-                break;   
+                Console.WriteLine("The 'look' command displays the current room description.");
+                break;
             case CommandWord.TAKE:
-                Console.WriteLine("The 'take' command is used to pick up items from the surrounding area. " +
-                                  "\nUsage example: 'take rock'");
+                Console.WriteLine("The 'take' command picks up an item in the room." +
+                                  "\nUsage: 'take hammer'");
                 break;
             case CommandWord.DROP:
-                Console.WriteLine("The 'drop' command is used to leave an item from your inventory on the ground." +
-                                  "\nUsage example: 'drop hammer'");
+                Console.WriteLine("The 'drop' command leaves an inventory item in the room." +
+                                  "\nUsage: 'drop hammer'");
                 break;
             case CommandWord.ITEMS:
-                Console.WriteLine("The 'items' command displays a list of items currently in your inventory.");
+                Console.WriteLine("The 'items' command lists your inventory and carry weight.");
                 break;
             case CommandWord.USE:
-                Console.WriteLine("The 'use' command uses an item from your inventory, if applicable." +
-                                  "\nUsage example: 'use axe'");
+                Console.WriteLine("The 'use' command uses an item from your inventory." +
+                                  "\nUsage: 'use axe'");
                 break;
             case CommandWord.TALK:
-                Console.WriteLine("The 'talk' command is used to attempt to inform the protagonist of something important, if they're nearby.");
+                Console.WriteLine("The 'talk' command speaks to the protagonist (must be in the same room)." +
+                                  "\nIt gives dynamic objective guidance and acknowledges completed tasks.");
                 break;
             case CommandWord.SLEEP:
-                Console.WriteLine("The 'sleep' command is used to rest. Can only be used once the protagonist has been provided with sufficient help.");
+                Console.WriteLine("The 'sleep' command ends the run only when both objectives have been delivered to the protagonist." +
+                                  "\nYou must be at camp to sleep.");
                 break;
             case CommandWord.FOLLOW:
-                Console.WriteLine("The 'follow' command unties your trusty mule to allow it to follow behind you.");
+                Console.WriteLine("The 'follow' command unties your mule so it follows you.");
                 break;
             case CommandWord.STAY:
-                Console.WriteLine("The 'stay' command tethers your trusty mule to a nearby object to have it stay put.");
+                Console.WriteLine("The 'stay' command tethers your mule to keep it in place.");
                 break;
             case CommandWord.TRADE:
-                Console.WriteLine("The 'trade' command allows you to exchange items with your trusty mule.");
+                Console.WriteLine("The 'trade' command exchanges items with your mule.");
                 break;
             case CommandWord.SAVE:
-                Console.WriteLine("The 'save' command saves the game to a file to preserve game progress.");
+                Console.WriteLine("The 'save' command writes current progress to disk.");
                 break;
             case CommandWord.LOAD:
-                Console.WriteLine("The 'load' command is loads the game from the file to resume play.");
+                Console.WriteLine("The 'load' command restores progress from disk.");
                 break;
             case CommandWord.DELETE:
-                Console.WriteLine("The 'delete' command erases any pre-existing save files.");
+                Console.WriteLine("The 'delete' command erases existing save data.");
                 break;
             default:
                 Console.WriteLine("Command not recognized.");
                 break;
         }
-        
     }
 
     internal void PrintLocationInfo(Room currentRoom)
@@ -742,29 +746,144 @@ if (room != null)
 
     internal void Talk()
     {
-        // Multiplayer Change 13:
-        // Talk checks now compare the protagonist against the active player.
-        if (GetPlayer().GetCurrentRoom() == protag.getCurrentRoom())
-        {
-            if (progress.SwordPlaced && !progress.ToldProtagSword)
-            {
-                progress.ToldProtagSword = true;
-                Console.WriteLine("You inform the protagonist of the location of a weapon.");
-            }
-            else if (progress.GateOpen && !progress.ToldProtagGate)
-            {
-                progress.ToldProtagGate = true;
-                Console.WriteLine("You inform the protagonist of a way forward.");
-            }
-            else
-            {
-                Console.WriteLine("Nothing to say to the protagonist right now.");
-            }
-        }
-        else
+        if (GetPlayer().GetCurrentRoom() != protag.getCurrentRoom())
         {
             Console.WriteLine("There's no-one to talk to!");
+            return;
         }
+
+        bool gateDone = progress.GateOpen;
+        bool swordDone = progress.SwordPlaced;
+        bool toldGate = progress.ToldProtagGate;
+        bool toldSword = progress.ToldProtagSword;
+
+        // Acknowledge newly completed objective(s) once.
+        if (swordDone && !toldSword)
+        {
+            progress.ToldProtagSword = true;
+            Console.WriteLine("Thank you for preparing a weapon for me.");
+        }
+
+        if (gateDone && !toldGate)
+        {
+            progress.ToldProtagGate = true;
+            Console.WriteLine("Thank you for opening a path through the gate.");
+        }
+
+        // If both are done and both acknowledged, finish cleanly.
+        if (progress.ToldProtagGate && progress.ToldProtagSword)
+        {
+            Console.WriteLine("I have what I need now. Thank you.");
+            return;
+        }
+
+        // Build dynamic objective + sub-step guidance.
+        List<string> reminders = BuildProtagonistReminders();
+
+        if (reminders.Count == 0)
+        {
+            Console.WriteLine("I think we're ready. Let's move on soon.");
+            return;
+        }
+
+        Console.WriteLine("I still need your help with the following:");
+        foreach (string reminder in reminders)
+        {
+            Console.WriteLine($"- {reminder}");
+        }
+    }
+
+    private List<string> BuildProtagonistReminders()
+    {
+        var reminders = new List<string>();
+        Player activePlayer = GetPlayer();
+
+        bool needsSwordPath = !progress.SwordPlaced;
+        bool needsGatePath = !progress.GateOpen;
+        bool hasAxe = activePlayer.hasItemByName("axe");
+
+        // Axe is only required if one of the axe-driven world-state steps is still incomplete.
+        bool stillNeedsAxeActions = !progress.SwampCleared || !progress.GateOpen;
+
+        if (stillNeedsAxeActions && !hasAxe)
+        {
+            reminders.Add("Find the axe at the old battlefield, then take it with you.");
+        }
+
+        if (needsSwordPath)
+        {
+            reminders.Add(BuildSwordObjectiveHint());
+        }
+
+        if (needsGatePath)
+        {
+            reminders.Add(BuildGateObjectiveHint());
+        }
+
+        return reminders;
+    }
+
+    private string BuildGateObjectiveHint()
+    {
+        Player activePlayer = GetPlayer();
+
+        if (!activePlayer.hasItemByName("axe"))
+        {
+            return "You need the axe before you can break through the gate.";
+        }
+
+        return "Use the axe at the castle gate to break a path through.";
+    }
+
+
+    private string BuildSwordObjectiveHint()
+    {
+        Player activePlayer = GetPlayer();
+
+        bool hasAxe = activePlayer.hasItemByName("axe");
+        bool hasHammer = activePlayer.hasItemByName("hammer");
+        bool hasOre = activePlayer.hasItemByName("ore");
+        bool hasHilt = activePlayer.hasItemByName("hilt");
+        bool hasSword = activePlayer.hasItemByName("sword");
+
+        // If already forged, next step is always altar placement.
+        if (hasSword)
+        {
+            return "Use the sword at the grove altar.";
+        }
+
+        // Axe is only relevant for sword path before swamp is cleared.
+        if (!progress.SwampCleared)
+        {
+            if (!hasAxe)
+            {
+                return "You need the axe before you can clear the swamp path to the grove.";
+            }
+
+            return "Use the axe on the swamp log to open the grove path.";
+        }
+
+        if (!hasHilt)
+        {
+            return "Find the sword hilt in the hidden grove.";
+        }
+
+        if (!hasHammer)
+        {
+            return "Retrieve the hammer from the graveyard.";
+        }
+
+        if (!hasOre)
+        {
+            return "Use the hammer at the quarry to obtain ore.";
+        }
+
+        if (!progress.ForgePrepared)
+        {
+            return "Bring the hammer to the forge and use it to prepare the tools.";
+        }
+
+        return "At the forge, use the hilt while carrying ore to forge a sword.";
     }
 
     internal bool Sleep()
