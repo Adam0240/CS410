@@ -248,32 +248,89 @@ public partial class Game
     // The splash screen is now callable from Program so it can display before the mode-selection menu.
     public void ShowSplashScreen()
     {
+        int lastWidth = Console.WindowWidth;
+        int lastHeight = Console.WindowHeight;
+
+        // First draw: animated
+        DrawSplashScreen(animated: true);
+
+        while (true)
+        {
+            // If the user resized the console, redraw everything instantly
+            if (Console.WindowWidth != lastWidth || Console.WindowHeight != lastHeight)
+            {
+                lastWidth = Console.WindowWidth;
+                lastHeight = Console.WindowHeight;
+
+                DrawSplashScreen(animated: false);
+            }
+
+            // Exit splash when a key is pressed
+            if (Console.KeyAvailable)
+            {
+                Console.ReadKey(true);
+                break;
+            }
+
+            Thread.Sleep(50);
+        }
+
         Console.Clear();
+    }
+
+    private void DrawSplashScreen(bool animated)
+    {
+        Console.Clear();
+
+        // If the window is too small, show a simple message instead of broken art
+        if (Console.WindowWidth < 60 || Console.WindowHeight < 25)
+        {
+            WriteCentered("Window too small for splash screen");
+            WriteCentered("Please resize the console larger");
+            WriteCentered("Press any key to begin...");
+            return;
+        }
 
         Console.ForegroundColor = ConsoleColor.Cyan;
 
         ShowCastleArt();
 
-        TypeCentered("=====================================", 5);
-        Thread.Sleep(500);
-        TypeCentered("       ACT: A Clueless Traveler", 50);
-        Thread.Sleep(500);
-        TypeCentered("=====================================", 5);
-        Thread.Sleep(500);
+        if (animated)
+        {
+            TypeCentered("=====================================", 5);
+            Thread.Sleep(500);
+            TypeCentered("ACT: A Clueless Traveler", 50);
+            Thread.Sleep(500);
+            TypeCentered("=====================================", 5);
+            Thread.Sleep(500);
+        }
+        else
+        {
+            WriteCentered("=====================================");
+            WriteCentered("ACT: A Clueless Traveler");
+            WriteCentered("=====================================");
+        }
 
         Console.ResetColor();
 
         Console.WriteLine();
 
-        TypeCentered("A cursed land. A clueless hero.", 40);
-        Thread.Sleep(500);
-        TypeCentered("Your choices decide his fate.", 40);
-        Thread.Sleep(500);
-        Console.WriteLine();
-        TypeCentered("Press any key to begin...", 25);
-
-        Console.ReadKey(true);
-        Console.Clear();
+        if (animated)
+        {
+            TypeCentered("A cursed land. A clueless hero.", 40);
+            Thread.Sleep(500);
+            TypeCentered("Your choices decide his fate.", 40);
+            Thread.Sleep(500);
+            Console.WriteLine();
+            TypeCentered("Press any key to begin...", 25);
+        }
+        else
+        {
+            WriteCentered("A cursed land. A clueless hero.");
+            WriteCentered("Your choices decide his fate.");
+            Console.WriteLine();
+            WriteCentered("Press any key to begin...");
+        }
     }
 
     private void WriteCentered(string text)
@@ -292,7 +349,7 @@ public partial class Game
     {
         string[] art =
         {
-        "   |>>>",
+        " |>>>",
         "|",
         "_  _|_  _",
         "|;|_|;|_|;|",
