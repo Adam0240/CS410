@@ -248,6 +248,7 @@ public partial class Game
     // The splash screen is now callable from Program so it can display before the mode-selection menu.
     public void ShowSplashScreen()
     {
+        Console.SetWindowSize(213, 128);
         Console.Clear();
 
         Console.ForegroundColor = ConsoleColor.Cyan;
@@ -256,7 +257,7 @@ public partial class Game
 
         TypeCentered("=====================================", 5);
         Thread.Sleep(500);
-        TypeCentered("       ACT: A Clueless Traveler", 50);
+        TypeCentered("ACT: A Clueless Traveler", 50);
         Thread.Sleep(500);
         TypeCentered("=====================================", 5);
         Thread.Sleep(500);
@@ -292,7 +293,7 @@ public partial class Game
     {
         string[] art =
         {
-        "   |>>>",
+        "         |>>>",
         "|",
         "_  _|_  _",
         "|;|_|;|_|;|",
@@ -308,10 +309,10 @@ public partial class Game
         "__||_   |__",
         "(_____) (____)"
     };
-
+        
         foreach (var line in art)
         {
-            WriteCentered(line);
+            TypeCentered(line);
         }
     }
 
