@@ -94,7 +94,7 @@ public partial class Game
         // Multiplayer Change 1:
         // The original player is now explicitly registered as Player 1 for shared-world multiplayer state.
         player = new Player(1, "Player 1");
-        protag = new Protagonist();
+        protag = new Protagonist(this);
         oldHorseFollower = new Follower(this);
         progress = new GameProgress();
         //Save State Edit 16
@@ -186,7 +186,7 @@ public partial class Game
         lava.SetExit("north", rocky);
         lava.SetExit("slideward", graves);
 
-        graves.SetExit("exit", hub);
+        graves.SetExit("outside", hub);
 
         castleGate.SetExit("south", castleTown);
 
@@ -419,7 +419,8 @@ if (room != null)
             commandWord != CommandWord.SAVE &&
             commandWord != CommandWord.LOAD &&
             //Save State Edit 31
-            commandWord != CommandWord.DELETE)
+            commandWord != CommandWord.DELETE &&
+            commandWord != CommandWord.TALK)
         {
             ProtagMove();
         }
@@ -441,7 +442,7 @@ if (room != null)
             Console.WriteLine("Main goals:");
             Console.WriteLine("- Secure a weapon for the protagonist (sword path).");
             Console.WriteLine("- Open a path through the castle gate.");
-            Console.WriteLine("Tip: use 'talk' near the protagonist for dynamic step-by-step objective hints.");
+            Console.WriteLine("Tip: use 'talk' near the protagonist for dynamic objective hints.");
             Console.WriteLine();
             Console.WriteLine("Your command words are:");
             parser.ShowCommands();
@@ -818,36 +819,32 @@ if (room != null)
         if (swordDone && !toldSword)
         {
             progress.ToldProtagSword = true;
-            Console.WriteLine("Thank you for preparing a weapon for me.");
+            Console.WriteLine("Protagonist: \n\"A sword, hm? Fitting for a hero such as myself! I'll need to retrieve it later.\"\n");
+            return;
         }
-
         if (gateDone && !toldGate)
         {
             progress.ToldProtagGate = true;
-            Console.WriteLine("Thank you for opening a path through the gate.");
+            Console.WriteLine("Protagonist: \n\"Aha, a hidden entrance embedded within the gate! Good work sniffing that out.\"\n");
+            return;
         }
 
         // If both are done and both acknowledged, finish cleanly.
         if (progress.ToldProtagGate && progress.ToldProtagSword)
         {
-            Console.WriteLine("I have what I need now. Thank you.");
+            Console.WriteLine("Protagonist: \n\"I believe I can handle myself for now, please have a rest!\"\n");
             return;
         }
-
+        
+        
         // Build dynamic objective + sub-step guidance.
-        List<string> reminders = BuildProtagonistReminders();
-
-        if (reminders.Count == 0)
+        if (protag.isCacheClear())
         {
-            Console.WriteLine("I think we're ready. Let's move on soon.");
-            return;
+            protag.SetDialogueCache(BuildProtagonistReminders());
         }
 
-        Console.WriteLine("I still need your help with the following:");
-        foreach (string reminder in reminders)
-        {
-            Console.WriteLine($"- {reminder}");
-        }
+        Console.WriteLine("Protagonist: \n" + protag.GetNextDialogue() + "\n");
+        
     }
 
     private List<string> BuildProtagonistReminders()
@@ -864,7 +861,7 @@ if (room != null)
 
         if (stillNeedsAxeActions && !hasAxe)
         {
-            reminders.Add("Find the axe at the old battlefield, then take it with you.");
+            reminders.Add("\"The buildings and terrain of this land are unstable, an axe could be handy for navigating.\"");
         }
 
         if (needsSwordPath)
@@ -874,22 +871,14 @@ if (room != null)
 
         if (needsGatePath)
         {
-            reminders.Add(BuildGateObjectiveHint());
+            reminders.Add("\"That castle gate is shut fast. Its sturdy, but still only made of wood...\"");
         }
+        
+        reminders.Add("\"Filler flavor text 1\"");
+        reminders.Add("\"Filler flavor text 2\"");
+        reminders.Add("\"Filler flavor text 3\"");
 
         return reminders;
-    }
-
-    private string BuildGateObjectiveHint()
-    {
-        Player activePlayer = GetPlayer();
-
-        if (!activePlayer.hasItemByName("axe"))
-        {
-            return "You need the axe before you can break through the gate.";
-        }
-
-        return "Use the axe at the castle gate to break a path through.";
     }
 
 
@@ -897,7 +886,6 @@ if (room != null)
     {
         Player activePlayer = GetPlayer();
 
-        bool hasAxe = activePlayer.hasItemByName("axe");
         bool hasHammer = activePlayer.hasItemByName("hammer");
         bool hasOre = activePlayer.hasItemByName("ore");
         bool hasHilt = activePlayer.hasItemByName("hilt");
@@ -906,41 +894,28 @@ if (room != null)
         // If already forged, next step is always altar placement.
         if (hasSword)
         {
-            return "Use the sword at the grove altar.";
+            return "\"I'll have to search that grove for a weapon again later.\"";
         }
 
         // Axe is only relevant for sword path before swamp is cleared.
         if (!progress.SwampCleared)
-        {
-            if (!hasAxe)
-            {
-                return "You need the axe before you can clear the swamp path to the grove.";
-            }
-
-            return "Use the axe on the swamp log to open the grove path.";
+        { 
+            return "\"I've heard stories about a shrine in that swamp, but I saw no path to follow. " +
+                   "\nCould the way be blocked by something?\"";
         }
-
         if (!hasHilt)
         {
-            return "Find the sword hilt in the hidden grove.";
+            return "\"I had thought that grove might hold a weapon suited for me, but unfortunately not. " +
+                   "\nPerhaps I'll have to check again later.\"";
         }
 
-        if (!hasHammer)
+        if (!hasHammer || !hasOre)
         {
-            return "Retrieve the hammer from the graveyard.";
+            return "\"Ah, no my squire, that's only a hilt. They say the smiths of this land produced many great weapons," +
+                   "\nthe blows of their hammers forging ore into gleaming blades!\"";
         }
-
-        if (!hasOre)
-        {
-            return "Use the hammer at the quarry to obtain ore.";
-        }
-
-        if (!progress.ForgePrepared)
-        {
-            return "Bring the hammer to the forge and use it to prepare the tools.";
-        }
-
-        return "At the forge, use the hilt while carrying ore to forge a sword.";
+        
+        return "\nThey say that this land's ore requires an extremely powerful heat to be properly forged.\n";
     }
 
     internal bool Sleep()
@@ -1102,6 +1077,7 @@ if (room != null)
         // Protagonist movement is automated by generating a "GO" command with a random exit.
         Command command = new(CommandWord.GO, protag.getCurrentRoom()!.GetRandomExit());
         protag.protagSteps(command);
+        
     }
 
     protected virtual void OnPlayerMove(object sender, Command command)
