@@ -29,9 +29,7 @@ public class Follower : Character, IGameInventory
 
     // Optional flavor/name for dialogue/output.
     private readonly string _name;
-
-    //required for event listener implementation
-    //private readonly EventHandler<Command> _playerMovement;
+    
     
     // Default constructor.
     // Starts with no room, in following mode, and a modest carry limit.
@@ -247,14 +245,3 @@ public class Follower : Character, IGameInventory
     }
 }
 
-
-// TODO NEXT STEPS (integration work outside this file):
-// 1) Add new command words in Commands/CommandWord.cs (FOLLOW, STAY, TRADE, and a follower-inventory command token). Done (follower inventory viewable with command "items follower")
-// 2) Map command strings in Commands/CommandWords.cs ("follow", "stay", "trade", and e.g. "finv" or "followerinventory"). Done
-// 3) Create command actions in Commands/CommandActions.cs for follow/stay/trade/follower-inventory. Done
-// 4) Register those actions in Commands/CommandActionRegistry.cs. Done 
-// 5) Add a Follower field to Core/Game.cs, initialize it in CreateRooms, and expose an internal getter for tests. Done
-// 6) Implement Game methods for follow/stay/trade/follower inventory output + same-room validation. Done
-// 7) Update Game movement flow so follower moves with player only while in follow mode.  Done
-// 8) Extend Talk() with follower intro/recruit dialogue and normal companion responses. 
-// 9) Add unit tests for recruitment, follow/stay behavior, item trading in both directions, and follower inventory output.
