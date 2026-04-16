@@ -227,129 +227,64 @@ public partial class Game
         Console.WriteLine("Play again, if you'd like.");
     }
 
-    private void TypeCentered(string text, int delay = 25)
+    private void WriteCenteredAt(string text, int row)
     {
-        int windowWidth = Console.WindowWidth;
-        int padding = (windowWidth - text.Length) / 2;
-
-        if (padding < 0) padding = 0;
-
-        Console.Write(new string(' ', padding));
-
-        foreach (char c in text)
+        if (row < 0 || row >= Console.WindowHeight)
         {
-            Console.Write(c);
-            Thread.Sleep(delay);
+            return;
         }
-        Console.WriteLine();
+
+        int col = Math.Max(0, (Console.WindowWidth - text.Length) / 2);
+        Console.SetCursorPosition(col, row);
+        Console.Write(text);
     }
 
     // Multiplayer Change 20:
     // The splash screen is now callable from Program so it can display before the mode-selection menu.
     public void ShowSplashScreen()
     {
+        Console.CursorVisible = false;
+
         int lastWidth = Console.WindowWidth;
         int lastHeight = Console.WindowHeight;
 
-        // First draw: animated
-        DrawSplashScreen(animated: true);
+        DrawSplashScreen();
 
-        while (true)
+        while (!Console.KeyAvailable)
         {
-            // If the user resized the console, redraw everything instantly
             if (Console.WindowWidth != lastWidth || Console.WindowHeight != lastHeight)
             {
                 lastWidth = Console.WindowWidth;
                 lastHeight = Console.WindowHeight;
 
-                DrawSplashScreen(animated: false);
-            }
-
-            // Exit splash when a key is pressed
-            if (Console.KeyAvailable)
-            {
-                Console.ReadKey(true);
-                break;
+                DrawSplashScreen();
             }
 
             Thread.Sleep(50);
         }
 
+        Console.ReadKey(true);
         Console.Clear();
+        Console.CursorVisible = true;
     }
 
-    private void DrawSplashScreen(bool animated)
+    private void DrawSplashScreen()
     {
-        Console.Clear();
+        ClearSplashScreen();
 
-        // If the window is too small, show a simple message instead of broken art
         if (Console.WindowWidth < 60 || Console.WindowHeight < 25)
         {
-            WriteCentered("Window too small for splash screen");
-            WriteCentered("Please resize the console larger");
-            WriteCentered("Press any key to begin...");
+            int mid = Console.WindowHeight / 2;
+
+            WriteCenteredAt("Window too small for splash screen", mid - 1);
+            WriteCenteredAt("Please resize the console larger", mid);
+            WriteCenteredAt("Press any key to begin...", mid + 2);
             return;
         }
 
-        Console.ForegroundColor = ConsoleColor.Cyan;
-
-        ShowCastleArt();
-
-        if (animated)
-        {
-            TypeCentered("=====================================", 5);
-            Thread.Sleep(500);
-            TypeCentered("ACT: A Clueless Traveler", 50);
-            Thread.Sleep(500);
-            TypeCentered("=====================================", 5);
-            Thread.Sleep(500);
-        }
-        else
-        {
-            WriteCentered("=====================================");
-            WriteCentered("ACT: A Clueless Traveler");
-            WriteCentered("=====================================");
-        }
-
-        Console.ResetColor();
-
-        Console.WriteLine();
-
-        if (animated)
-        {
-            TypeCentered("A cursed land. A clueless hero.", 40);
-            Thread.Sleep(500);
-            TypeCentered("Your choices decide his fate.", 40);
-            Thread.Sleep(500);
-            Console.WriteLine();
-            TypeCentered("Press any key to begin...", 25);
-        }
-        else
-        {
-            WriteCentered("A cursed land. A clueless hero.");
-            WriteCentered("Your choices decide his fate.");
-            Console.WriteLine();
-            WriteCentered("Press any key to begin...");
-        }
-    }
-
-    private void WriteCentered(string text)
-    {
-        int windowWidth = Console.WindowWidth;
-        int textLength = text.Length;
-
-        int padding = (windowWidth - textLength) / 2;
-
-        if (padding < 0) padding = 0;
-
-        Console.WriteLine(new string(' ', padding) + text);
-    }
-
-    private void ShowCastleArt()
-    {
         string[] art =
         {
-        " |>>>",
+        "   |>>>",
         "|",
         "_  _|_  _",
         "|;|_|;|_|;|",
@@ -366,10 +301,34 @@ public partial class Game
         "(_____) (____)"
     };
 
-        foreach (var line in art)
+        int totalLines = art.Length + 6;
+        int startRow = Math.Max(1, (Console.WindowHeight - totalLines) / 2);
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+
+        for (int i = 0; i < art.Length; i++)
         {
-            WriteCentered(line);
+            WriteCenteredAt(art[i], startRow + i);
         }
+
+        WriteCenteredAt("=====================================", startRow + art.Length + 1);
+        WriteCenteredAt("ACT: A Clueless Traveler", startRow + art.Length + 2);
+        WriteCenteredAt("=====================================", startRow + art.Length + 3);
+
+        Console.ResetColor();
+
+        WriteCenteredAt("A cursed land. A clueless hero.", startRow + art.Length + 4);
+        WriteCenteredAt("Your choices decide his fate.", startRow + art.Length + 5);
+        WriteCenteredAt("Press any key to begin...", startRow + art.Length + 6);
+    }
+
+    private void ClearSplashScreen()
+    {
+        Console.Clear();
+        Console.SetCursorPosition(0, 0);
+
+        // Helps clear scrollback/ghosting in Terminal
+        Console.Write("\u001b[3J\u001b[H\u001b[2J");
     }
 
 
