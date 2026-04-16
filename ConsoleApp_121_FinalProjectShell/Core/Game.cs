@@ -861,7 +861,7 @@ if (room != null)
 
         if (stillNeedsAxeActions && !hasAxe)
         {
-            reminders.Add("\"The buildings and terrain of this land are unstable, an axe could be handy for navigating.\"");
+            reminders.Add("\"The buildings and terrain around here are unstable, something with heft could be handy for navigation.\"");
         }
 
         if (needsSwordPath)
@@ -911,11 +911,11 @@ if (room != null)
 
         if (!hasHammer || !hasOre)
         {
-            return "\"Ah, no my squire, that's only a hilt. They say the smiths of this land produced many great weapons," +
-                   "\nthe blows of their hammers forging ore into gleaming blades!\"";
+            return "\"They say the smiths of this land produced many great weapons, the blows of their hammers " +
+                   "\nrefining their metal into gleaming blades.\"";
         }
         
-        return "\nThey say that this land's ore requires an extremely powerful heat to be properly forged.\n";
+        return "\nI've heard that that the ore of this land requires an extremely powerful heat to be properly forged.\n";
     }
 
     internal bool Sleep()
