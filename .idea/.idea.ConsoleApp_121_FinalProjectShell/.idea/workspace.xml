@@ -8,8 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="238f02c3-c02e-46fa-9d12-9c8efe80e1f5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/TextColors.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ConsoleApp_121_FinalProjectShell/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Core/Game.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Follower.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Follower.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/People/Player.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Room.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ConsoleApp_121_FinalProjectShell/Room.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,25 +51,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Project.ConsoleApp_121_FinalProjectShell.executor&quot;: &quot;Run&quot;,
-    &quot;4b375b65-c593-424f-885f-41f9bf147764.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;a178c182-7359-4db8-bce9-cbb2b48599b4.executor&quot;: &quot;Debug&quot;,
-    &quot;d7ba7add-3481-401f-b2b5-dd04b472b86c.executor&quot;: &quot;Debug&quot;,
-    &quot;ebfabe5d-7938-4e76-bbcb-a30855117461.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dialogue-rewrite-and-rescript&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CodeLensConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Project.ConsoleApp_121_FinalProjectShell.executor": "Run",
+    "4b375b65-c593-424f-885f-41f9bf147764.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "a178c182-7359-4db8-bce9-cbb2b48599b4.executor": "Debug",
+    "d7ba7add-3481-401f-b2b5-dd04b472b86c.executor": "Debug",
+    "ebfabe5d-7938-4e76-bbcb-a30855117461.executor": "Debug",
+    "git-widget-placeholder": "Colorized-Text",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CodeLensConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="ConsoleApp_121_FinalProjectShell" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -141,6 +145,10 @@
       <workItem from="1776171553756" duration="5818000" />
       <workItem from="1776213210145" duration="6914000" />
       <workItem from="1776310126886" duration="55000" />
+      <workItem from="1776690426524" duration="1541000" />
+      <workItem from="1776693672866" duration="3700000" />
+      <workItem from="1776753409474" duration="336000" />
+      <workItem from="1776776395215" duration="792000" />
     </task>
     <servers />
   </component>
