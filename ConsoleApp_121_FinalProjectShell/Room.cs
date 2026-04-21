@@ -1,6 +1,4 @@
-﻿//Transcribed Rooms.java.java file - Dan Tager
-
-using ConsoleApp_121_FinalProjectShell.Core;
+﻿using ConsoleApp_121_FinalProjectShell.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,26 +6,11 @@ using ConsoleApp_121_FinalProjectShell.Items;
 
 namespace ConsoleApp_121_FinalProjectShell;
 
-/**
-* This class is part of the "FUGwACL Adventure" application.
-* "FUGwACL Adventure" is a slightly less simple, text based adventure game.
-*
-* Room - a single room, static fields are flags that track completion of certain events.
-*
-* Exits are stored in a String + Room HashMap.
-*
-* @author  Michael Kölling, David J. Barnes, and Christian Byrne
-* @version 2023-12-03
-*/
 public class Room(string description, int roomId) : IGameInventory
 {
     private readonly Dictionary<string, Room> _exits = [];
     private readonly List<Item> _roomItems = [];
-
-
-
-    //object constructor
-
+    
     /**
  * Define an exit of this room.
  * String is the exit name typed as part of a GO command
@@ -50,18 +33,11 @@ public class Room(string description, int roomId) : IGameInventory
     {
         return roomId;
     }
-
-    //technical debt:
-    //unique room descriptions for rooms with alternate descriptions are all stored here
-    //rooms are dependent on an instance in a class, and adding more rooms with clear conditions
-    //requires modifying this method
-    //potential solution: refactor Room to allow rooms to store their own flag for an alternative description.
-    //Factory pattern could also be implemented to add each room with a clear condition to a static list in Game
-    //to allow for easier checking of all clear conditions. 
+    
     /**
- * @return The description of the room.
- * returns unique descriptions depending on the room and what flags are true
- */
+    * @return The description of the room.
+    * returns unique descriptions depending on the room and what flags are true
+    */
     public string GetDescription()
     {
         return description;

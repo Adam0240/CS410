@@ -100,7 +100,7 @@ public class Player : Character, IGameInventory
         {
             iText.Append(':');
             foreach (Item item in _inventory)
-                iText.Append("  " + item.GetName());
+                iText.Append("  " + TextColors.YELLOW + item.GetName() + TextColors.NORMAL);
             iText.AppendLine();
         }
         else
