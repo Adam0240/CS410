@@ -381,7 +381,7 @@ if (room != null)
             commandWord != CommandWord.LOAD &&
             //Save State Edit 31
             commandWord != CommandWord.DELETE &&
-            commandWord != CommandWord.TALK)
+            (commandWord != CommandWord.TALK || protag.getProtagStepsCount() >= 8))
         {
             ProtagMove();
         }
@@ -780,20 +780,20 @@ if (room != null)
         if (swordDone && !toldSword)
         {
             progress.ToldProtagSword = true;
-            Console.WriteLine($"Protagonist: \n\"A {TextColors.CYAN}sword{TextColors.NORMAL}, hm? Fitting for a hero such as myself! I'll need to retrieve it later.\"\n");
+            Console.WriteLine("You inform the protagonist of the location of a weapon.");
             return;
         }
         if (gateDone && !toldGate)
         {
             progress.ToldProtagGate = true;
-            Console.WriteLine($"Protagonist: \n\"Aha, a hidden entrance embedded within the {TextColors.CYAN}gate{TextColors.NORMAL}! Good work sniffing that out.\"\n");
+            Console.WriteLine("You inform the protagonist of a way forward.");
             return;
         }
 
         // If both are done and both acknowledged, finish cleanly.
         if (progress.ToldProtagGate && progress.ToldProtagSword)
         {
-            Console.WriteLine("Protagonist: \n\"I believe I can handle myself for now, please take a rest!\"\n");
+            Console.WriteLine("Nothing to say to the protagonist right now.");
             return;
         }
         

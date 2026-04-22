@@ -30,9 +30,9 @@ public class Protagonist : Character
     //Moves the protagonist through a random room exit. Very simple function.
     public bool protagSteps(Command command)
     {
-        if (_protagStepsCount >= 10)
+        if (_protagStepsCount >= 8)
         {
-            _protagStepsCount -= 10;
+            _protagStepsCount -= 8;
             goRoom(command);
             return true;
         }
